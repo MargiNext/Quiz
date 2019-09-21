@@ -43,6 +43,7 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
+    'nuxt-buefy',
   ],
   /*
   ** Axios module configuration
@@ -54,6 +55,9 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    vendor: [
+      'socket.io-client'
+    ],
     postcss: {
       preset: {
         features: {
