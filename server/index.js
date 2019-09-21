@@ -44,6 +44,13 @@ async function start () {
       // 接続されたクライアントのidをコンソールに表示
       console.log('id: ' + socket.id + ' is connected')
 
+      // サーバー側で保持しているクイズをクライアント側に送信する
+      if (quizQue.length > 0) {  
+        quizQue.forEach(quiz => {
+          socket.emit('Question', quiz)
+        })
+      }
+
       // send
       socket.on('QuizId', quiz => {
         console.log(quiz)
