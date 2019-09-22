@@ -15,7 +15,6 @@
 <script>
 import io from 'socket.io-client'
 import question from '../assets/api/question.json'
-// Import question
 
 export default {
   data() {
@@ -28,7 +27,6 @@ export default {
     }
   },
   computed: {
-		// 配列の後ろ（新しいもの）から順に表示させたいので反転させる
     reverseAns: function() {
       return this.answers.slice().reverse()
     },
@@ -56,7 +54,7 @@ export default {
 
       // サーバー側にクイズ番号を送信する
       this.socket.emit('QuizId', quiz)
-      // input要素を空にする
+      // 要素を空にする
       this.quiz = ''
     },
   }

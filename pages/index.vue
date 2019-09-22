@@ -28,12 +28,6 @@ export default {
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
-    this.socket.on('connection', socket => {
-      // 接続されたクライアントのidをコンソールに表示
-      console.log('id: ' + socket.id + ' is connected')
-      console.log('hoge')
-    })
-
     this.socket.on('Question', question => {
       this.question = questions[question.id]
     })
@@ -52,7 +46,7 @@ export default {
 
       // サーバー側にクイズ番号を送信する
       this.socket.emit('Answer', ans)
-      // input要素を空にする
+      // 要素を空にする
       this.ans = ''
     }
   }
