@@ -6,7 +6,7 @@
 			<button class="button is-info" @click="send('1')">Q2</button>
 			<button class="button is-info" @click="send('2')">Q3</button>
     </div>
-		<div v-for="(ans, index) in answers" :key="index">
+		<div v-for="(ans, index) in reverseAns" :key="index">
 			<p>{{ ans }}</p>
 		</div>
   </section>
@@ -29,7 +29,7 @@ export default {
   },
   computed: {
 		// 配列の後ろ（新しいもの）から順に表示させたいので反転させる
-    reverseMessages: function() {
+    reverseAns: function() {
       return this.answers.slice().reverse()
     },
   },

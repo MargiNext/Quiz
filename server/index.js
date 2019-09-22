@@ -33,7 +33,7 @@ async function start () {
   socketStart(server)
   console.log('Socket.IO starts')
 
-  let quizQueue = []
+  let quizId = ''
   let ansQueue = []
 
   function socketStart(server) {
@@ -46,10 +46,8 @@ async function start () {
       console.log('id: ' + socket.id + ' is connected')
 
       // サーバー側で保持しているクイズをクライアント側に送信
-      if (quizQueue.length > 0) {  
-        quizQueue.forEach(quiz => {
-          socket.emit('Question', quiz)
-        })
+      if (quizId.length > 0) {  
+        socket.emit('Question', quizId)
       }
 
       // サーバーで保持している回答をクライアント側に送信
@@ -64,14 +62,10 @@ async function start () {
         console.log(quiz)
 
         // サーバーで保持している変数にクイズidを格納する
-        quizQueue.push(quiz)
+        quizId = quiz
+
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Question', quiz)
-
-        // サーバー側で保持しているクイズidが1を超えたら古いものから削除する
-        if (quizQueue.length > 1) {
-          quizQueue = quizQueue.slice(-1)
-        }
       })
 
       // 回答の受け取り
