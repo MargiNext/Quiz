@@ -33,7 +33,8 @@ async function start () {
   socketStart(server)
   console.log('Socket.IO starts')
 
-  let quizQue = []
+  let quizQueue = []
+  let ansQueue = []
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -44,25 +45,50 @@ async function start () {
       // 接続されたクライアントのidをコンソールに表示
       console.log('id: ' + socket.id + ' is connected')
 
-      // サーバー側で保持しているクイズをクライアント側に送信する
-      if (quizQue.length > 0) {  
-        quizQue.forEach(quiz => {
+      // サーバー側で保持しているクイズをクライアント側に送信
+      if (quizQueue.length > 0) {  
+        quizQueue.forEach(quiz => {
           socket.emit('Question', quiz)
         })
       }
 
-      // send
+      // サーバーで保持している回答をクライアント側に送信
+      if (ansQueue.length > 0) {
+        ansQueue.forEach(answer => {
+          socket.emit('Answer', answer)
+        })
+      }
+
+      // 問題の受け取り
       socket.on('QuizId', quiz => {
         console.log(quiz)
 
         // サーバーで保持している変数にクイズidを格納する
-        quizQue.push(quiz)
+        quizQueue.push(quiz)
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Question', quiz)
 
         // サーバー側で保持しているクイズidが1を超えたら古いものから削除する
-        if (quizQue.length > 1) {
-          quizQue = quizQue.slice(-1)
+        if (quizQueue.length > 1) {
+          quizQueue = quizQueue.slice(-1)
+        }
+      })
+
+      // 回答の受け取り
+      socket.on('Answer', ans => {
+        console.log(ans)
+
+        // 一旦socket idを回答に紐付けておきました
+        ans.id = socket.id
+
+        // サーバーで保持している変数にクイズidを格納する
+        ansQueue.push(ans)
+        // クライアントに対してクイズidを送信する
+        socket.broadcast.emit('Answer', ans)
+
+        // サーバー側で保持している回答が1を超えたら古いものから削除する
+        if (ansQueue.length > 10) {
+          ansQueue = ansQueue.slice(-10)
         }
       })
     })

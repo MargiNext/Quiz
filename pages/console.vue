@@ -6,6 +6,9 @@
 			<button class="button is-info" @click="send('1')">Q2</button>
 			<button class="button is-info" @click="send('2')">Q3</button>
     </div>
+		<div v-for="(ans, index) in answers" :key="index">
+			<p>{{ ans }}</p>
+		</div>
   </section>
 </template>
 
@@ -20,16 +23,25 @@ export default {
       socket: '',
       isLoading: true,
       question: question,
-      quiz: '',
+			quiz: '',
+			answers: [],
     }
   },
   computed: {
+		// 配列の後ろ（新しいもの）から順に表示させたいので反転させる
+    reverseMessages: function() {
+      return this.answers.slice().reverse()
+    },
   },
   mounted() {
     console.log(this.question)
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
+
+    this.socket.on('Answer', answer => {
+      this.answers.push(answer)
+    })
 
     // コンポーネントがマウントされてから1秒間はローディングする
     setTimeout(() => {
