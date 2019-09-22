@@ -2,7 +2,7 @@
   <section class="section">
     <div id="wrapper" class="container">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
-      <p>{{ question.num }}. {{ question.content }}</p>
+      <p>{{ question.num }}.{{ question.content }}</p>
     </div>
   </section>
 </template>
