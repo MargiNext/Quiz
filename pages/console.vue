@@ -6,13 +6,15 @@
 			<button class="button is-info" @click="send('1')">Q2</button>
 			<button class="button is-info" @click="send('2')">Q3</button>
     </div>
+		<div v-for="(ans, index) in reverseAns" :key="index">
+			<p>{{ ans }}</p>
+		</div>
   </section>
 </template>
 
 <script>
 import io from 'socket.io-client'
 import question from '../assets/api/question.json'
-// Import question
 
 export default {
   data() {
@@ -20,16 +22,24 @@ export default {
       socket: '',
       isLoading: true,
       question: question,
-      quiz: '',
+			quiz: '',
+			answers: [],
     }
   },
   computed: {
+    reverseAns: function() {
+      return this.answers.slice().reverse()
+    },
   },
   mounted() {
     console.log(this.question)
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
+
+    this.socket.on('Answer', answer => {
+      this.answers.push(answer)
+    })
 
     // コンポーネントがマウントされてから1秒間はローディングする
     setTimeout(() => {
@@ -44,7 +54,7 @@ export default {
 
       // サーバー側にクイズ番号を送信する
       this.socket.emit('QuizId', quiz)
-      // input要素を空にする
+      // 要素を空にする
       this.quiz = ''
     },
   }

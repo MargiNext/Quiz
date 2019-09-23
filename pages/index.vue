@@ -4,6 +4,10 @@
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <p>{{ question.num }}. {{ question.content }}</p>
     </div>
+    <button class="button is-info" @click="answer('0')">1</button>
+    <button class="button is-info" @click="answer('1')">2</button>
+    <button class="button is-info" @click="answer('2')">3</button>
+    <button class="button is-info" @click="answer('3')">4</button>
   </section>
 </template>
 
@@ -33,6 +37,19 @@ export default {
       this.isLoading = false
     }, 1000)
   },
+  methods: {
+    answer(value){
+      let ans = {
+        id: '',
+        ans: value,
+      }
+
+      // サーバー側にクイズ番号を送信する
+      this.socket.emit('Answer', ans)
+      // 要素を空にする
+      this.ans = ''
+    }
+  }
 }
 </script>
 
