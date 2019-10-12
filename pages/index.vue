@@ -2,6 +2,7 @@
   <section class="section">
     <loading v-if="showModal" />
     <div id="wrapper" class="container">
+      <p>あなたのお名前：{{ name }}</p>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <p>{{ question.num }} {{ question.content }}</p>
     </div>
@@ -36,9 +37,13 @@ export default {
       loading: false,
       showModal: false,
       top: true,
+			name: ''
     }
   },
   mounted() {
+    // セッションストレージから名前を取り出す
+    this.name = sessionStorage.getItem('name');
+
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
