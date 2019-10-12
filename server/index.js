@@ -40,7 +40,6 @@ async function start () {
   socketStart(server)
   console.log('Socket.IO starts')
 
-  // let quizId = []
   let quizId = 0
   let ansQueue = []
 
@@ -100,10 +99,6 @@ async function start () {
           console.error("Error adding document: ", error);
         });
 
-        // サーバー側で保持している回答が1を超えたら古いものから削除する
-        if (ansQueue.length > 10) {
-          ansQueue = ansQueue.slice(-10)
-        }
       })
     })
   }
