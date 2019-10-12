@@ -1,6 +1,9 @@
 <template>
   <section class="section">
     <div id="wrapper" class="container">
+      <div class="test">
+          <loading v-if="showModal" />
+      </div>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <p>{{ question.num }}. {{ question.content }}</p>
     </div>
@@ -14,14 +17,20 @@
 <script>
 import io from 'socket.io-client'
 import questions from '../assets/api/question.json'
+import loading from '~/components/Loading.vue'
 
 export default {
+  components: {
+    loading
+  },
   data() {
     return {
       socket: '',
       isLoading: true,
       questions: questions,
       question: '',
+      loading: false,
+      showModal: false
     }
   },
   mounted() {
@@ -44,10 +53,17 @@ export default {
         ans: value,
       }
 
-      // サーバー側にクイズ番号を送信する
+      // サーバー側に回答を送信する
       this.socket.emit('Answer', ans)
       // 要素を空にする
       this.ans = ''
+      this.loading = true
+      this.showModal = true
+    }
+  },
+  watch: {
+    question: function(){
+      this.showModal = false
     }
   }
 }
