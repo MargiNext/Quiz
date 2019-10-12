@@ -40,8 +40,7 @@ async function start () {
   socketStart(server)
   console.log('Socket.IO starts')
 
-  let quizId = 0
-  let ansQueue = []
+  let quizId = 0 // クイズの問題番号
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -56,13 +55,6 @@ async function start () {
       if (quizId != 0) {
           socket.emit('Question', quizId)
       }
-
-      // サーバーで保持している回答をクライアント側に送信
-      // if (ansQueue.length > 0) {
-      //   ansQueue.forEach(answer => {
-      //     socket.emit('Answer', answer)
-      //   })
-      // }
 
       // 問題の受け取り
       socket.on('QuizId', quiz => {
@@ -80,8 +72,6 @@ async function start () {
         console.log('receive')
         console.log(ans)
 
-        // サーバーで保持している変数にクイズidを格納する
-        ansQueue.push(ans)
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Answer', ans)
 
