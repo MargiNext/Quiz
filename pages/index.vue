@@ -1,6 +1,11 @@
 <template>
   <section class="section">
     <div id="wrapper" class="container">
+      <div class="test">
+        <modal v-if="showModal" @close="showModal = false">
+          <h3 slot="header">custom header</h3>
+        </modal>
+      </div>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <p>{{ question.num }}. {{ question.content }}</p>
     </div>
@@ -8,20 +13,27 @@
     <button class="button is-info" @click="answer('1')">2</button>
     <button class="button is-info" @click="answer('2')">3</button>
     <button class="button is-info" @click="answer('3')">4</button>
+    <loading />
   </section>
 </template>
 
 <script>
 import io from 'socket.io-client'
 import questions from '../assets/api/question.json'
+import modal from '~/components/Loading.vue'
 
 export default {
+  components: {
+    modal
+  },
   data() {
     return {
       socket: '',
       isLoading: true,
       questions: questions,
       question: '',
+      loading: false,
+      showModal: false
     }
   },
   mounted() {
@@ -48,6 +60,13 @@ export default {
       this.socket.emit('Answer', ans)
       // 要素を空にする
       this.ans = ''
+      this.loading = true
+      this.showModal = true
+    }
+  },
+  watch: {
+    question: function(){
+      this.showModal = false
     }
   }
 }
