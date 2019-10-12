@@ -61,12 +61,17 @@ export default {
       let ans = {
         id: '',
         ans: value,
+        correct: '',
       }
+
+      // idと正解かどうかもサーバに送る
+      ans.id = this.name
+      ans.correct = (ans.ans == this.question.answer) ? true : false
 
       // サーバー側に回答を送信する
       this.socket.emit('Answer', ans)
       // 要素を空にする
-      this.ans = ''
+      ans = ''
       this.loading = true
       this.showModal = true
     }
