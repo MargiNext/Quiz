@@ -1,22 +1,31 @@
-// --------------------------------------------------
-// const admin = require('firebase-admin')
-
+const express = require('express')
+const consola = require('consola')
+const { Nuxt, Builder } = require('nuxt')
 const firebase = require('firebase')
-const serviceAccount = require('../serviceAccoundKey.json')
+const serviceAccount = require('../serviceAccoundKey.json') // import account info
+const app = express()
 
+// Import and Set Nuxt.js options
+const config = require('../nuxt.config.js')
+config.dev = process.env.NODE_ENV !== 'production'
+
+// firestore
 firebase.initializeApp({ ...serviceAccount })
 const db = firebase.firestore()
 const settings = { timestampsInSnapshots: true }
 db.settings(settings)
-db.collection("test").get().then((querySnapshot) => {
-  querySnapshot.forEach((doc) => {
-    console.log(doc.id, '=>', doc.data())
-  })
-})
 
+// db -> express
+// db.collection("test").get().then((querySnapshot) => {
+//   querySnapshot.forEach((doc) => {
+//     console.log(doc.id, '=>', doc.data())
+//   })
+// })
+
+// express -> db
 // db.collection("test").add({
-//   first: "Ada",
-//   last: "Lovelace",
+//   first: "kuma",
+//   last: "aioue",
 //   born: 1815
 // })
 // .then(function(docRef) {
@@ -25,16 +34,6 @@ db.collection("test").get().then((querySnapshot) => {
 // .catch(function(error) {
 //   console.error("Error adding document: ", error);
 // });
-// --------------------------------------------------
-
-const express = require('express')
-const consola = require('consola')
-const { Nuxt, Builder } = require('nuxt')
-const app = express()
-
-// Import and Set Nuxt.js options
-const config = require('../nuxt.config.js')
-config.dev = process.env.NODE_ENV !== 'production'
 
 
 async function start () {
