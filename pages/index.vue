@@ -1,16 +1,20 @@
 <template>
   <section class="section">
+    <loading v-if="showModal" />
     <div id="wrapper" class="container">
-      <div class="test">
-          <loading v-if="showModal" />
-      </div>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
-      <p>{{ question.num }}. {{ question.content }}</p>
+      <p>{{ question.num }} {{ question.content }}</p>
     </div>
-    <button class="button is-info" @click="answer('0')">1</button>
-    <button class="button is-info" @click="answer('1')">2</button>
-    <button class="button is-info" @click="answer('2')">3</button>
-    <button class="button is-info" @click="answer('3')">4</button>
+    <div v-if="top">
+      <p>クイズ大会だよ〜</p>
+      <p>みんなが入るまで待っててね</p>
+    </div>
+    <div v-else>
+      <button class="button is-info" @click="answer('1')">1</button>
+      <button class="button is-info" @click="answer('2')">2</button>
+      <button class="button is-info" @click="answer('3')">3</button>
+      <button class="button is-info" @click="answer('4')">4</button>
+    </div>
   </section>
 </template>
 
@@ -30,7 +34,8 @@ export default {
       questions: questions,
       question: '',
       loading: false,
-      showModal: false
+      showModal: false,
+      top: true,
     }
   },
   mounted() {
@@ -64,6 +69,8 @@ export default {
   watch: {
     question: function(){
       this.showModal = false
+      this.top = (this.question.id == 0) ? true : false
+      console.log(this.top)
     }
   }
 }
