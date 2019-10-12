@@ -2,9 +2,7 @@
   <section class="section">
     <div id="wrapper" class="container">
       <div class="test">
-        <modal v-if="showModal" @close="showModal = false">
-          <h3 slot="header">custom header</h3>
-        </modal>
+          <loading v-if="showModal" />
       </div>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <p>{{ question.num }}. {{ question.content }}</p>
@@ -13,18 +11,17 @@
     <button class="button is-info" @click="answer('1')">2</button>
     <button class="button is-info" @click="answer('2')">3</button>
     <button class="button is-info" @click="answer('3')">4</button>
-    <loading />
   </section>
 </template>
 
 <script>
 import io from 'socket.io-client'
 import questions from '../assets/api/question.json'
-import modal from '~/components/Loading.vue'
+import loading from '~/components/Loading.vue'
 
 export default {
   components: {
-    modal
+    loading
   },
   data() {
     return {
@@ -56,7 +53,7 @@ export default {
         ans: value,
       }
 
-      // サーバー側にクイズ番号を送信する
+      // サーバー側に回答を送信する
       this.socket.emit('Answer', ans)
       // 要素を空にする
       this.ans = ''
