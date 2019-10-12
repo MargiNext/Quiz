@@ -1,3 +1,32 @@
+// --------------------------------------------------
+// const admin = require('firebase-admin')
+
+const firebase = require('firebase')
+const serviceAccount = require('../serviceAccoundKey.json')
+
+firebase.initializeApp({ ...serviceAccount })
+const db = firebase.firestore()
+const settings = { timestampsInSnapshots: true }
+db.settings(settings)
+db.collection("test").get().then((querySnapshot) => {
+  querySnapshot.forEach((doc) => {
+    console.log(doc.id, '=>', doc.data())
+  })
+})
+
+// db.collection("test").add({
+//   first: "Ada",
+//   last: "Lovelace",
+//   born: 1815
+// })
+// .then(function(docRef) {
+//   console.log("Document written with ID: ", docRef.id);
+// })
+// .catch(function(error) {
+//   console.error("Error adding document: ", error);
+// });
+// --------------------------------------------------
+
 const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
@@ -46,7 +75,7 @@ async function start () {
       console.log('id: ' + socket.id + ' is connected')
 
       // サーバー側で保持しているクイズをクライアント側に送信
-      if (quizId.length > 0) {  
+      if (quizId.length > 0) {
         quizId.forEach(quiz => {
           socket.emit('Question', quiz)
         })
