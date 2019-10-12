@@ -40,9 +40,9 @@ async function start () {
   socketStart(server)
   console.log('Socket.IO starts')
 
-  let quizId = []
+  // let quizId = []
+  let quizId = 0
   let ansQueue = []
-  let quizNo = 0
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -54,27 +54,29 @@ async function start () {
       console.log('id: ' + socket.id + ' is connected')
 
       // サーバー側で保持しているクイズをクライアント側に送信
-      if (quizId.length > 0) {
-        quizId.forEach(quiz => {
-          socket.emit('Question', quiz)
-        })
+      // if (quizId.length > 0) {
+      //   quizId.forEach(quiz => {
+      //     socket.emit('Question', quiz)
+      //   })
+      // }
+      if (quizId != 0) {
+          socket.emit('Question', quizId)
       }
 
       // サーバーで保持している回答をクライアント側に送信
-      if (ansQueue.length > 0) {
-        ansQueue.forEach(answer => {
-          socket.emit('Answer', answer)
-        })
-      }
+      // if (ansQueue.length > 0) {
+      //   ansQueue.forEach(answer => {
+      //     socket.emit('Answer', answer)
+      //   })
+      // }
 
       // 問題の受け取り
       socket.on('QuizId', quiz => {
         console.log(quiz)
 
         // サーバーで保持している変数にクイズidを格納する
-        quizId.push(quiz)
-
-        quizNo = quiz
+        // quizId.push(quiz)
+        quizId = quiz
 
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Question', quiz)
@@ -93,7 +95,7 @@ async function start () {
         // dbに格納 ------------------------------
         db.collection("quiz").add({
           user_id: socket.id, // TODO: socket.id -> ans.id
-          quiz_no: quizNo.id,
+          quiz_id: quizId.id,
           select_num: ans.ans,
           is_correct: 1
         })
