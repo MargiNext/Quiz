@@ -9,32 +9,11 @@ const app = express()
 const config = require('../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
 
-// firestore
+// Initialize firestore
 firebase.initializeApp({ ...serviceAccount })
 const db = firebase.firestore()
 const settings = { timestampsInSnapshots: true }
 db.settings(settings)
-
-// db -> express
-// db.collection("test").get().then((querySnapshot) => {
-//   querySnapshot.forEach((doc) => {
-//     console.log(doc.id, '=>', doc.data())
-//   })
-// })
-
-// express -> db
-// db.collection("test").add({
-//   first: "kuma",
-//   last: "aioue",
-//   born: 1815
-// })
-// .then(function(docRef) {
-//   console.log("Document written with ID: ", docRef.id);
-// })
-// .catch(function(error) {
-//   console.error("Error adding document: ", error);
-// });
-
 
 async function start () {
   // Init Nuxt.js
@@ -63,6 +42,7 @@ async function start () {
 
   let quizId = []
   let ansQueue = []
+  let quizNo = 0
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -94,21 +74,35 @@ async function start () {
         // サーバーで保持している変数にクイズidを格納する
         quizId.push(quiz)
 
+        quizNo = quiz
+
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Question', quiz)
       })
 
       // 回答の受け取り
       socket.on('Answer', ans => {
+        console.log('receive')
         console.log(ans)
-
-        // 一旦socket idを回答に紐付けておきました
-        ans.id = socket.id
 
         // サーバーで保持している変数にクイズidを格納する
         ansQueue.push(ans)
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Answer', ans)
+
+        // dbに格納 ------------------------------
+        db.collection("quiz").add({
+          user_id: socket.id, // TODO: socket.id -> ans.id
+          quiz_no: quizNo.id,
+          select_num: ans.ans,
+          is_correct: 1
+        })
+        .then(function(docRef) {
+          console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function(error) {
+          console.error("Error adding document: ", error);
+        });
 
         // サーバー側で保持している回答が1を超えたら古いものから削除する
         if (ansQueue.length > 10) {

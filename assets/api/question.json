@@ -22,5 +22,11 @@
 		"num": "Q3",
 		"content": "れもんは何色でしょう",
 		"answer": "3"
+	},
+	{
+		"id": "4",
+		"num": "Q4.",
+		"content": "hogeは何色でしょう",
+		"answer": "4"
 	}
 ]
