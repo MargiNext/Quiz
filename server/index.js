@@ -54,11 +54,6 @@ async function start () {
       console.log('id: ' + socket.id + ' is connected')
 
       // サーバー側で保持しているクイズをクライアント側に送信
-      // if (quizId.length > 0) {
-      //   quizId.forEach(quiz => {
-      //     socket.emit('Question', quiz)
-      //   })
-      // }
       if (quizId != 0) {
           socket.emit('Question', quizId)
       }
@@ -75,7 +70,6 @@ async function start () {
         console.log(quiz)
 
         // サーバーで保持している変数にクイズidを格納する
-        // quizId.push(quiz)
         quizId = quiz
 
         // クライアントに対してクイズidを送信する
@@ -92,12 +86,12 @@ async function start () {
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Answer', ans)
 
-        // dbに格納 ------------------------------
+        // dbに格納
         db.collection("quiz").add({
-          user_id: socket.id, // TODO: socket.id -> ans.id
+          user_id: ans.id,
           quiz_id: quizId.id,
           select_num: ans.ans,
-          is_correct: 1
+          is_correct: ans.correct
         })
         .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
