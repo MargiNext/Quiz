@@ -3,6 +3,7 @@
     <loading v-if="showModal" />
     <div id="wrapper" class="container">
       <p>あなたのお名前：{{ name }}</p>
+      <p>あなたの正解数：{{ this.corNum_before }}</p>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <p>{{ question.num }} {{ question.content }}</p>
     </div>
@@ -37,12 +38,17 @@ export default {
       loading: false,
       showModal: false,
       top: true,
-			name: ''
+      name: '',
+      corNum: 0,
+      corNum_before: 0
     }
   },
   mounted() {
     // セッションストレージから名前を取り出す
     this.name = sessionStorage.getItem('name');
+
+    // 最新の情報をとってくる
+    this.corNum = sessionStorage.getItem('corNum');
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
@@ -70,6 +76,12 @@ export default {
 
       // サーバー側に回答を送信する
       this.socket.emit('Answer', ans)
+
+      // 正解数をセッションストレージに格納
+      ans.correct ? this.corNum++ : this.corNum
+      sessionStorage.setItem('corNum', this.corNum);
+      console.log(this.corNum)
+
       // 要素を空にする
       ans = ''
       this.loading = true
@@ -80,6 +92,7 @@ export default {
     question: function(){
       this.showModal = false
       this.top = (this.question.id == 0) ? true : false
+      this.corNum_before = this.corNum
       console.log(this.top)
     }
   }
