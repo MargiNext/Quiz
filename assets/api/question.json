@@ -2,26 +2,31 @@
 	{
 		"id": "0",
 		"num": "",
-		"content": ""
+		"content": "",
+		"answer": "0"
 	},
 	{
 		"id": "1",
-		"num": "Q1.",
-		"content": "りんごは何色でしょう"
+		"num": "Q1",
+		"content": "りんごは何色でしょう",
+		"answer": "1"
 	},
 	{
 		"id": "2",
-		"num": "Q2.",
-		"content": "ぶどうは何色でしょう"
+		"num": "Q2",
+		"content": "ぶどうは何色でしょう",
+		"answer": "2"
 	},
 	{
 		"id": "3",
-		"num": "Q3.",
-		"content": "れもんは何色でしょう"
+		"num": "Q3",
+		"content": "れもんは何色でしょう",
+		"answer": "3"
 	},
 	{
 		"id": "4",
 		"num": "Q4.",
-		"content": "hogeは何色でしょう"
+		"content": "hogeは何色でしょう",
+		"answer": "4"
 	}
 ]
