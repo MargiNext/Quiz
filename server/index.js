@@ -67,6 +67,21 @@ async function start () {
         socket.broadcast.emit('Question', quiz)
       })
 
+      // トリガ（eachResult）の受け取り，クライアントへ送信
+      socket.on('eachResult', result => {
+        socket.broadcast.emit('eachResult', result)
+      })
+
+      // トリガ（finalResult）の受け取り，クライアントへ送信
+      socket.on('finalResult', result => {
+        socket.broadcast.emit('finalResult', result)
+      })
+
+      // トリガ（goScreen）の受け取り，クライアントへ送信
+      socket.on('goScreen', go => {
+        socket.broadcast.emit('goScreen', go)
+      })
+
       // 回答の受け取り
       socket.on('Answer', ans => {
         console.log('receive')

@@ -7,6 +7,9 @@
 			<button class="button is-info" @click="send('2')">Q2</button>
 			<button class="button is-info" @click="send('3')">Q3</button>
 			<button class="button is-info" @click="send('4')">Q4</button>
+			<button class="button is-info" @click="ans_trigger(true)">答えを表示</button>
+			<button class="button is-info" @click="res_trigger(true)">結果発表</button>
+			<button class="button is-danger" @click="con_trigger(true)">緊急！スクリーンに戻りたい！</button>
     </div>
 		<div v-for="(ans, index) in reverseAns" :key="index">
 			<p>{{ ans }}</p>
@@ -58,6 +61,24 @@ export default {
       this.socket.emit('QuizId', quiz)
       // 要素を空にする
       this.quiz = ''
+    },
+    ans_trigger(boolean) {
+      let trigger = boolean
+
+      // サーバー側に回答結果を表示するためのトリガを送信する
+			this.socket.emit('eachResult', trigger)
+    },
+    res_trigger(boolean) {
+      let trigger = boolean
+
+      // サーバー側に最終結果を表示するためのトリガを送信する
+			this.socket.emit('finalResult', trigger)
+    },
+    con_trigger(boolean) {
+      let trigger = boolean
+
+      // サーバー側にスクリーン画面へ戻るためのトリガを送信する
+			this.socket.emit('goScreen', trigger)
     },
   }
 }

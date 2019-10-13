@@ -1,14 +1,11 @@
 <template>
   <section class="section">
     
-    <!-- ローディング画面 -->
-    <loading v-if="showModal" />
-    <!-- 各結果を表示 -->
-    <each-result v-if="showModal_re" :is_correct="this.ans.correct" />
+    <div v-if="show">
+			正解は{{ question.answer }}
+    </div>
 
     <div id="wrapper" class="container">
-      <p>あなたのお名前：{{ name }}</p>
-      <p>あなたの正解数：{{ this.corNum_before }}</p>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <p>{{ question.num }} {{ question.content }}</p>
     </div>
@@ -44,11 +41,11 @@ export default {
       question: '',
       loading: false,
       showModal: false,
-      showModal_re: false,
+      show: false,
       top: true,
       name: '',
       corNum: 0,
-      corNum_before: 0,
+			corNum_before: 0,
       ans: {
         id: '',
         ans: '',
@@ -57,12 +54,6 @@ export default {
     }
   },
   mounted() {
-    // セッションストレージから名前を取り出す
-    this.name = sessionStorage.getItem('name');
-
-    // 最新の情報をとってくる
-    this.corNum = sessionStorage.getItem('corNum');
-
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
@@ -73,7 +64,12 @@ export default {
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
-      this.showModal_re = result
+      this.show = result
+		})
+
+    // 最終結果発表トリガの受け取り
+    this.socket.on('finalResult', result => {
+			this.$router.push('/finalResult')
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
@@ -82,28 +78,10 @@ export default {
     }, 1000)
   },
   methods: {
-    answer(value){
-      this.ans.ans = value
-      // idと正解かどうかもサーバに送る
-      this.ans.id = this.name
-      this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
-
-      // サーバー側に回答を送信する
-      this.socket.emit('Answer', this.ans)
-
-      // 正解数をセッションストレージに格納
-      this.ans.correct ? this.corNum++ : this.corNum
-      sessionStorage.setItem('corNum', this.corNum);
-      console.log(this.corNum)
-
-      this.loading = true
-      this.showModal = true
-    }
   },
   watch: {
     question: function(){
-      this.showModal = false
-      this.showModal_re = false
+      this.show = false
       this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
       console.log(this.top)
