@@ -45,7 +45,7 @@ export default {
       top: true,
       name: '',
       corNum: 0,
-      corNum_before: 0,
+			corNum_before: 0,
       ans: {
         id: '',
         ans: '',
@@ -60,13 +60,16 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
-      console.log('ボタンおされたよ2')
     })
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
       this.showModal_re = result
-      console.log('ボタンおされたよ')
+		})
+
+    // 最終結果発表トリガの受け取り
+    this.socket.on('finalResult', result => {
+			this.$router.push('/finalResult')
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする

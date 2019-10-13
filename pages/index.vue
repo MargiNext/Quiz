@@ -69,13 +69,11 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
-      console.log('ボタンおされたよ2')
     })
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
       this.showModal_re = result
-      console.log('ボタンおされたよ')
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする

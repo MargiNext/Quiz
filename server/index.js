@@ -68,8 +68,13 @@ async function start () {
       })
 
       // トリガ（eachResult）の受け取り，クライアントへ送信
-      socket.on('eachResult', qui => {
-        socket.broadcast.emit('eachResult', qui)
+      socket.on('eachResult', result => {
+        socket.broadcast.emit('eachResult', result)
+      })
+
+      // トリガ（finalResult）の受け取り，クライアントへ送信
+      socket.on('finalResult', result => {
+        socket.broadcast.emit('finalResult', result)
       })
 
       // 回答の受け取り
