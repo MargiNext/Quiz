@@ -1,6 +1,11 @@
 <template>
   <section class="section">
+    
+    <!-- ローディング画面 -->
     <loading v-if="showModal" />
+    <!-- 各結果を表示 -->
+    <each-result v-if="showModal_re" :is_correct="this.ans.correct" />
+
     <div id="wrapper" class="container">
       <p>あなたのお名前：{{ name }}</p>
       <p>あなたの正解数：{{ this.corNum_before }}</p>
@@ -24,10 +29,12 @@
 import io from 'socket.io-client'
 import questions from '../assets/api/question.json'
 import loading from '~/components/Loading.vue'
+import eachResult from '~/components/eachResult.vue'
 
 export default {
   components: {
-    loading
+    loading,
+    eachResult
   },
   data() {
     return {
@@ -37,10 +44,16 @@ export default {
       question: '',
       loading: false,
       showModal: false,
+      showModal_re: false,
       top: true,
       name: '',
       corNum: 0,
-      corNum_before: 0
+      corNum_before: 0,
+      ans: {
+        id: '',
+        ans: '',
+        correct: false,
+      }
     }
   },
   mounted() {
@@ -53,8 +66,16 @@ export default {
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
+    // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
+      console.log('ボタンおされたよ2')
+    })
+
+    // 回答トリガの受け取り
+    this.socket.on('eachResult', result => {
+      this.showModal_re = result
+      console.log('ボタンおされたよ')
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
@@ -64,26 +85,19 @@ export default {
   },
   methods: {
     answer(value){
-      let ans = {
-        id: '',
-        ans: value,
-        correct: '',
-      }
-
+      this.ans.ans = value
       // idと正解かどうかもサーバに送る
-      ans.id = this.name
-      ans.correct = (ans.ans == this.question.answer) ? true : false
+      this.ans.id = this.name
+      this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
 
       // サーバー側に回答を送信する
-      this.socket.emit('Answer', ans)
+      this.socket.emit('Answer', this.ans)
 
       // 正解数をセッションストレージに格納
-      ans.correct ? this.corNum++ : this.corNum
+      this.ans.correct ? this.corNum++ : this.corNum
       sessionStorage.setItem('corNum', this.corNum);
       console.log(this.corNum)
 
-      // 要素を空にする
-      ans = ''
       this.loading = true
       this.showModal = true
     }
@@ -91,6 +105,7 @@ export default {
   watch: {
     question: function(){
       this.showModal = false
+      this.showModal_re = false
       this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
       console.log(this.top)

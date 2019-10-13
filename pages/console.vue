@@ -7,6 +7,7 @@
 			<button class="button is-info" @click="send('2')">Q2</button>
 			<button class="button is-info" @click="send('3')">Q3</button>
 			<button class="button is-info" @click="send('4')">Q4</button>
+			<button class="button is-info" @click="send_trigger(true)">答えを表示</button>
     </div>
 		<div v-for="(ans, index) in reverseAns" :key="index">
 			<p>{{ ans }}</p>
@@ -58,6 +59,13 @@ export default {
       this.socket.emit('QuizId', quiz)
       // 要素を空にする
       this.quiz = ''
+    },
+    send_trigger(boolean) {
+      let trigger = boolean
+
+      // サーバー側にクイズ番号を送信する
+			this.socket.emit('eachResult', trigger)
+			
     },
   }
 }
