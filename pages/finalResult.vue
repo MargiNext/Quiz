@@ -1,7 +1,7 @@
 <template>
   <section class="section">
     
-		<p>結果発表〜</p>
+		<p>最終結果発表〜</p>
   </section>
 </template>
 
@@ -21,6 +21,14 @@ export default {
     }
   },
   mounted() {
+    // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
+    this.socket = io()
+
+    // コンソールへ戻るためのトリガの受け取り
+    this.socket.on('goScreen', result => {
+			this.$router.push('/screen')
+    })
+
   },
   methods: {
   },

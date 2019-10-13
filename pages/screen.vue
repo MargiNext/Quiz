@@ -1,7 +1,7 @@
 <template>
   <section class="section">
     
-    <div v-if="showModal_re">
+    <div v-if="show">
 			正解は{{ question.answer }}
     </div>
 
@@ -41,7 +41,7 @@ export default {
       question: '',
       loading: false,
       showModal: false,
-      showModal_re: false,
+      show: false,
       top: true,
       name: '',
       corNum: 0,
@@ -64,7 +64,7 @@ export default {
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
-      this.showModal_re = result
+      this.show = result
 		})
 
     // 最終結果発表トリガの受け取り
@@ -81,7 +81,7 @@ export default {
   },
   watch: {
     question: function(){
-      this.showModal_re = false
+      this.show = false
       this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
       console.log(this.top)
