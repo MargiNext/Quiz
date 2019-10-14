@@ -106,6 +106,7 @@ export default {
       this.showModal_re = false
       this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
+      this.ans = {}
       console.log(this.top)
     }
   }
