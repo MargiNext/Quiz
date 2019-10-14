@@ -17,10 +17,10 @@
       <p>みんなが入るまで待っててね</p>
     </div>
     <div v-else>
-      <button class="button is-info" @click="answer('1')">1</button>
-      <button class="button is-info" @click="answer('2')">2</button>
-      <button class="button is-info" @click="answer('3')">3</button>
-      <button class="button is-info" @click="answer('4')">4</button>
+      <button class="button is-info" @click="answer('1')">1. {{ question.select_1 }}</button>
+      <button class="button is-info" @click="answer('2')">2. {{ question.select_2 }}</button>
+      <button class="button is-info" @click="answer('3')">3. {{ question.select_3 }}</button>
+      <button class="button is-info" @click="answer('4')">4. {{ question.select_4 }}</button>
     </div>
   </section>
 </template>
