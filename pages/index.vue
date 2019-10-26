@@ -1,28 +1,51 @@
 <template>
-  <section class="section">
-    
+  <div>
     <!-- ローディング画面 -->
     <loading v-if="showModal" />
     <!-- 各結果を表示 -->
     <each-result v-if="showModal_re" :is_correct="this.ans.correct" />
 
-    <div id="wrapper" class="container">
-      <p>あなたのお名前：{{ name }}</p>
-      <p>あなたの正解数：{{ this.corNum_before }}</p>
+    <div class="card">
+      <div class="card-content">
+        <div class="media">
+          <div class="media-left">
+            <b-icon
+              icon="account"
+              size="is-large"
+              type="is-success"
+              class="colmun"
+            />
+          </div>
+          <div class="media-content">
+            <p class="title is-4">{{ name }}</p>
+            <p class="subtitle is-6">score：{{ this.corNum_before }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
-      <p>{{ question.num }} {{ question.content }}</p>
     </div>
     <div v-if="top">
       <p>クイズ大会だよ〜</p>
       <p>みんなが入るまで待っててね</p>
     </div>
-    <div v-else>
-      <button class="button is-info" @click="answer('1')">1. {{ question.select_1 }}</button>
-      <button class="button is-info" @click="answer('2')">2. {{ question.select_2 }}</button>
-      <button class="button is-info" @click="answer('3')">3. {{ question.select_3 }}</button>
-      <button class="button is-info" @click="answer('4')">4. {{ question.select_4 }}</button>
+    <div class="colmuns" v-else>
+      <p :class="box" id="padding_ud_30">{{ question.num }} {{ question.content }}</p>
+      <div id="padding_d_30">
+        <button :class="[select_btn, color_1]" @click="answer('1')" :style="resetColor_1" onfocus="this.blur();">{{ question.select_1 }}</button>
+      </div>
+      <div id="padding_d_30">
+        <button :class="[select_btn, color_2]" @click="answer('2')" :style="resetColor_2" onfocus="this.blur();">{{ question.select_2 }}</button>
+      </div>
+      <div id="padding_d_30">
+        <button :class="[select_btn, color_3]" @click="answer('3')" :style="resetColor_3" onfocus="this.blur();">{{ question.select_3 }}</button>
+      </div>
+      <div id="padding_d_30">
+        <button :class="[select_btn, color_4]" @click="answer('4')" :style="resetColor_4" onfocus="this.blur();">{{ question.select_4 }}</button>
+      </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -30,14 +53,27 @@ import io from 'socket.io-client'
 import questions from '../assets/api/question.json'
 import loading from '~/components/Loading.vue'
 import eachResult from '~/components/eachResult.vue'
+import Button from '~/components/Button.vue'
 
 export default {
   components: {
     loading,
-    eachResult
+    eachResult,
+    Button
   },
   data() {
     return {
+      resetColor_1: '',
+      resetColor_2: '',
+      resetColor_3: '',
+      resetColor_4: '',
+      color_1: 'is-info',
+      color_2: 'is-link',
+      color_3: 'is-primary',
+      color_4: 'is-success',
+      hov: true,
+      select_btn: "button column is-large is-6-desktop is-offset-3-desktop is-offset-1-mobile is-10-mobile is-outlined",
+      box: "column title is-6-desktop is-offset-3-desktop is-offset-1-mobile is-10-mobile",
       socket: '',
       isLoading: true,
       questions: questions,
@@ -83,6 +119,19 @@ export default {
   },
   methods: {
     answer(value){
+      this.hov = 'is-hovered'
+      if (value == 1){
+        this.resetColor_1 = 'background-color: #209cee; border-color: #209cee; color: #fff;'
+      }
+      if (value == 2){
+        this.resetColor_2 = 'background-color: #3273dc; border-color: #3273dc; color: #fff;'
+      }
+      if (value == 3){
+        this.resetColor_3 = 'background-color: #00d1b2; border-color: #00d1b2; color: #fff;'
+      }
+      if (value == 4){
+        this.resetColor_4 = 'background-color: #23d160; border-color: #23d160; color: #fff;'
+      }
       this.ans.ans = value
       // idと正解かどうかもサーバに送る
       this.ans.id = this.name
@@ -107,15 +156,36 @@ export default {
       this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
       this.ans = {}
+      this.hov = false
+      this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
+      this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
+      this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 
+      this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;' 
       console.log(this.top)
+    }
+  },
+  computed: {
+    selectBtn: function(){
+      return {
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+@import "https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css";
 #wrapper
 {
   max-width: 600px;
+}
+#padding_ud_30 {
+  padding: 40px 0px 30px;
+}
+#padding_d_30 {
+  padding: 0px 0px 30px;
+}
+#button {
+  margin: 0px 0px 30px 0px;
 }
 </style>
