@@ -71,7 +71,6 @@ export default {
       color_2: 'is-link',
       color_3: 'is-primary',
       color_4: 'is-success',
-      hov: true,
       select_btn: "button column is-large is-6-desktop is-offset-3-desktop is-offset-1-mobile is-10-mobile is-outlined",
       box: "column title is-6-desktop is-offset-3-desktop is-offset-1-mobile is-10-mobile",
       socket: '',
@@ -119,7 +118,6 @@ export default {
   },
   methods: {
     answer(value){
-      this.hov = 'is-hovered'
       if (value == 1){
         this.resetColor_1 = 'background-color: #209cee; border-color: #209cee; color: #fff;'
       }
@@ -156,7 +154,6 @@ export default {
       this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
       this.ans = {}
-      this.hov = false
       this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
       this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
       this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 
@@ -164,12 +161,6 @@ export default {
       console.log(this.top)
     }
   },
-  computed: {
-    selectBtn: function(){
-      return {
-      }
-    }
-  }
 }
 </script>
 

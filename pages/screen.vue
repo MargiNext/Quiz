@@ -14,10 +14,14 @@
       <p>みんなが入るまで待っててね</p>
     </div>
     <div v-else>
-      <button class="button is-primary is-outlined" @click="answer('1')">1. {{ question.select_1 }}</button>
-      <button class="button is-success is-outlined" @click="answer('2')">2. {{ question.select_2 }}</button>
-      <button class="button is-info is-outlined" @click="answer('3')">3. {{ question.select_3 }}</button>
-      <button class="button is-link is-outlined" @click="answer('4')">4. {{ question.select_4 }}</button>
+			<div class="colmuns">
+				<button class="colmun button is-primary is-outlined" @click="answer('1')">1. {{ question.select_1 }}</button>
+				<button class="colmun button is-success is-outlined" @click="answer('2')">2. {{ question.select_2 }}</button>
+			</div>
+			<div class="colmuns">
+				<button class="colmun button is-info is-outlined" @click="answer('3')">3. {{ question.select_3 }}</button>
+				<button class="colmun button is-link is-outlined" @click="answer('4')">4. {{ question.select_4 }}</button>
+			</div>
     </div>
   </section>
 </template>
