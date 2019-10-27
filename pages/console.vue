@@ -7,6 +7,7 @@
 			<button class="button is-info" @click="send('2')">Q2</button>
 			<button class="button is-info" @click="send('3')">Q3</button>
 			<button class="button is-info" @click="send('4')">Q4</button>
+			<button class="button is-info" @click="rate_trigger(true)">回答割合を表示</button>
 			<button class="button is-info" @click="ans_trigger(true)">答えを表示</button>
 			<button class="button is-info" @click="res_trigger(true)">結果発表</button>
 			<button class="button is-danger" @click="con_trigger(true)">緊急！スクリーンに戻りたい！</button>
@@ -61,6 +62,12 @@ export default {
       this.socket.emit('QuizId', quiz)
       // 要素を空にする
       this.quiz = ''
+    },
+    rate_trigger(boolean) {
+      let trigger = boolean
+
+      // サーバー側に回答結果を表示するためのトリガを送信する
+			this.socket.emit('rateResult', trigger)
     },
     ans_trigger(boolean) {
       let trigger = boolean
