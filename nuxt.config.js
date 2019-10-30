@@ -4,6 +4,8 @@ module.exports = {
   ** Headers of the page
   */
   head: {
+    script: [
+    ],
     title: process.env.npm_package_name || '',
     meta: [
       { charset: 'utf-8' },
@@ -11,7 +13,11 @@ module.exports = {
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet',
+        href:
+          'https://use.fontawesome.com/releases/v5.6.1/css/all.css'  
+      }
     ]
   },
   /*
@@ -38,11 +44,12 @@ module.exports = {
   */
   modules: [
     // Doc: https://github.com/nuxt-community/modules/tree/master/packages/bulma
+    '@nuxtjs/vuetify',
     '@nuxtjs/bulma',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    'nuxt-buefy',
+    'nuxt-buefy'
   ],
   /*
   ** Axios module configuration

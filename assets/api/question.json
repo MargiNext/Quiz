@@ -3,30 +3,50 @@
 		"id": "0",
 		"num": "",
 		"content": "",
-		"answer": "0"
+		"answer": "0",
+		"select_1": "赤",
+		"select_2": "黃",
+		"select_3": "緑",
+		"select_4": "青"
 	},
 	{
 		"id": "1",
 		"num": "Q1",
 		"content": "りんごは何色でしょう",
-		"answer": "1"
+		"answer": "1",
+		"select_1": "赤",
+		"select_2": "黃",
+		"select_3": "緑",
+		"select_4": "青"
 	},
 	{
 		"id": "2",
 		"num": "Q2",
 		"content": "ぶどうは何色でしょう",
-		"answer": "2"
+		"answer": "2",
+		"select_1": "赤",
+		"select_2": "黃",
+		"select_3": "緑",
+		"select_4": "青"
 	},
 	{
 		"id": "3",
 		"num": "Q3",
 		"content": "れもんは何色でしょう",
-		"answer": "3"
+		"answer": "3",
+		"select_1": "赤",
+		"select_2": "黃",
+		"select_3": "緑",
+		"select_4": "青"
 	},
 	{
 		"id": "4",
 		"num": "Q4.",
 		"content": "hogeは何色でしょう",
-		"answer": "4"
+		"answer": "4",
+		"select_1": "赤",
+		"select_2": "黃",
+		"select_3": "緑",
+		"select_4": "青"
 	}
 ]
