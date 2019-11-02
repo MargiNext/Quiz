@@ -16,24 +16,24 @@
 			<div class="columns">
 				<div :style="color_1 + tile_style" :class="[tile_class, front]">{{ question.select_1 }}
 					<div v-if="rateShow" :style="color_text_1 + tile_style2" class="has-text-white">
-						<div :style="rate_style" class="is-size-1">25%</div>
+						<div :style="rate_style" class="is-size-1">{{this.rateShow[1]}}%</div>
 					</div>
 				</div>
 				<div :style="color_2 + tile_style" :class="[tile_class]">{{ question.select_2 }}
 					<div v-if="rateShow" :style="color_text_2 + tile_style2" class="has-text-white">
-						<div :style="rate_style" class="is-size-1">25%</div>
+						<div :style="rate_style" class="is-size-1">{{this.rateShow[2]}}%</div>
 					</div>
 				</div>
 			</div>
 			<div class="columns">
 				<div :style="color_3 + tile_style" :class="[tile_class, front]">{{ question.select_3 }}
 					<div v-if="rateShow" :style="color_text_3 + tile_style2" class="has-text-white">
-						<div :style="rate_style" class="is-size-1">25%</div>
+						<div :style="rate_style" class="is-size-1">{{this.rateShow[3]}}%</div>
 					</div>
 				</div>
 				<div :style="color_4 + tile_style" :class="[tile_class]">{{ question.select_4 }}
 					<div v-if="rateShow" :style="color_text_4 + tile_style2" class="has-text-white">
-						<div :style="rate_style" class="is-size-1">25%</div>
+						<div :style="rate_style" class="is-size-1">{{this.rateShow[4]}}%</div>
 					</div>
 				</div>
 			</div>
