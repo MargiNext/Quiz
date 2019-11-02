@@ -151,7 +151,9 @@ async function start () {
         // for debug
         console.log(userRank)
 
-        socket.broadcast.emit('finalResult', result)
+        // 正答数をscreenに送信
+        // 上位のみ送信
+        socket.broadcast.emit('finalResult', userRank.slice(0,rank))
         // 値の初期化
         finalResult = []
         userResult = {}

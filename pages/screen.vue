@@ -102,7 +102,7 @@ export default {
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
       // for debug
-      console.log("screen: ", result)
+      console.log("screen(rateResult): ", result)
       this.rateShow = result
 		})
 
@@ -113,6 +113,8 @@ export default {
 
     // 最終結果発表トリガの受け取り
     this.socket.on('finalResult', result => {
+      // for debug
+      console.log("screen(finalResult): ", result)
 			this.$router.push('/finalResult')
     })
 
