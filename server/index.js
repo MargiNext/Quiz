@@ -41,7 +41,9 @@ async function start () {
   console.log('Socket.IO starts')
 
   let quizId = 0 // クイズの問題番号
-  let ansSelect = []
+  let ansSelect = [] // 回答数
+  let finalResult = [] // 最終結果時のデータ
+  let userResult = {} // ユーザごとの正答数
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -71,8 +73,8 @@ async function start () {
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', result => {
         // データベースから回答割合を算出する
-        // TODO: firestoreからデータを取り出す時点でquizIdに合わせて取ってくる => .where()を利用？
         // TODO: 初回にボタンを押したときに反応しない = ansSelectに値が入らない => 変数初期化関連？
+        // TODO: firestoreからデータを取り出す時点でquizIdに合わせて取ってくる => .where()を利用？
         db.collection("quiz").get().then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
             // 現在の問題番号に絞り込む
@@ -85,11 +87,12 @@ async function start () {
         .catch(function(error) {
           console.log("Error getting documents: ", error)
         })
+
         console.log("ansSelect: ", ansSelect)
         let counts = {}
         for(let i=0;i< ansSelect.length;i++)
         {
-          let key = ansSelect[i];
+          let key = ansSelect[i]
           counts[key] = (counts[key])? counts[key] + 1 : 1
         }
         console.log("counts: ", counts)
@@ -108,7 +111,36 @@ async function start () {
 
       // トリガ（finalResult）の受け取り，クライアントへ送信
       socket.on('finalResult', result => {
+        // データベースから結果を算出する
+        // TODO: 初回にボタンを押したときに反応しない = finalResultに値が入らない => 変数初期化関連？
+        db.collection("quiz").get().then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+            finalResult.push(doc.data())
+            if (!userResult[doc.data().user_id]) {
+              userResult[doc.data().user_id] = 0
+            }
+          })
+        })
+        // エラー処理
+        .catch(function(error) {
+          console.log("Error getting documents: ", error)
+        })
+        // ユーザごとに正答数をカウントする
+        for(let i=0;i< finalResult.length;i++)
+        {
+          user_ = finalResult[i].user_id
+          is_correct = finalResult[i].is_correct
+          if (is_correct) {
+            userResult[user_]++
+          }
+        }
+        // for debug
+        console.log(userResult)
+
         socket.broadcast.emit('finalResult', result)
+        // 値の初期化
+        finalResult = []
+        userResult = {}
       })
 
       // トリガ（goScreen）の受け取り，クライアントへ送信
