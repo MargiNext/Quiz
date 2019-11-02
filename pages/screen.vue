@@ -1,9 +1,9 @@
 <template>
   <section class="section">
     
-    <!-- <div v-if="show">
+    <div v-if="show">
 			正解は{{ question.answer }}
-    </div> -->
+    </div>
 
     <div v-if="top">
       <p>クイズ大会だよ〜</p>
@@ -54,9 +54,6 @@ export default {
   },
   data() {
     return {
-			styleObject: {
-				fontSize: '13px'
-			},
       color_1: 'background-color: transparent; border-color: #209cee; color: #209cee;',
       color_2: 'background-color: transparent; border-color: #3273dc; color: #3273dc;',
       color_3: 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;',
@@ -101,16 +98,20 @@ export default {
 
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
+      // for debug
+      console.log("screen(rateResult): ", result)
       this.rateShow = result
 		})
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
-      this.show = result
+			this.show = result
 		})
 
     // 最終結果発表トリガの受け取り
     this.socket.on('finalResult', result => {
+      // for debug
+      console.log("screen(finalResult): ", result)
 			this.$router.push('/finalResult')
     })
 
@@ -127,7 +128,6 @@ export default {
 			this.rateShow = false
       this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
-      console.log(this.top)
     }
   }
 }
