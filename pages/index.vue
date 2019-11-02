@@ -5,6 +5,26 @@
     <!-- 各結果を表示 -->
     <each-result v-if="showModal_re" :is_correct="this.ans.correct" />
 
+    <!-- signoutモーダル -->
+    <div :class="{ modal: true, 'is-active': signout }">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">注意！</p>
+        </header>
+        <section class="modal-card-body">
+          ログアウトしますか？
+          <br>
+          一度ログアウトすると戻れません．
+          <!-- Content ... -->
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-danger" @click="out">Logout</button>
+          <button class="button" @click="out_cancel">Cancel</button>
+        </footer>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-content">
         <div class="media">
@@ -20,6 +40,9 @@
             <p class="title is-4">{{ name }}</p>
             <p class="subtitle is-6">score：{{ this.corNum_before }}</p>
           </div>
+          <div class="media-right">
+            <i class="fas fa-sign-out-alt fa-lg" @click="out_trigger"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -27,8 +50,7 @@
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
     </div>
     <div v-if="top">
-      <p>クイズ大会だよ〜</p>
-      <p>みんなが入るまで待っててね</p>
+      <top />
     </div>
     <div class="colmuns" v-else>
       <p :class="box" id="padding_ud_30">{{ question.num }} {{ question.content }}</p>
@@ -54,12 +76,14 @@ import questions from '../assets/api/question.json'
 import loading from '~/components/Loading.vue'
 import eachResult from '~/components/eachResult.vue'
 import Button from '~/components/Button.vue'
+import top from '~/components/Top'
 
 export default {
   components: {
     loading,
     eachResult,
-    Button
+    Button,
+    top
   },
   data() {
     return {
@@ -88,7 +112,8 @@ export default {
         id: '',
         ans: '',
         correct: false,
-      }
+      },
+      signout: false,
     }
   },
   mounted() {
@@ -148,6 +173,17 @@ export default {
 
       this.loading = true
       this.showModal = true
+    },
+    out_trigger(){
+      this.signout = true
+    },
+    out_cancel(){
+      this.signout = false
+    },
+    out(){
+      sessionStorage.setItem('name', null);
+      sessionStorage.setItem('corNum', 0);
+			this.$router.push('/login')
     }
   },
   watch: {
