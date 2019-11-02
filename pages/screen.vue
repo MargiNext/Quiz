@@ -101,6 +101,8 @@ export default {
 
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
+      // for debug
+      console.log("screen: ", result)
       this.rateShow = result
 		})
 
