@@ -41,7 +41,7 @@ async function start () {
   console.log('Socket.IO starts')
 
   let quizId = 0 // クイズの問題番号
-  let ans_quiz = []
+  let ansSelect = []
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -71,29 +71,34 @@ async function start () {
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', result => {
         // データベースから回答割合を算出する
-        // TODO: quizIdに合わせてデータを抽出する .where()でできる？
+        // TODO: firestoreからデータを取り出す時点でquizIdに合わせて取ってくる => .where()を利用？
+        // TODO: 初回にボタンを押したときに反応しない = ansSelectに値が入らない => 変数初期化関連？
         db.collection("quiz").get().then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
-            // doc.data() is never undefined for query doc snapshots
-            ans_quiz.push(doc.data().select_num)
+            // 現在の問題番号に絞り込む
+            if (doc.data().quiz_id == quizId.id) {
+              ansSelect.push(doc.data().select_num)
+            }
           })
         })
         // エラー処理
         .catch(function(error) {
-          console.log("Error getting documents: ", error);
+          console.log("Error getting documents: ", error)
         })
-        console.log("ans_quiz: ", ans_quiz)
-        let counts = {};
-        for(let i=0;i< ans_quiz.length;i++)
+        console.log("ansSelect: ", ansSelect)
+        let counts = {}
+        for(let i=0;i< ansSelect.length;i++)
         {
-          let key = ans_quiz[i];
-          counts[key] = (counts[key])? counts[key] + 1 : 1 ;
+          let key = ansSelect[i];
+          counts[key] = (counts[key])? counts[key] + 1 : 1
         }
         console.log("counts: ", counts)
-        // ans_quizの初期化
-        ans_quiz = []
 
-        socket.broadcast.emit('rateResult', result)
+        // 回答割合の送信
+        socket.broadcast.emit('rateResult', counts)
+
+        // ansSelectの初期化
+        ansSelect = []
       })
 
       // トリガ（eachResult）の受け取り，クライアントへ送信
