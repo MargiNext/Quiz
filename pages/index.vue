@@ -50,8 +50,7 @@
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
     </div>
     <div v-if="top">
-      <p>クイズ大会だよ〜</p>
-      <p>みんなが入るまで待っててね</p>
+      <top />
     </div>
     <div class="colmuns" v-else>
       <p :class="box" id="padding_ud_30">{{ question.num }} {{ question.content }}</p>
@@ -77,12 +76,14 @@ import questions from '../assets/api/question.json'
 import loading from '~/components/Loading.vue'
 import eachResult from '~/components/eachResult.vue'
 import Button from '~/components/Button.vue'
+import top from '~/components/Top'
 
 export default {
   components: {
     loading,
     eachResult,
-    Button
+    Button,
+    top
   },
   data() {
     return {
@@ -181,6 +182,7 @@ export default {
     },
     out(){
       sessionStorage.setItem('name', null);
+      sessionStorage.setItem('corNum', 0);
 			this.$router.push('/login')
     }
   },
