@@ -41,6 +41,7 @@ async function start () {
   console.log('Socket.IO starts')
 
   let quizId = 0 // クイズの問題番号
+  let ans_quiz = []
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -73,14 +74,24 @@ async function start () {
         // TODO: quizIdに合わせてデータを抽出する .where()でできる？
         db.collection("quiz").get().then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
-              // doc.data() is never undefined for query doc snapshots
-              console.log(doc.id, " => ", doc.data());
+            // doc.data() is never undefined for query doc snapshots
+            ans_quiz.push(doc.data().select_num)
           })
         })
         // エラー処理
         .catch(function(error) {
           console.log("Error getting documents: ", error);
         })
+        console.log("ans_quiz: ", ans_quiz)
+        let counts = {};
+        for(let i=0;i< ans_quiz.length;i++)
+        {
+          let key = ans_quiz[i];
+          counts[key] = (counts[key])? counts[key] + 1 : 1 ;
+        }
+        console.log("counts: ", counts)
+        // ans_quizの初期化
+        ans_quiz = []
 
         socket.broadcast.emit('rateResult', result)
       })
