@@ -118,50 +118,60 @@ async function start () {
       // トリガ（finalResult）の受け取り，クライアントへ送信
       socket.on('finalResult', result => {
         // データベースから結果を算出する
-        // TODO: 初回にボタンを押したときに反応しない = finalResultに値が入らない => 変数初期化関連？
-        db.collection("quiz").get().then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
-            finalResult.push(doc.data())
-            if (!userResult[doc.data().user_id]) {
-              userResult[doc.data().user_id] = 0
+        function dbResult() {
+          return new Promise(function(resolve,reject) {
+            for(let i=1;i<=maxQuizNum;i++) {
+              db.collection(String(i)).get().then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                  finalResult.push(doc.data())
+                  if (!userResult[doc.data().user_id]) {
+                    userResult[doc.data().user_id] = 0
+                  }
+                })
+              })
+              // エラー処理
+              .catch(function(error) {
+                console.log("Error getting documents: ", error)
+              })
             }
+            setTimeout(function() {
+              resolve(1);
+            }, 1000)
           })
-        })
-        // エラー処理
-        .catch(function(error) {
-          console.log("Error getting documents: ", error)
-        })
-        // ユーザごとに正答数をカウントする
-        for(let i=0;i< finalResult.length;i++)
-        {
-          user_ = finalResult[i].user_id
-          is_correct = finalResult[i].is_correct
-          if (is_correct) {
-            userResult[user_]++
+        }
+        dbResult().then(function(value) {
+          // ユーザごとに正答数をカウントする
+          for(let i=0;i< finalResult.length;i++)
+          {
+            user_ = finalResult[i].user_id
+            is_correct = finalResult[i].is_correct
+            if (is_correct) {
+              userResult[user_]++
+            }
           }
-        }
-        let userRank = [] // 連想配列に変換してソートする
-        for (let i in userResult) {
-          userRank.push({
-            "userId": i,
-            "correctNum": userResult[i]
+          let userRank = [] // 連想配列に変換してソートする
+          for (let i in userResult) {
+            userRank.push({
+              "userId": i,
+              "correctNum": userResult[i]
+            })
+          }
+          // 正答数順にソートする
+          userRank.sort(function(a,b){
+            if(a.correctNum>b.correctNum) return -1
+            if(a.correctNum < b.correctNum) return 1
+            return 0
           })
-        }
-        // 正答数順にソートする
-        userRank.sort(function(a,b){
-          if(a.correctNum>b.correctNum) return -1
-          if(a.correctNum < b.correctNum) return 1
-          return 0
-        })
-        // for debug
-        console.log(userRank)
+          // for debug
+          console.log(userRank)
 
-        // 正答数をscreenに送信
-        // 上位のみ送信
-        socket.broadcast.emit('finalResult', userRank.slice(0,rank))
-        // 値の初期化
-        finalResult = []
-        userResult = {}
+          // 正答数をscreenに送信
+          // 上位のみ送信
+          socket.broadcast.emit('finalResult', userRank.slice(0,rank))
+          // 値の初期化
+          finalResult = []
+          userResult = {}
+        })
       })
 
       // トリガ（goScreen）の受け取り，クライアントへ送信
