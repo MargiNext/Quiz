@@ -2,7 +2,7 @@ const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 const firebase = require('firebase')
-const serviceAccount = require('../serviceAccoundKey.json') // import account info
+const serviceAccount = require('../serviceAccountKey.json') // import account info
 const app = express()
 
 // Import and Set Nuxt.js options
