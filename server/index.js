@@ -69,6 +69,19 @@ async function start () {
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', result => {
+        // データベースから回答割合を算出する
+        // TODO: quizIdに合わせてデータを抽出する .where()でできる？
+        db.collection("quiz").get().then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+              // doc.data() is never undefined for query doc snapshots
+              console.log(doc.id, " => ", doc.data());
+          })
+        })
+        // エラー処理
+        .catch(function(error) {
+          console.log("Error getting documents: ", error);
+        })
+
         socket.broadcast.emit('rateResult', result)
       })
 
