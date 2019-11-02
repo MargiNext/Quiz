@@ -89,3 +89,10 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# FireStore account key
+serviceAccountKey.json
+
+# Package Manager
+package.json
+package-lock.json

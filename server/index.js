@@ -73,6 +73,8 @@ async function start () {
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', result => {
+        console.log('Hello rsultRate')
+        console.log(quizId)
         // データベースから回答割合を算出する
         // TODO: 初回にボタンを押したときに反応しない = ansSelectに値が入らない => 変数初期化関連？
         // TODO: firestoreからデータを取り出す時点でquizIdに合わせて取ってくる => .where()を利用？
