@@ -180,9 +180,8 @@ async function start () {
         socket.broadcast.emit('Answer', ans)
 
         // dbに格納
-        db.collection("quiz").add({
+        db.collection(String(quizId)).add({
           user_id: ans.id,
-          quiz_id: quizId.id,
           select_num: ans.ans,
           is_correct: ans.correct
         })
