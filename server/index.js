@@ -44,6 +44,7 @@ async function start () {
   let ansSelect = [] // 回答数
   let finalResult = [] // 最終結果時のデータ
   let userResult = {} // ユーザごとの正答数
+  let rank = 5
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -134,8 +135,21 @@ async function start () {
             userResult[user_]++
           }
         }
+        let userRank = [] // 連想配列に変換してソートする
+        for (let i in userResult) {
+          userRank.push({
+            "userId": i,
+            "correctNum": userResult[i]
+          })
+        }
+        // 正答数順にソートする
+        userRank.sort(function(a,b){
+          if(a.correctNum>b.correctNum) return -1
+          if(a.correctNum < b.correctNum) return 1
+          return 0
+        })
         // for debug
-        console.log(userResult)
+        console.log(userRank)
 
         socket.broadcast.emit('finalResult', result)
         // 値の初期化
