@@ -44,7 +44,8 @@ async function start () {
   let ansSelect = [] // 回答数
   let finalResult = [] // 最終結果時のデータ
   let userResult = {} // ユーザごとの正答数
-  let rank = 5
+  let maxQuizNum = 4 // クイズの問題数
+  let rank = 5 // 上位表彰者数:
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -73,36 +74,40 @@ async function start () {
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', result => {
+        console.log("quiz: ", quizId.id)
         // データベースから回答割合を算出する
-        // TODO: 初回にボタンを押したときに反応しない = ansSelectに値が入らない => 変数初期化関連？
-        // TODO: firestoreからデータを取り出す時点でquizIdに合わせて取ってくる => .where()を利用？
-        db.collection("quiz").get().then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
-            // 現在の問題番号に絞り込む
-            if (doc.data().quiz_id == quizId.id) {
-              ansSelect.push(doc.data().select_num)
-            }
+        function dbResult() {
+          return new Promise(function(resolve,reject) {
+            db.collection(String(quizId.id)).get().then(function(querySnapshot) {
+              querySnapshot.forEach(function(doc) {
+                  ansSelect.push(doc.data().select_num)
+              })
+            })
+            // エラー処理
+            .catch(function(error) {
+              console.log("Error getting documents: ", error)
+            })
+            setTimeout(function() {
+              resolve(1);
+            }, 1000)
           })
-        })
-        // エラー処理
-        .catch(function(error) {
-          console.log("Error getting documents: ", error)
-        })
-
-        console.log("ansSelect: ", ansSelect)
-        let counts = {}
-        for(let i=0;i< ansSelect.length;i++)
-        {
-          let key = ansSelect[i]
-          counts[key] = (counts[key])? counts[key] + 1 : 1
         }
-        console.log("counts: ", counts)
+        dbResult().then(function(value) {
+          console.log("ansSelect: ", ansSelect)
+          let counts = {}
+          for(let i=0;i< ansSelect.length;i++)
+          {
+            let key = ansSelect[i]
+            counts[key] = (counts[key])? counts[key] + 1 : 1
+          }
+          console.log("counts: ", counts)
 
-        // 回答割合の送信
-        socket.broadcast.emit('rateResult', counts)
+          // 回答割合の送信
+          socket.broadcast.emit('rateResult', counts)
 
-        // ansSelectの初期化
-        ansSelect = []
+          // ansSelectの初期化
+          ansSelect = []
+        })
       })
 
       // トリガ（eachResult）の受け取り，クライアントへ送信
@@ -113,50 +118,60 @@ async function start () {
       // トリガ（finalResult）の受け取り，クライアントへ送信
       socket.on('finalResult', result => {
         // データベースから結果を算出する
-        // TODO: 初回にボタンを押したときに反応しない = finalResultに値が入らない => 変数初期化関連？
-        db.collection("quiz").get().then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
-            finalResult.push(doc.data())
-            if (!userResult[doc.data().user_id]) {
-              userResult[doc.data().user_id] = 0
+        function dbResult() {
+          return new Promise(function(resolve,reject) {
+            for(let i=1;i<=maxQuizNum;i++) {
+              db.collection(String(i)).get().then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                  finalResult.push(doc.data())
+                  if (!userResult[doc.data().user_id]) {
+                    userResult[doc.data().user_id] = 0
+                  }
+                })
+              })
+              // エラー処理
+              .catch(function(error) {
+                console.log("Error getting documents: ", error)
+              })
             }
+            setTimeout(function() {
+              resolve(1);
+            }, 1000)
           })
-        })
-        // エラー処理
-        .catch(function(error) {
-          console.log("Error getting documents: ", error)
-        })
-        // ユーザごとに正答数をカウントする
-        for(let i=0;i< finalResult.length;i++)
-        {
-          user_ = finalResult[i].user_id
-          is_correct = finalResult[i].is_correct
-          if (is_correct) {
-            userResult[user_]++
+        }
+        dbResult().then(function(value) {
+          // ユーザごとに正答数をカウントする
+          for(let i=0;i< finalResult.length;i++)
+          {
+            user_ = finalResult[i].user_id
+            is_correct = finalResult[i].is_correct
+            if (is_correct) {
+              userResult[user_]++
+            }
           }
-        }
-        let userRank = [] // 連想配列に変換してソートする
-        for (let i in userResult) {
-          userRank.push({
-            "userId": i,
-            "correctNum": userResult[i]
+          let userRank = [] // 連想配列に変換してソートする
+          for (let i in userResult) {
+            userRank.push({
+              "userId": i,
+              "correctNum": userResult[i]
+            })
+          }
+          // 正答数順にソートする
+          userRank.sort(function(a,b){
+            if(a.correctNum>b.correctNum) return -1
+            if(a.correctNum < b.correctNum) return 1
+            return 0
           })
-        }
-        // 正答数順にソートする
-        userRank.sort(function(a,b){
-          if(a.correctNum>b.correctNum) return -1
-          if(a.correctNum < b.correctNum) return 1
-          return 0
-        })
-        // for debug
-        console.log(userRank)
+          // for debug
+          console.log(userRank)
 
-        // 正答数をscreenに送信
-        // 上位のみ送信
-        socket.broadcast.emit('finalResult', userRank.slice(0,rank))
-        // 値の初期化
-        finalResult = []
-        userResult = {}
+          // 正答数をscreenに送信
+          // 上位のみ送信
+          socket.broadcast.emit('finalResult', userRank.slice(0,rank))
+          // 値の初期化
+          finalResult = []
+          userResult = {}
+        })
       })
 
       // トリガ（goScreen）の受け取り，クライアントへ送信
@@ -178,9 +193,8 @@ async function start () {
         socket.broadcast.emit('Answer', ans)
 
         // dbに格納
-        db.collection("quiz").add({
+        db.collection(String(quizId.id)).add({
           user_id: ans.id,
-          quiz_id: quizId.id,
           select_num: ans.ans,
           is_correct: ans.correct
         })
