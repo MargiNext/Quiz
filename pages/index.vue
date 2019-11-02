@@ -94,6 +94,9 @@ export default {
   mounted() {
     // セッションストレージから名前を取り出す
     this.name = sessionStorage.getItem('name');
+    if(this.name == null){
+			this.$router.push('/login')
+    }
 
     // 最新の情報をとってくる
     this.corNum = sessionStorage.getItem('corNum');
