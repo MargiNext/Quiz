@@ -126,8 +126,8 @@ export default {
     // 最終結果発表トリガの受け取り
     this.socket.on('finalResult', result => {
       // for debug
-      console.log("screen(finalResult): ", result)
-			this.$router.push('/finalResult')
+      // console.log("screen(finalResult): ", result)
+			this.$router.push({ path: '/finalResult', query: result})
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
