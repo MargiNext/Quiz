@@ -1,7 +1,9 @@
 <template>
   <div>
+    <p>{{ this.isAns }}</p>
     <!-- ローディング画面 -->
-    <loading v-if="showModal" />
+    <loading v-if="isAns" />
+    <!-- <loading v-if="showModal" /> -->
     <!-- 各結果を表示 -->
     <each-result v-if="showModal_re" :is_correct="this.ans.correct" />
 
@@ -114,9 +116,14 @@ export default {
         correct: false,
       },
       signout: false,
+      isAns: false,
     }
   },
   mounted() {
+    console.log('1:', this.isAns);
+    this.isAns = Boolean(sessionStorage.getItem('isAns'));
+    console.log('2:', this.isAns);
+
     // セッションストレージから名前を取り出す
     this.name = sessionStorage.getItem('name');
     if(this.name == null){
@@ -137,6 +144,8 @@ export default {
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
       this.showModal_re = result
+      sessionStorage.setItem('isAns', '')
+      this.isAns = false
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
@@ -168,11 +177,14 @@ export default {
 
       // 正解数をセッションストレージに格納
       this.ans.correct ? this.corNum++ : this.corNum
-      sessionStorage.setItem('corNum', this.corNum);
+      sessionStorage.setItem('corNum', this.corNum)
       console.log(this.corNum)
 
       this.loading = true
       this.showModal = true
+      sessionStorage.setItem('isAns', true);
+      this.isAns = true
+      console.log('3:', this.isAns);
     },
     out_trigger(){
       this.signout = true
@@ -181,8 +193,8 @@ export default {
       this.signout = false
     },
     out(){
-      sessionStorage.setItem('name', null);
-      sessionStorage.setItem('corNum', 0);
+      sessionStorage.setItem('name', null)
+      sessionStorage.setItem('corNum', 0)
 			this.$router.push('/login')
     }
   },
@@ -197,7 +209,7 @@ export default {
       this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
       this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 
       this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;' 
-      console.log(this.top)
+      // console.log(this.top)
     }
   },
 }
