@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <p :class="box" id="padding_ud_30">最終結果</p>
+  <v-app style="height: 100%; background:linear-gradient(#F89174, #FFC778);">
+    <p :class="box" id="padding_ud_50">最終結果</p>
 
     <div class="colmuns">
       <div id="padding_d_30">
@@ -96,7 +96,7 @@
     <div v-if='show_5 == true' class="columns css-fade5" id="padding_d_30">
       <div :style="tile_style" :class="[tile_class]">５位．{{ final_result_5.userId }} {{ final_result_5.correctNum }}</div>
     </div> -->
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -130,7 +130,7 @@ export default {
       color_text_4: 'background-color: #23d160; border-color: #23d160; color: #23d160;',
 			tile_class: 'column is-10-desktop is-offset-1-desktop is-size-3',
 			tile_style: '',
-      box: "column is-size-1 is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile",
+      box: "column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile has-text-white has-text-weight-bold",
       rank: '',
       show_1: false,
       show_2: false,
@@ -181,8 +181,9 @@ export default {
 </script>
 
 <style scoped>
-#padding_ud_30 {
-  padding: 40px 0px 30px;
+#padding_ud_50 {
+  padding: 50px 0px 50px;
+  font-size: 80px;
 }
 #padding_d_30 {
   padding: 0px 0px 30px;
