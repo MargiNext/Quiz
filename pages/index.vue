@@ -1,9 +1,8 @@
 <template>
   <div>
-    <p>{{ this.isAns }}</p>
     <!-- ローディング画面 -->
     <loading v-if="isAns" />
-    <!-- <loading v-if="showModal" /> -->
+
     <!-- 各結果を表示 -->
     <each-result v-if="showModal_re" :is_correct="this.ans.correct" />
 
@@ -120,9 +119,7 @@ export default {
     }
   },
   mounted() {
-    console.log('1:', this.isAns);
     this.isAns = Boolean(sessionStorage.getItem('isAns'));
-    console.log('2:', this.isAns);
 
     // セッションストレージから名前を取り出す
     this.name = sessionStorage.getItem('name');
@@ -131,7 +128,7 @@ export default {
     }
 
     // 最新の情報をとってくる
-    this.corNum = sessionStorage.getItem('corNum');
+    this.corNum = sessionStorage.getItem('corNum') ? sessionStorage.getItem('corNum') : 0 ;
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
@@ -178,13 +175,11 @@ export default {
       // 正解数をセッションストレージに格納
       this.ans.correct ? this.corNum++ : this.corNum
       sessionStorage.setItem('corNum', this.corNum)
-      console.log(this.corNum)
 
       this.loading = true
       this.showModal = true
       sessionStorage.setItem('isAns', true);
       this.isAns = true
-      console.log('3:', this.isAns);
     },
     out_trigger(){
       this.signout = true
@@ -209,7 +204,6 @@ export default {
       this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
       this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 
       this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;' 
-      // console.log(this.top)
     }
   },
 }
