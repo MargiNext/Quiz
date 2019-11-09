@@ -199,6 +199,11 @@ async function start () {
         socket.broadcast.emit('Rank', go)
       })
 
+      // トリガ（timeLimit）の受け取り，クライアントへ送信
+      socket.on('timeLimit', timeLimit => {
+        socket.broadcast.emit('timeLimit', timeLimit)
+      })
+
       // 回答の受け取り
       socket.on('Answer', ans => {
         console.log('receive')

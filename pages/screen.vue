@@ -7,6 +7,11 @@
 			<div class="columns">
 				<p :class="box" id="padding_d_30">{{ question.num }} {{ question.content }}</p>
 			</div>
+			<!-- カウントダウン -->
+			<div class="columns">
+				<p :class="box">{{ timeLimit - timeLimitCount }}</p>
+			</div>
+			<!-- カウントダウン -->
 			<div class="columns">
 				<div :style="color_1 + tile_style" :class="[tile_class, front]">{{ question.select_1 }}
 					<div v-if="rateShow" :style="color_text_1 + tile_style2">
@@ -83,6 +88,10 @@ export default {
 			interval_id_1: '',
 			count_1: 0,
 			count_2: 0,
+	  timeLimit: 0,
+	  timeLimitCount: 0,
+	  timeLimitButtonFlag: true,
+	  countDownId: ''
     }
   },
   mounted() {
@@ -92,7 +101,16 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
-    })
+	})
+
+	// 制限時間の受け取り
+	this.socket.on('timeLimit', timeLimit => {
+		if (this.timeLimitButtonFlag) {
+			this.timeLimitButtonFlag = false
+			this.timeLimit = this.question.time
+			this.countDown()
+		}
+	})
 
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
@@ -159,18 +177,29 @@ export default {
 			}
 		},
 		regular(){
-      this.color_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-      this.color_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
-      this.color_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
+      		this.color_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
+      		this.color_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
+      		this.color_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
 			this.color_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
-      this.color_text_1 = 'background-color: #209cee; border-color: #209cee; color: #209cee;'
-      this.color_text_2 = 'background-color: #3273dc; border-color: #3273dc; color: #3273dc;'
-      this.color_text_3 = 'background-color: #00d1b2; border-color: #00d1b2; color: #00d1b2;'
-      this.color_text_4 = 'background-color: #23d160; border-color: #23d160; color: #23d160;'
+      		this.color_text_1 = 'background-color: #209cee; border-color: #209cee; color: #209cee;'
+      		this.color_text_2 = 'background-color: #3273dc; border-color: #3273dc; color: #3273dc;'
+      		this.color_text_3 = 'background-color: #00d1b2; border-color: #00d1b2; color: #00d1b2;'
+      		this.color_text_4 = 'background-color: #23d160; border-color: #23d160; color: #23d160;'
 			this.rate_color_1 = 'color: white'
 			this.rate_color_2 = 'color: white'
 			this.rate_color_3 = 'color: white'
 			this.rate_color_4 = 'color: white'
+		},
+		countDown(){
+			this.countDownId = setInterval(() => {
+				this.timeLimitCount++
+				if(this.timeLimitCount >= this.timeLimit){
+					clearInterval(this.countDownId)
+					this.timeLimit = 0
+					this.timeLimitCount = 0
+					this.timeLimitButtonFlag = true
+				}
+			}, 1000)
 		}
   },
   watch: {

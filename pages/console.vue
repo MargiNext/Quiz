@@ -12,6 +12,7 @@
 			<button class="button is-info" @click="res_trigger(true)">結果発表</button>
 			<button class="button is-danger" @click="con_trigger(true)">緊急！スクリーンに戻りたい！</button>
 			<button class="button is-info" @click="rank_trigger(true)">順位表示</button>
+			<button class="button is-info" @click="limit_trigger(true)">タイムリミットを表示</button>
     </div>
 		<div v-for="(ans, index) in reverseAns" :key="index">
 			<p>{{ ans }}</p>
@@ -95,6 +96,12 @@ export default {
       // サーバー側に順位トリガを送信する
       this.socket.emit('Rank', trigger)
     },
+    limit_trigger(boolean) {
+      let trigger = boolean
+
+      // サーバー側に制限時間開始のトリガを送信する
+      this.socket.emit('timeLimit', trigger)
+    }
   }
 }
 </script>
