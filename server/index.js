@@ -45,6 +45,7 @@ async function start () {
   let finalResult = [] // 最終結果時のデータ
   let userResult = {} // ユーザごとの正答数
   let maxQuizNum = 4 // クイズの問題数
+  let people = 0 // 参加人数
   let rank = 5 // 上位表彰者数
   let winner = [] // 上位入賞者
 
@@ -217,6 +218,17 @@ async function start () {
         });
 
       })
+
+      // nameの受け取り，クライアントへ送信
+      socket.on('name', result => {
+        result ? people++ : null
+      })
+
+      // delNameの受け取り，クライアントへ送信
+      socket.on('delName', result => {
+        result ? people-- : null
+      })
+      socket.broadcast.emit('People', people)
     })
   }
   consola.ready({
