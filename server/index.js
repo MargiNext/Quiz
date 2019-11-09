@@ -201,7 +201,6 @@ async function start () {
 
       // トリガ（timeLimit）の受け取り，クライアントへ送信
       socket.on('timeLimit', timeLimit => {
-        console.log(timeLimit)
         socket.broadcast.emit('timeLimit', timeLimit)
       })
 

@@ -90,6 +90,7 @@ export default {
 			count_2: 0,
 	  timeLimit: 0,
 	  timeLimitCount: 0,
+	  timeLimitButtonFlag: true,
 	  countDownId: ''
     }
   },
@@ -104,10 +105,11 @@ export default {
 
 	// 制限時間の受け取り
 	this.socket.on('timeLimit', timeLimit => {
-		// for debug
-		console.log(this.question.time)
-		this.timeLimit = this.question.time
-		this.countDown()
+		if (this.timeLimitButtonFlag) {
+			this.timeLimitButtonFlag = false
+			this.timeLimit = this.question.time
+			this.countDown()
+		}
 	})
 
     // 割合トリガの受け取り
@@ -190,15 +192,14 @@ export default {
 		},
 		countDown(){
 			this.countDownId = setInterval(() => {
-				console.log(this.timeLimitCount)
 				this.timeLimitCount++
-				if(this.timeLimitCount > this.timeLimit){
+				if(this.timeLimitCount >= this.timeLimit){
 					clearInterval(this.countDownId)
 					this.timeLimit = 0
 					this.timeLimitCount = 0
+					this.timeLimitButtonFlag = true
 				}
 			}, 1000)
-			clearInterval(countDownId)
 		}
   },
   watch: {
