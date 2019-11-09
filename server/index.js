@@ -187,6 +187,7 @@ async function start () {
           // 値の初期化
           finalResult = []
           userResult = {}
+          winner = []
         })
       })
 
@@ -214,17 +215,17 @@ async function start () {
         socket.broadcast.emit('Answer', ans)
 
         // dbに格納
-        db.collection(String(quizId.id)).add({
+        db.collection(String(quizId.id)).doc().set({
           user_id: ans.id,
           select_num: ans.ans,
           is_correct: ans.correct
         })
-        .then(function(docRef) {
-          console.log("Document written with ID: ", docRef.id);
+        .then(function() {
+          console.log("Document successfully written!")
         })
         .catch(function(error) {
-          console.error("Error adding document: ", error);
-        });
+          console.error("Error writing document: ", error)
+        })
 
       })
 
