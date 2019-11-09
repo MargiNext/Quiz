@@ -7,7 +7,7 @@
 			<div class="columns" id="padding_d_30">
 				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
 					<div class="columns">
-						<div :class="box_1">{{ question.num }} <br> {{ question.content }}</div>
+						<div :class="box_1">{{ question.num }} {{ question.content }}</div>
 						<div :class="box_2" :style="countD">{{ timeLimit }}</div>
 					</div>
 				</div>
