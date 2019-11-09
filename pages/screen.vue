@@ -7,9 +7,8 @@
 			<div class="columns" id="padding_d_30">
 				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
 					<div class="columns">
-						<div :class="box_1">{{ question.num }} {{ question.content }}</div>
+						<div :class="box_1">{{ question.num }} <br> {{ question.content }}</div>
 						<div :class="box_2" :style="countD">{{ timeLimit }}</div>
-						<!-- <div :class="box_2" :style="countD">{{ timeLimit - timeLimitCount }}</div> -->
 					</div>
 				</div>
 			</div>
@@ -68,8 +67,8 @@ export default {
 			tile_style: 'border-style: solid; border-radius: 1em; height: 250px; position: relative;',
 			tile_style2: 'border-style: solid; border-radius: 0.8em; height: 50%; width: 50%; bottom: 0; right: 0; position: absolute;',
 			front: 'is-offset-2-desktop',
-			box_1: "column is-11 is-size-3",
-			box_2: "column is-1 has-text-weight-bold circle",
+			box_1: "column is-10 is-size-3",
+			box_2: "column is-2 has-text-weight-bold circle",
 			rate_style: 'text-align: center; padding-top: 25px; font-weight: bold;',
 			rate_color_1: 'color: white',
 			rate_color_2: 'color: white',
