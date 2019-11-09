@@ -171,14 +171,15 @@ async function start () {
           // 上位のみ送信
           for (let i=0;i < userRank.length;i++) {
             if (winner.length >= rank) break
+            // 順位を格納する
             userRank[i].rank = i+1
             winner.push(userRank[i])
             for (let j=i+1;j < userRank.length;j++){
-              if (userRank[j].correctNum > userRank[i].correctNum) break
-              if (userRank[i].correctNum == userRank[j].correctNum) {
-                userRank[j].rank = i+1
-                winner.push(userRank[j])
-              }
+              if (userRank[i].correctNum > userRank[j].correctNum) break
+              // 順位を格納する
+              userRank[j].rank = i+1
+              winner.push(userRank[j])
+              i++
             }
           }
           console.log(winner)
