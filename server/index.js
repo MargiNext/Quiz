@@ -155,7 +155,7 @@ async function start () {
           for (let i in userResult) {
             userRank.push({
               "userId": i,
-              "correctNum": userResult[i]
+              "correctNum": userResult[i],
             })
           }
           // 正答数順にソートする
@@ -171,11 +171,14 @@ async function start () {
           // 上位のみ送信
           for (let i=0;i < userRank.length;i++) {
             if (winner.length >= rank) break
+            userRank[i].rank = i+1
             winner.push(userRank[i])
             for (let j=i+1;j < userRank.length;j++){
               if (userRank[j].correctNum > userRank[i].correctNum) break
-              if (userRank[i].correctNum == userRank[j].correctNum)
+              if (userRank[i].correctNum == userRank[j].correctNum) {
+                userRank[j].rank = i+1
                 winner.push(userRank[j])
+              }
             }
           }
           console.log(winner)
