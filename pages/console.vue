@@ -11,11 +11,7 @@
 			<button class="button is-info" @click="ans_trigger(true)">答えを表示</button>
 			<button class="button is-info" @click="res_trigger(true)">結果発表</button>
 			<button class="button is-danger" @click="con_trigger(true)">緊急！スクリーンに戻りたい！</button>
-			<button class="button is-info" @click="rank_trigger('5')">5</button>
-			<button class="button is-info" @click="rank_trigger('4')">4</button>
-			<button class="button is-info" @click="rank_trigger('3')">3</button>
-			<button class="button is-info" @click="rank_trigger('2')">2</button>
-			<button class="button is-info" @click="rank_trigger('1')">1</button>
+			<button class="button is-info" @click="rank_trigger(true)">順位表示</button>
 			<button class="button is-info" @click="limit_trigger(true)">タイムリミットを表示</button>
     </div>
 		<div v-for="(ans, index) in reverseAns" :key="index">
@@ -94,13 +90,11 @@ export default {
       // サーバー側にスクリーン画面へ戻るためのトリガを送信する
 			this.socket.emit('goScreen', trigger)
     },
-    rank_trigger(value) {
-      let rank = value
+    rank_trigger(boolean) {
+      let trigger = boolean
 
-      // サーバー側に順位を送信する
-      this.socket.emit('Rank', rank)
-      // 要素を空にする
-      this.rank = ''
+      // サーバー側に順位トリガを送信する
+      this.socket.emit('Rank', trigger)
     },
     limit_trigger(boolean) {
       let trigger = boolean

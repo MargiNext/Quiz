@@ -3,6 +3,30 @@
     <p :class="box" id="padding_ud_50">最終結果</p>
 
     <div class="colmuns">
+      <div v-for="(result, index) in this.final_result" :key="index" id="padding_d_30">
+        <div :class="select_btn" :style="pink">
+          <div class="columns is-size-1">
+            <div class="column is-2 is-offset-1">
+              {{ result.rank }}位
+            </div>
+            <div v-if='rank_count[result.rank - 1]' class="column is-6 css-fade">
+              {{ result.userId }}
+            </div>
+            <div v-if='rank_count[result.rank - 1]' class="column is-2 css-fade">
+              {{ result.correctNum }}
+            </div>
+            <!-- <div v-if='show_1 == true' class="column is-6 css-fade">
+              {{ result.userId }}
+            </div>
+            <div v-if='show_1 == true' class="column is-2 css-fade">
+              {{ result.correctNum }}
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ここから下は過去の遺産 -->
+    <!-- <div class="colmuns">
       <div id="padding_d_30">
         <div :class="select_btn" :style="pink">
           <div class="columns is-size-1">
@@ -78,7 +102,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- リストレンダリングは一旦諦めました -->
     <!-- <div v-if='show_1 == true' class="columns css-fade2" id="padding_d_30">
@@ -118,6 +142,7 @@ export default {
       resetColor_4: '',
       rank_col: 'colmun',
       select_btn: "column is-large is-10 is-offset-1 is-outlined",
+      final_result: this.$route.query,
       final_result_1: this.$route.query[0],
       final_result_2: this.$route.query[1],
       final_result_3: this.$route.query[2],
@@ -132,15 +157,16 @@ export default {
 			tile_style: '',
       box: "column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile has-text-white has-text-weight-bold",
       rank: '',
-      show_1: false,
-      show_2: false,
-      show_3: false,
-      show_4: false,
-      show_5: false,
+      // show_1: false,
+      // show_2: false,
+      // show_3: false,
+      // show_4: false,
+      // show_5: false,
+      rank_count: [false, false, false, false, false],
+      countDown: 4,
     }
   },
   mounted() {
-    console.log(this.final_result)
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
@@ -151,25 +177,9 @@ export default {
 
     // 割合トリガの受け取り
     this.socket.on('Rank', result => {
-      this.rank = result
-      console.log(this.rank)
-
-      // 順位を受け取ったら変数に格納
-      if (this.rank == '1') {
-        this.show_1 = true
-      }
-      if (this.rank == '2') {
-        this.show_2 = true
-      }
-      if (this.rank == '3') {
-        this.show_3 = true
-      }
-      if (this.rank == '4') {
-        this.show_4 = true
-      }
-      if (this.rank == '5') {
-        this.show_5 = true
-      }
+      this.rank_count.splice(this.countDown, 1, true)
+      this.countDown--
+      console.log(this.rank_count)
     })
     
   },
