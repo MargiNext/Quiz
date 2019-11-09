@@ -8,7 +8,8 @@
 				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
 					<div class="columns">
 						<div :class="box_1">{{ question.num }} {{ question.content }}</div>
-						<div :class="box_2" :style="countD">{{ timeLimit - timeLimitCount }}</div>
+						<div :class="box_2" :style="countD">{{ timeLimit }}</div>
+						<!-- <div :class="box_2" :style="countD">{{ timeLimit - timeLimitCount }}</div> -->
 					</div>
 				</div>
 			</div>
@@ -87,6 +88,7 @@ export default {
       corNum: 0,
 			corNum_before: 0,
 			interval_id_1: '',
+			interval_id_2: '',
 			count_1: 0,
 			count_2: 0,
 			timeLimit: 0,
@@ -103,16 +105,16 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
-	})
-
-	// 制限時間の受け取り
-	this.socket.on('timeLimit', timeLimit => {
-		if (this.timeLimitButtonFlag) {
-			this.timeLimitButtonFlag = false
 			this.timeLimit = this.question.time
-			this.countDown()
-		}
-	})
+		})
+
+		// 制限時間の受け取り
+		this.socket.on('timeLimit', timeLimit => {
+			if (this.timeLimitButtonFlag) {
+				this.timeLimitButtonFlag = false
+				this.countDown()
+			}
+		})
 
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
@@ -194,11 +196,9 @@ export default {
 		},
 		countDown(){
 			this.countDownId = setInterval(() => {
-				this.timeLimitCount++
-				if(this.timeLimitCount >= this.timeLimit){
+				this.timeLimit--
+				if(this.timeLimit <= 0){
 					clearInterval(this.countDownId)
-					this.timeLimit = 0
-					this.timeLimitCount = 0
 					this.timeLimitButtonFlag = true
 				}
 			}, 1000)
@@ -216,7 +216,6 @@ export default {
 			this.color_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
 			this.count_1 = 0
 			this.count_2 = 0
-			clearInterval(this.interval_id)
     }
   }
 }
