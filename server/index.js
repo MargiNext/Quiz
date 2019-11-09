@@ -46,6 +46,7 @@ async function start () {
   let userResult = {} // ユーザごとの正答数
   let maxQuizNum = 4 // クイズの問題数
   let rank = 5 // 上位表彰者数:
+  let people = 0
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -206,6 +207,12 @@ async function start () {
         });
 
       })
+
+      // nameの受け取り，クライアントへ送信
+      socket.on('name', result => {
+        result ? people++ : null
+      })
+      socket.broadcast.emit('People', people)
     })
   }
   consola.ready({

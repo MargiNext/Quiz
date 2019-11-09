@@ -23,10 +23,12 @@ export default {
     }
   },
   mounted() {
+    this.socket = io()
   },
   methods: {
 		login(){
-			this.$router.push('/')
+      this.$router.push('/')
+      this.socket.emit('name', this.name)
 
 			// セッションストレージを使用
 			sessionStorage.setItem('name', this.name);
