@@ -9,12 +9,18 @@
             <div class="column is-2 is-offset-1">
               {{ result.rank }}位
             </div>
-            <div v-if='show_1 == true' class="column is-6 css-fade">
+            <div v-if='rank_count[result.rank - 1]' class="column is-6 css-fade">
+              {{ result.userId }}
+            </div>
+            <div v-if='rank_count[result.rank - 1]' class="column is-2 css-fade">
+              {{ result.correctNum }}
+            </div>
+            <!-- <div v-if='show_1 == true' class="column is-6 css-fade">
               {{ result.userId }}
             </div>
             <div v-if='show_1 == true' class="column is-2 css-fade">
               {{ result.correctNum }}
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -151,15 +157,16 @@ export default {
 			tile_style: '',
       box: "column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile has-text-white has-text-weight-bold",
       rank: '',
-      show_1: false,
-      show_2: false,
-      show_3: false,
-      show_4: false,
-      show_5: false,
+      // show_1: false,
+      // show_2: false,
+      // show_3: false,
+      // show_4: false,
+      // show_5: false,
+      rank_count: [false, false, false, false, false],
+      countDown: 4,
     }
   },
   mounted() {
-    console.log(this.final_result)
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
@@ -170,25 +177,9 @@ export default {
 
     // 割合トリガの受け取り
     this.socket.on('Rank', result => {
-      this.rank = result
-      console.log(this.rank)
-
-      // 順位を受け取ったら変数に格納
-      if (this.rank == '1') {
-        this.show_1 = true
-      }
-      if (this.rank == '2') {
-        this.show_2 = true
-      }
-      if (this.rank == '3') {
-        this.show_3 = true
-      }
-      if (this.rank == '4') {
-        this.show_4 = true
-      }
-      if (this.rank == '5') {
-        this.show_5 = true
-      }
+      this.rank_count.splice(this.countDown, 1, true)
+      this.countDown--
+      console.log(this.rank_count)
     })
     
   },
