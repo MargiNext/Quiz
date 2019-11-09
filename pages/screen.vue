@@ -92,7 +92,12 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
-    })
+	})
+
+	// 制限時間の受け取り
+	this.socket.on('timeLimit', timeLimit => {
+		// this.timeLimit = questions[]
+	})
 
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
