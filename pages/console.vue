@@ -2,11 +2,10 @@
   <section class="section">
     <div id="wrapper" class="container">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
-			<button class="button is-info" @click="send('0')">Top</button>
-			<button class="button is-info" @click="send('1')">Q1</button>
-			<button class="button is-info" @click="send('2')">Q2</button>
-			<button class="button is-info" @click="send('3')">Q3</button>
-			<button class="button is-info" @click="send('4')">Q4</button>
+      <div v-for="(question, index) in question" :key="index">
+        <button v-if="question.id == 0" class="button is-info" @click="send(Number(question.id))">Top</button>
+        <button v-else class="button is-info" @click="send(Number(question.id))">Q{{ Number(question.id)}}</button>
+      </div>
 			<button class="button is-info" @click="rate_trigger(true)">回答割合を表示</button>
 			<button class="button is-info" @click="ans_trigger(true)">答えを表示</button>
 			<button class="button is-info" @click="res_trigger(true)">結果発表</button>

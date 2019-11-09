@@ -4,14 +4,14 @@
 			<top />
     </div>
     <div v-else>
-			<div class="columns">
-				<p :class="box" id="padding_d_30">{{ question.num }} {{ question.content }}</p>
+			<div class="columns" id="padding_d_30">
+				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
+					<div class="columns">
+						<div :class="box_1">{{ question.num }} <br> {{ question.content }}</div>
+						<div :class="box_2" :style="countD">{{ timeLimit }}</div>
+					</div>
+				</div>
 			</div>
-			<!-- カウントダウン -->
-			<div class="columns">
-				<p :class="box">{{ timeLimit - timeLimitCount }}</p>
-			</div>
-			<!-- カウントダウン -->
 			<div class="columns">
 				<div :style="color_1 + tile_style" :class="[tile_class, front]">{{ question.select_1 }}
 					<div v-if="rateShow" :style="color_text_1 + tile_style2">
@@ -67,7 +67,8 @@ export default {
 			tile_style: 'border-style: solid; border-radius: 1em; height: 250px; position: relative;',
 			tile_style2: 'border-style: solid; border-radius: 0.8em; height: 50%; width: 50%; bottom: 0; right: 0; position: absolute;',
 			front: 'is-offset-2-desktop',
-			box: "column is-size-3 is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile",
+			box_1: "column is-10 is-size-3",
+			box_2: "column is-2 has-text-weight-bold circle",
 			rate_style: 'text-align: center; padding-top: 25px; font-weight: bold;',
 			rate_color_1: 'color: white',
 			rate_color_2: 'color: white',
@@ -86,12 +87,14 @@ export default {
       corNum: 0,
 			corNum_before: 0,
 			interval_id_1: '',
+			interval_id_2: '',
 			count_1: 0,
 			count_2: 0,
-	  timeLimit: 0,
-	  timeLimitCount: 0,
-	  timeLimitButtonFlag: true,
-	  countDownId: ''
+			timeLimit: 0,
+			timeLimitCount: 0,
+			timeLimitButtonFlag: true,
+			countDownId: '',
+			countD: 'text-align: center; color: white;'
     }
   },
   mounted() {
@@ -101,16 +104,16 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
-	})
-
-	// 制限時間の受け取り
-	this.socket.on('timeLimit', timeLimit => {
-		if (this.timeLimitButtonFlag) {
-			this.timeLimitButtonFlag = false
 			this.timeLimit = this.question.time
-			this.countDown()
-		}
-	})
+		})
+
+		// 制限時間の受け取り
+		this.socket.on('timeLimit', timeLimit => {
+			if (this.timeLimitButtonFlag) {
+				this.timeLimitButtonFlag = false
+				this.countDown()
+			}
+		})
 
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
@@ -177,14 +180,14 @@ export default {
 			}
 		},
 		regular(){
-      		this.color_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-      		this.color_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
-      		this.color_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
+			this.color_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
+			this.color_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
+			this.color_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
 			this.color_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
-      		this.color_text_1 = 'background-color: #209cee; border-color: #209cee; color: #209cee;'
-      		this.color_text_2 = 'background-color: #3273dc; border-color: #3273dc; color: #3273dc;'
-      		this.color_text_3 = 'background-color: #00d1b2; border-color: #00d1b2; color: #00d1b2;'
-      		this.color_text_4 = 'background-color: #23d160; border-color: #23d160; color: #23d160;'
+			this.color_text_1 = 'background-color: #209cee; border-color: #209cee; color: #209cee;'
+			this.color_text_2 = 'background-color: #3273dc; border-color: #3273dc; color: #3273dc;'
+			this.color_text_3 = 'background-color: #00d1b2; border-color: #00d1b2; color: #00d1b2;'
+			this.color_text_4 = 'background-color: #23d160; border-color: #23d160; color: #23d160;'
 			this.rate_color_1 = 'color: white'
 			this.rate_color_2 = 'color: white'
 			this.rate_color_3 = 'color: white'
@@ -192,11 +195,9 @@ export default {
 		},
 		countDown(){
 			this.countDownId = setInterval(() => {
-				this.timeLimitCount++
-				if(this.timeLimitCount >= this.timeLimit){
+				this.timeLimit--
+				if(this.timeLimit <= 0){
 					clearInterval(this.countDownId)
-					this.timeLimit = 0
-					this.timeLimitCount = 0
 					this.timeLimitButtonFlag = true
 				}
 			}, 1000)
@@ -214,13 +215,21 @@ export default {
 			this.color_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
 			this.count_1 = 0
 			this.count_2 = 0
-			clearInterval(this.interval_id)
     }
   }
 }
 </script>
 
 <style scoped>
+.circle{
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #FF5192	;
+  margin: 10px auto;
+	padding: 10px 0 0px;
+	font-size: 90px;
+}
 #wrapper
 {
   max-width: 600px;
