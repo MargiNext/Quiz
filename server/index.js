@@ -45,7 +45,8 @@ async function start () {
   let finalResult = [] // 最終結果時のデータ
   let userResult = {} // ユーザごとの正答数
   let maxQuizNum = 4 // クイズの問題数
-  let rank = 5 // 上位表彰者数:
+  let rank = 5 // 上位表彰者数
+  let winner = [] // 上位入賞者
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -141,7 +142,7 @@ async function start () {
         }
         dbResult().then(function(value) {
           // ユーザごとに正答数をカウントする
-          for(let i=0;i< finalResult.length;i++)
+          for(let i=0;i < finalResult.length;i++)
           {
             user_ = finalResult[i].user_id
             is_correct = finalResult[i].is_correct
@@ -163,11 +164,21 @@ async function start () {
             return 0
           })
           // for debug
-          console.log(userRank)
+          // console.log(userRank)
 
           // 正答数をscreenに送信
           // 上位のみ送信
-          socket.broadcast.emit('finalResult', userRank.slice(0,rank))
+          for (let i=0;i < userRank.length;i++) {
+            if (winner.length >= rank) break
+            winner.push(userRank[i])
+            for (let j=i+1;j < userRank.length;j++){
+              if (userRank[j].correctNum > userRank[i].correctNum) break
+              if (userRank[i].correctNum == userRank[j].correctNum)
+                winner.push(userRank[j])
+            }
+          }
+          console.log(winner)
+          socket.broadcast.emit('finalResult', winner)
           // 値の初期化
           finalResult = []
           userResult = {}
