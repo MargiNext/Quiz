@@ -83,6 +83,7 @@ export default {
 			interval_id_1: '',
 			count_1: 0,
 			count_2: 0,
+	  timeLimit: 0
     }
   },
   mounted() {
@@ -96,7 +97,8 @@ export default {
 
 	// 制限時間の受け取り
 	this.socket.on('timeLimit', timeLimit => {
-		// this.timeLimit = questions[]
+		console.log(questions[this.question]["time"])
+		this.timeLimit = questions[this.question]["time"]
 	})
 
     // 割合トリガの受け取り
