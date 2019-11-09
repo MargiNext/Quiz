@@ -232,6 +232,26 @@ async function start () {
       // nameの受け取り，クライアントへ送信
       socket.on('name', result => {
         result ? people++ : null
+
+        function dbResult() {
+          return new Promise(function(resolve,reject) {
+            db.collection('user').get().then(function(querySnapshot) {
+              querySnapshot.forEach(function(doc) {
+                  ansSelect.push(doc.data().select_num)
+              })
+            })
+            // エラー処理
+            .catch(function(error) {
+              console.log("Error getting documents: ", error)
+            })
+            setTimeout(function() {
+              resolve(1);
+            }, 1000)
+          })
+        }
+        dbResult().then(function(value) {
+        })
+
       })
 
       // delNameの受け取り，クライアントへ送信
