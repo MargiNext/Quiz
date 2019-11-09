@@ -233,36 +233,19 @@ async function start () {
       socket.on('name', result => {
         result ? people++ : null
 
-        // console.log(result)
-        // db.collection('user').where('name','==',result).get()
-        // // すでにユーザ名が存在するため登録し直し
-        // .then(doc => {
-        //   console.log(doc.docs[0].id)
-        //   console.log("Exist user name")
-        // })
-        // // ユーザ名が重複しなかったため新しくDBに格納する
-        // .catch(function(error) {
-        //   console.log("Not Exist user name")
-        //   db.collection('user').add({
-        //     name: result
-        //   })
-        // })
-
-        // Transactionパターン 未完成
-        // 新規登録を同時にされた場合に対応できる？
-        var docId = db.collection('user').where('name','==',result)
-        var docRef = db.collection('user').doc(docId.docs[0].id)
-        return db.runTransaction(function(transaction) {
-          return transaction.get(docRef).then(function(doc) {
-            console.log("Exist user name")
-            console.log(doc.docs[0].id)
-          })
+        // for debug
+        console.log(result)
+        db.collection('user').where('name','==',result).get()
+        // すでにユーザ名が存在するため登録し直し
+        .then(doc => {
+          console.log("Exist user name")
         })
-        .then(function() {
-          console.log("Transaction successfully committed!")
-        })
+        // ユーザ名が重複しなかったため新しくDBに格納する
         .catch(function(error) {
-          console.log("Transaction failed: ", error)
+          console.log("Not Exist user name")
+          db.collection('user').add({
+            name: result
+          })
         })
 
       })
