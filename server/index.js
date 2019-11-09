@@ -238,7 +238,8 @@ async function start () {
         db.collection('user').where('name','==',result).get()
         // すでにユーザ名が存在するため登録し直し
         .then(doc => {
-          console.log("Exist user name")
+          console.log(doc.docs[0].id)
+          console.log("Exist user name ")
         })
         // ユーザ名が重複しなかったため新しくDBに格納する
         .catch(function(error) {
