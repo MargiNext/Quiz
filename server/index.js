@@ -212,6 +212,11 @@ async function start () {
       socket.on('name', result => {
         result ? people++ : null
       })
+
+      // delNameの受け取り，クライアントへ送信
+      socket.on('delName', result => {
+        result ? people-- : null
+      })
       socket.broadcast.emit('People', people)
     })
   }

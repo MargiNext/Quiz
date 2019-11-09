@@ -191,6 +191,7 @@ export default {
       sessionStorage.setItem('name', null)
       sessionStorage.setItem('corNum', 0)
 			this.$router.push('/login')
+      this.socket.emit('delName', this.name)
     }
   },
   watch: {

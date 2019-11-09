@@ -22,14 +22,13 @@ export default {
 		}
 	},
 	mounted(){
-		console.log('hhg')
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
+		// 参加人数の受け取り
     this.socket.on('People', people => {
 			this.people = people
 			console.log(people)
-			console.log('hhhg')
     })
 	}
 }
