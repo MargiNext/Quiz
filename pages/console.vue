@@ -16,6 +16,7 @@
 			<button class="button is-info" @click="rank_trigger('3')">3</button>
 			<button class="button is-info" @click="rank_trigger('2')">2</button>
 			<button class="button is-info" @click="rank_trigger('1')">1</button>
+			<button class="button is-info" @click="limit_trigger(true)">タイムリミットを表示</button>
     </div>
 		<div v-for="(ans, index) in reverseAns" :key="index">
 			<p>{{ ans }}</p>
@@ -101,6 +102,12 @@ export default {
       // 要素を空にする
       this.rank = ''
     },
+    limit_trigger(boolean) {
+      let trigger = boolean
+
+      // サーバー側に制限時間開始のトリガを送信する
+      this.socket.emit('timeLimit', trigger)
+    }
   }
 }
 </script>
