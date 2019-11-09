@@ -171,14 +171,15 @@ async function start () {
           // 上位のみ送信
           for (let i=0;i < userRank.length;i++) {
             if (winner.length >= rank) break
+            // 順位を格納する
             userRank[i].rank = i+1
             winner.push(userRank[i])
             for (let j=i+1;j < userRank.length;j++){
-              if (userRank[j].correctNum > userRank[i].correctNum) break
-              if (userRank[i].correctNum == userRank[j].correctNum) {
-                userRank[j].rank = i+1
-                winner.push(userRank[j])
-              }
+              if (userRank[i].correctNum > userRank[j].correctNum) break
+              // 順位を格納する
+              userRank[j].rank = i+1
+              winner.push(userRank[j])
+              i++
             }
           }
           console.log(winner)
@@ -186,6 +187,7 @@ async function start () {
           // 値の初期化
           finalResult = []
           userResult = {}
+          winner = []
         })
       })
 
@@ -213,17 +215,17 @@ async function start () {
         socket.broadcast.emit('Answer', ans)
 
         // dbに格納
-        db.collection(String(quizId.id)).add({
+        db.collection(String(quizId.id)).doc().set({
           user_id: ans.id,
           select_num: ans.ans,
           is_correct: ans.correct
         })
-        .then(function(docRef) {
-          console.log("Document written with ID: ", docRef.id);
+        .then(function() {
+          console.log("Document successfully written!")
         })
         .catch(function(error) {
-          console.error("Error adding document: ", error);
-        });
+          console.error("Error writing document: ", error)
+        })
 
       })
 
