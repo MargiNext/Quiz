@@ -215,7 +215,7 @@ async function start () {
         socket.broadcast.emit('Answer', ans)
 
         // dbに格納
-        db.collection(String(quizId.id)).doc().set({
+        db.collection(String(quizId.id)).add({
           user_id: ans.id,
           select_num: ans.ans,
           is_correct: ans.correct
@@ -233,23 +233,36 @@ async function start () {
       socket.on('name', result => {
         result ? people++ : null
 
-        function dbResult() {
-          return new Promise(function(resolve,reject) {
-            db.collection('user').get().then(function(querySnapshot) {
-              querySnapshot.forEach(function(doc) {
-                  ansSelect.push(doc.data().select_num)
-              })
-            })
-            // エラー処理
-            .catch(function(error) {
-              console.log("Error getting documents: ", error)
-            })
-            setTimeout(function() {
-              resolve(1);
-            }, 1000)
+        // console.log(result)
+        // db.collection('user').where('name','==',result).get()
+        // // すでにユーザ名が存在するため登録し直し
+        // .then(doc => {
+        //   console.log(doc.docs[0].id)
+        //   console.log("Exist user name")
+        // })
+        // // ユーザ名が重複しなかったため新しくDBに格納する
+        // .catch(function(error) {
+        //   console.log("Not Exist user name")
+        //   db.collection('user').add({
+        //     name: result
+        //   })
+        // })
+
+        // Transactionパターン 未完成
+        // 新規登録を同時にされた場合に対応できる？
+        var docId = db.collection('user').where('name','==',result)
+        var docRef = db.collection('user').doc(docId.docs[0].id)
+        return db.runTransaction(function(transaction) {
+          return transaction.get(docRef).then(function(doc) {
+            console.log("Exist user name")
+            console.log(doc.docs[0].id)
           })
-        }
-        dbResult().then(function(value) {
+        })
+        .then(function() {
+          console.log("Transaction successfully committed!")
+        })
+        .catch(function(error) {
+          console.log("Transaction failed: ", error)
         })
 
       })
