@@ -1,5 +1,8 @@
 <template>
   <section class="section">
+    <!-- タイムアップ画面 -->
+    <time-up v-if="timeup" />
+
     <div v-if="top">
 			<top />
     </div>
@@ -7,7 +10,7 @@
 			<div class="columns" id="padding_d_30">
 				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
 					<div class="columns">
-						<div :class="box_1">{{ question.num }} <br> {{ question.content }}</div>
+						<div :class="box_1">{{ question.num }} {{ question.content }}</div>
 						<div :class="box_2" :style="countD">{{ timeLimit }}</div>
 					</div>
 				</div>
@@ -46,12 +49,14 @@ import questions from '../assets/api/question.json'
 import loading from '~/components/Loading.vue'
 import eachResult from '~/components/eachResult.vue'
 import top from '~/components/Top'
+import timeUp from '~/components/timeUp'
 
 export default {
   components: {
     loading,
 		eachResult,
-		top
+		top,
+		timeUp,
   },
   data() {
     return {
@@ -120,6 +125,7 @@ export default {
       // for debug
       console.log("screen(rateResult): ", result)
 			this.rateShow = result
+			this.timeup = false
 			this.regular()
 		})
 
@@ -197,6 +203,8 @@ export default {
 			this.countDownId = setInterval(() => {
 				this.timeLimit--
 				if(this.timeLimit <= 0){
+          this.timeup = true
+          this.isAns =false
 					clearInterval(this.countDownId)
 					this.timeLimitButtonFlag = true
 				}
