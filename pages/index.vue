@@ -128,7 +128,6 @@ export default {
       timeLimit: 0,
       timeLimitButtonFlag: true,
       timeup: false,
-      ans_boolean: false,
     }
   },
   mounted() {
@@ -203,7 +202,6 @@ export default {
       this.showModal = true
       sessionStorage.setItem('isAns', true)
       this.isAns = true
-      this.ans_boolean = true
     },
     out_trigger(){
       this.signout = true
