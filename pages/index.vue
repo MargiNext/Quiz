@@ -54,6 +54,9 @@
       <top />
     </div>
     <div class="colmuns" v-else>
+      <div id="padding_timer">
+        <div :class="timer" class="tag is-danger">{{ timeLimit }}</div>
+      </div>
       <p :class="box" id="padding_ud_30">{{ question.num }} {{ question.content }}</p>
       <div id="padding_d_30">
         <button :class="[select_btn, color_1]" @click="answer('1')" :style="resetColor_1" onfocus="this.blur();">{{ question.select_1 }}</button>
@@ -98,6 +101,7 @@ export default {
       color_4: 'is-success',
       select_btn: "button column is-large is-offset-3-desktop is-6-desktop is-offset-2-tablet is-8-tablet is-offset-1-mobile is-10-mobile is-outlined",
       box: "column title is-offset-3-desktop is-6-desktop is-offset-2-tablet is-8-tablet is-offset-1-mobile is-10-mobile",
+      timer: "column title is-offset-5-desktop is-2-desktop is-offset-5-tablet is-2-tablet is-offset-5-mobile is-2-mobile",
       socket: '',
       isLoading: true,
       questions: questions,
@@ -116,6 +120,8 @@ export default {
       },
       signout: false,
       isAns: false,
+      timeLimit: 0,
+      timeLimitButtonFlag: true,
     }
   },
   mounted() {
@@ -136,7 +142,16 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
+			this.timeLimit = this.question.time
     })
+
+		// 制限時間の受け取り
+		this.socket.on('timeLimit', timeLimit => {
+			if (this.timeLimitButtonFlag) {
+				this.timeLimitButtonFlag = false
+				this.countDown()
+			}
+		})
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
@@ -192,7 +207,16 @@ export default {
       sessionStorage.setItem('corNum', 0)
 			this.$router.push('/login')
       this.socket.emit('delName', this.name)
-    }
+    },
+		countDown(){
+			this.countDownId = setInterval(() => {
+				this.timeLimit--
+				if(this.timeLimit <= 0){
+					clearInterval(this.countDownId)
+					this.timeLimitButtonFlag = true
+				}
+			}, 1000)
+		}
   },
   watch: {
     question: function(){
@@ -216,8 +240,11 @@ export default {
 {
   max-width: 600px;
 }
+#padding_timer {
+  padding: 20px 0px 0px;
+}
 #padding_ud_30 {
-  padding: 40px 0px 30px;
+  padding: 20px 0px 20px;
 }
 #padding_d_30 {
   padding: 0px 0px 30px;
