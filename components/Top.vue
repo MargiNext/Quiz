@@ -2,12 +2,12 @@
 <template>
 	<div class="is-3" id="padding_ud_4030" style="text-align: center;">
 		<div class="is-size-3">SI部2019年忘年会<br>クイズ大会！</div>
-		<div class="is-size-5" id="padding_u_30">みんなが入るまで待っててね！</div>
-		<div class="is-size-5" id="padding_u_30">参加グループ数</div>
-		<div class="is-size-5" id="padding_u_30">{{ this.people }}</div>
+		<div class="is-size-5" id="padding_u_50">みんなが入るまで待っててね！</div>
 		<div id="padding_ud_4030" class="half-circle-spinner" style="margin: auto;">
 			<div class="circle circle-1" style="text-align: center;"></div>
 			<div class="circle circle-2" style="text-align: center;"></div>
+			<div id="padding_u_20">30</div>
+			<!-- <div id="padding_u_20">{{ this.people }}</div> -->
 		</div>
 	</div>
 </template>
@@ -39,16 +39,21 @@ export default {
 #padding_ud_4030 {
   padding: 40px 0px 30px;
 }
-#padding_u_30 {
-  padding: 30px 0px 0px;
+#padding_u_50 {
+  padding: 50px 0px 0px;
+}
+#padding_u_20 {
+  padding: 27px 0px 0px;
+	font-size: 30px;
+	/* font-weight: 100; */
 }
 .half-circle-spinner, .half-circle-spinner * {
 	box-sizing: border-box;
 }
 
 .half-circle-spinner {
-	width: 60px;
-	height: 60px;
+	width: 100px;
+	height: 100px;
 	border-radius: 100%;
 	position: relative;
 }
@@ -59,7 +64,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	border-radius: 100%;
-	border: calc(60px / 10) solid transparent;
+	border: calc(80px / 10) solid transparent;
 }
 
 .half-circle-spinner .circle.circle-1 {
