@@ -6,6 +6,9 @@
     <!-- 各結果を表示 -->
     <each-result v-if="showModal_re" :is_correct="this.ans.correct" />
 
+    <!-- タイムアップ画面 -->
+    <time-up v-if="timeup" />
+
     <!-- signoutモーダル -->
     <div :class="{ modal: true, 'is-active': signout }">
       <div class="modal-background"></div>
@@ -81,13 +84,15 @@ import loading from '~/components/Loading.vue'
 import eachResult from '~/components/eachResult.vue'
 import Button from '~/components/Button.vue'
 import top from '~/components/Top'
+import timeUp from '~/components/timeUp'
 
 export default {
   components: {
     loading,
     eachResult,
     Button,
-    top
+    top,
+    timeUp
   },
   data() {
     return {
@@ -122,6 +127,8 @@ export default {
       isAns: false,
       timeLimit: 0,
       timeLimitButtonFlag: true,
+      timeup: false,
+      ans_boolean: false,
     }
   },
   mounted() {
@@ -158,6 +165,7 @@ export default {
       this.showModal_re = result
       sessionStorage.setItem('isAns', '')
       this.isAns = false
+      this.timeup = false
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
@@ -193,8 +201,9 @@ export default {
 
       this.loading = true
       this.showModal = true
-      sessionStorage.setItem('isAns', true);
+      sessionStorage.setItem('isAns', true)
       this.isAns = true
+      this.ans_boolean = true
     },
     out_trigger(){
       this.signout = true
@@ -212,6 +221,8 @@ export default {
 			this.countDownId = setInterval(() => {
 				this.timeLimit--
 				if(this.timeLimit <= 0){
+          this.timeup = true
+          this.isAns =false
 					clearInterval(this.countDownId)
 					this.timeLimitButtonFlag = true
 				}
@@ -225,6 +236,7 @@ export default {
       this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
       this.ans = {}
+      this.timeup = false
       this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
       this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
       this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 

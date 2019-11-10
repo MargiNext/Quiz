@@ -2,16 +2,11 @@
   <transition name="modal">
     <div class="modal-mask">
       <div class="modal-wrapper">
-					<div class="load-wrapper">
-            <div class="box" id="result">
-              <div v-if="this.is_correct">
-                <p>正解！</p>
-              </div>
-              <div v-else>
-                <p>不正解！</p>
-              </div>
-            </div>
-					</div>
+        <div class="load-wrapper" id="timeup">
+          <div class="box">
+            <p>解答時間終了！</p>
+          </div>
+        </div>
       </div>
     </div>
   </transition>
@@ -97,7 +92,7 @@ export default {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
-#result {
+#timeup {
   text-align: center;
   font-size: 30px;
   font-weight: bold;
