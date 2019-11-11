@@ -215,7 +215,7 @@ async function start () {
         socket.broadcast.emit('Answer', ans)
 
         // dbに格納
-        db.collection(String(quizId.id)).doc().set({
+        db.collection(String(quizId.id)).add({
           user_id: ans.id,
           select_num: ans.ans,
           is_correct: ans.correct
@@ -232,6 +232,23 @@ async function start () {
       // nameの受け取り，クライアントへ送信
       socket.on('name', result => {
         result ? people++ : null
+
+        // for debug
+        console.log(result)
+        db.collection('user').where('name','==',result).get()
+        // すでにユーザ名が存在するため登録し直し
+        .then(doc => {
+          console.log(doc.docs[0].id)
+          console.log("Exist user name ")
+        })
+        // ユーザ名が重複しなかったため新しくDBに格納する
+        .catch(function(error) {
+          console.log("Not Exist user name")
+          db.collection('user').add({
+            name: result
+          })
+        })
+
       })
 
       // delNameの受け取り，クライアントへ送信
