@@ -128,6 +128,7 @@ export default {
       timeLimit: 0,
       timeup: false,
       reload: false,
+      Login: null,
     }
   },
   created () {
@@ -148,6 +149,17 @@ export default {
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
+
+		// ログイン可否の受け取り
+    this.socket.on('Login', Login => {
+			// this.Login = (Login == 'true')? true:false
+			this.Login = Login
+			console.log(typeof Login)
+			console.log('login::' + this.Login)
+      if(this.Login == false){
+        this.$router.push({path: '/login?login=false'})
+      }
+    })
 
     // reconnectイベント後
     this.socket.on('connect', () => {
