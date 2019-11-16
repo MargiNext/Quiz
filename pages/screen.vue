@@ -96,8 +96,6 @@ export default {
 			count_1: 0,
 			count_2: 0,
 			timeLimit: 0,
-			timeLimitCount: 0,
-			timeLimitButtonFlag: true,
 			countDownId: '',
 			countD: 'text-align: center; color: white;'
     }
@@ -110,15 +108,16 @@ export default {
     this.socket.on('Question', question => {
       this.question = questions[question.id]
 			this.timeLimit = this.question.time
-		})
+	})
 
-		// 制限時間の受け取り
-		this.socket.on('timeLimit', timeLimit => {
-			if (this.timeLimitButtonFlag) {
-				this.timeLimitButtonFlag = false
-				this.countDown()
-			}
-		})
+	// 制限時間の受け取り
+	this.socket.on('timeLimit', timeLimit => {
+		this.timeLimit = timeLimit
+		if (timeLimit <= 0)  {
+        	this.timeup = true
+        	this.isAns =false
+		}
+	})
 
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
@@ -199,17 +198,6 @@ export default {
 			this.rate_color_3 = 'color: white'
 			this.rate_color_4 = 'color: white'
 		},
-		countDown(){
-			this.countDownId = setInterval(() => {
-				this.timeLimit--
-				if(this.timeLimit <= 0){
-          this.timeup = true
-          this.isAns =false
-					clearInterval(this.countDownId)
-					this.timeLimitButtonFlag = true
-				}
-			}, 1000)
-		}
   },
   watch: {
     question: function(){

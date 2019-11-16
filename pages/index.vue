@@ -126,7 +126,6 @@ export default {
       signout: false,
       isAns: false,
       timeLimit: 0,
-      timeLimitButtonFlag: true,
       timeup: false,
     }
   },
@@ -151,13 +150,14 @@ export default {
 			this.timeLimit = this.question.time
     })
 
-		// 制限時間の受け取り
-		this.socket.on('timeLimit', timeLimit => {
-			if (this.timeLimitButtonFlag) {
-				this.timeLimitButtonFlag = false
-				this.countDown()
-			}
-		})
+	  // 制限時間の受け取り
+	  this.socket.on('timeLimit', timeLimit => {
+		  this.timeLimit = timeLimit
+		  if (timeLimit <= 0)  {
+        	  this.timeup = true
+        	  this.isAns =false
+		  }
+	  })
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
@@ -215,17 +215,6 @@ export default {
 			this.$router.push('/login')
       this.socket.emit('delName', this.name)
     },
-		countDown(){
-			this.countDownId = setInterval(() => {
-				this.timeLimit--
-				if(this.timeLimit <= 0){
-          this.timeup = true
-          this.isAns =false
-					clearInterval(this.countDownId)
-					this.timeLimitButtonFlag = true
-				}
-			}, 1000)
-		}
   },
   watch: {
     question: function(){
