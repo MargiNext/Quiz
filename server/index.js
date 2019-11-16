@@ -264,6 +264,7 @@ async function start () {
         .then(doc => {
           console.log(doc.docs[0].id)
           console.log("Exist user name ")
+          socket.broadcast.emit('Login', false)
         })
         // ユーザ名が重複しなかったため新しくDBに格納する
         .catch(function(error) {
@@ -271,6 +272,7 @@ async function start () {
           db.collection('user').add({
             name: result
           })
+          socket.broadcast.emit('Login', true)
         })
 
       })
