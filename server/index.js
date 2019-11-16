@@ -64,14 +64,9 @@ async function start () {
 
       // websocketの確認
       var clients = io.sockets.clients()
-      var client_cnt = clients.length
       console.log(clients)
+      // console.log(clients.server.clientsCount)
       console.log('-------------------------------------------')
-      if (client_cnt != 0) {
-        for(var i = 0; i < client_cnt; i++){
-          console.log(io.transports[clients[i].id].name)
-        }
-      }
 
       // サーバー側で保持しているクイズをクライアント側に送信
       if (quizId != 0) {
