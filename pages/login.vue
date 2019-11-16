@@ -6,6 +6,7 @@
         <div class="control">
             <input class="input" type="text" placeholder="Text input" v-model="name">
         </div>
+        <p v-if='!login'>このグループ名はすでに使用済みです</p>
 				<a class="button is-primary" @click="login()">ユーザを作成しログイン</a>
 			</div>
   </section>
@@ -19,7 +20,8 @@ export default {
   },
   data() {
     return {
-			name: '',
+      name: '',
+      login: false,
     }
   },
   mounted() {
@@ -27,6 +29,12 @@ export default {
   },
   methods: {
 		login(){
+      // this.socket.on('Login', login => {
+      //   this.login = login
+      // })
+      if (this.login) {
+
+      }
       this.$router.push('/')
       this.socket.emit('name', this.name)
 
