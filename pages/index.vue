@@ -128,13 +128,17 @@ export default {
       timeLimit: 0,
       timeLimitButtonFlag: true,
       timeup: false,
+      reload: false,
     }
   },
+  created () {
+  },
   mounted() {
-    this.isAns = Boolean(sessionStorage.getItem('isAns'));
+    // this.sessionId = 
+    this.isAns = Boolean(sessionStorage.getItem('isAns'))
 
     // セッションストレージから名前を取り出す
-    this.name = sessionStorage.getItem('name');
+    this.name = sessionStorage.getItem('name')
     if(this.name == null){
 			this.$router.push('/login')
     }
@@ -145,10 +149,28 @@ export default {
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
+    // reconnectイベント後
+    this.socket.on('connect', () => {
+      console.log(this.socket.id);
+
+      // this.socketId = sessionStorage.getItem('sessionId') ? sessionStorage.getItem('sessionId') : this.socket.id
+      console.log(sessionStorage.getItem('sessionId'))
+      if (sessionStorage.getItem('sessionId')) {
+        console.log('すでにsocketidをセッションストレージに保存済み')
+      }
+      else {
+        sessionStorage.setItem('sessionId', this.socket.id)
+        console.log('socketidをセッションストレージに保存した')
+      }
+      this.reload = sessionStorage.getItem('sessionId') != this.socket.id
+      console.log(this.reload)
+      sessionStorage.setItem('sessionId', this.socket.id)
+    });
+
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
-			this.timeLimit = this.question.time
+      this.timeLimit = this.question.time
     })
 
 		// 制限時間の受け取り
@@ -210,8 +232,10 @@ export default {
       this.signout = false
     },
     out(){
-      sessionStorage.setItem('name', null)
-      sessionStorage.setItem('corNum', 0)
+      sessionStorage.removeItem('name')
+      sessionStorage.removeItem('corNum')
+      sessionStorage.removeItem('sessionId')
+      console.log('sessionIdをセッションストレージから削除')
 			this.$router.push('/login')
       this.socket.emit('delName', this.name)
     },
