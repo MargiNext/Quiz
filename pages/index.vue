@@ -179,6 +179,7 @@ export default {
 		  this.timeLimit = timeLimit
 		  if (timeLimit <= 0)  {
         	  this.timeup = true
+            sessionStorage.setItem('timeup', true)
         	  this.isAns =false
 		  }
 	  })
@@ -188,6 +189,7 @@ export default {
       this.showModal_re = result
       sessionStorage.setItem('showModal_re', true)
       this.timeup = false
+      sessionStorage.removeItem('timeup')
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
@@ -246,14 +248,13 @@ export default {
     question: function(){
       // リロード検知
       if (this.reload) {
-        console.log('trueばい')
         this.reload = false
         this.top = (this.question.id == 0) ? true : false
         this.corNum_before = sessionStorage.getItem('corNumBefore')
         this.ans.correct = sessionStorage.getItem('ansCorrect')
+        this.timeup = sessionStorage.getItem('timeup')
       }
       else {
-        console.log('falseばい')
         sessionStorage.removeItem('isAns')
         sessionStorage.removeItem('showModal_re')
         sessionStorage.removeItem('ansCorrect')
