@@ -29,7 +29,6 @@ export default {
 		login(){
       this.$router.push('/')
       this.socket.emit('name', this.name)
-      console.log(this.socket.id)
 
 			// セッションストレージを使用
 			sessionStorage.setItem('name', this.name);
