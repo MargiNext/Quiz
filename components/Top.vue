@@ -21,14 +21,19 @@ export default {
 		}
 	},
 	mounted(){
-    // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
-    this.socket = io()
+    	// VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
+    	this.socket = io()
 
 		// 参加人数の受け取り
-    this.socket.on('People', people => {
+    	this.socket.on('People', people => {
 			this.people = people
 			console.log(people)
-    })
+		})
+
+		// websocket.idをサーバに送信
+    	this.socket.on('TopSocket', topSocket => {
+			this.socket.emit('TopSocketId', this.socket.id)
+    	})
 	}
 }
 </script>

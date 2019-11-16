@@ -256,12 +256,6 @@ export default {
       sessionStorage.removeItem('corNum')
       sessionStorage.removeItem('corNumBefore')
       sessionStorage.removeItem('sessionId')
-      // websocketを閉じる
-      // this.socket.onclose = function(event) {
-      //   console.log(event)
-      //   console.log("切断しました")
-      // }
-      // this.socket.close()
       console.log('sessionIdをセッションストレージから削除')
 			this.$router.push('/login')
       this.socket.emit('delName', this.name)
@@ -292,9 +286,9 @@ export default {
         this.ans = {}
         this.timeup = false
         this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
-        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 
-        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;' 
+        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
+        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
+        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
       }
     }
   },
