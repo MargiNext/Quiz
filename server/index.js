@@ -52,7 +52,6 @@ async function start () {
   let countDownId = '' // カウントダウンID
   let timeLimit = 0 // 残り回答時間
   let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
-  let loginSocket = []
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -66,8 +65,6 @@ async function start () {
       // for debug: websocketの確認
       var clients = io.sockets.clients()
       console.log('socket count: ', clients.server.engine.clientsCount)
-      // console.log(clients.adapter.rooms)
-      // console.log('-------------------------------------------')
 
       // サーバー側で保持しているクイズをクライアント側に送信
       if (quizId != 0) {
@@ -79,7 +76,6 @@ async function start () {
         console.log(quiz)
 
         // for debug: websocketの確認
-        var clients = io.sockets.clients()
         console.log('socket count: ', clients.server.engine.clientsCount)
 
         // Top画面のSocketを解放するためのFlag
