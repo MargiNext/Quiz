@@ -143,8 +143,8 @@ export default {
     }
 
     // 最新の情報をとってくる
-    this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0 
-    this.corNum = sessionStorage.getItem('corNum') ? sessionStorage.getItem('corNum') : 0 
+    this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+    this.corNum = sessionStorage.getItem('corNum') ? sessionStorage.getItem('corNum') : 0
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
@@ -244,6 +244,12 @@ export default {
       sessionStorage.removeItem('corNum')
       sessionStorage.removeItem('corNumBefore')
       sessionStorage.removeItem('sessionId')
+      // websocketを閉じる
+      this.socket.onclose = function(event) {
+        console.log(event)
+        console.log("切断しました")
+      }
+      this.socket.close()
       console.log('sessionIdをセッションストレージから削除')
 			this.$router.push('/login')
       this.socket.emit('delName', this.name)

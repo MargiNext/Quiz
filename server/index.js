@@ -65,6 +65,9 @@ async function start () {
       // websocketの確認
       var clients = io.sockets.clients()
       console.log(clients)
+      // console.log(clients["httpServer"])
+      console.log(clients.server.engine.clientsCount)
+      // console.log(clients.engine)
       // console.log(clients.server.clientsCount)
       console.log('-------------------------------------------')
 
