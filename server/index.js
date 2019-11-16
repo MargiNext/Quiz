@@ -44,7 +44,8 @@ async function start () {
   let ansSelect = [] // 回答数
   let finalResult = [] // 最終結果時のデータ
   let userResult = {} // ユーザごとの正答数
-  let maxQuizNum = 4 // クイズの問題数
+  let maxQuizNum = 10 // クイズの問題数
+  let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
   let rank = 5 // 上位表彰者数
   let winner = [] // 上位入賞者
@@ -101,6 +102,10 @@ async function start () {
           {
             let key = ansSelect[i]
             counts[key] = (counts[key])? counts[key] + 1 : 1
+          }
+          // 回答者がいない選択肢に0を代入する
+          for(let i = 1;i <= maxAnsNum;i++) {
+            if (!counts[String(i)]) counts[String(i)] = 0
           }
           console.log("counts: ", counts)
 
