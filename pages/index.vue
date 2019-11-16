@@ -180,7 +180,8 @@ export default {
 		  if (timeLimit <= 0)  {
         	  this.timeup = true
             sessionStorage.setItem('timeup', true)
-        	  this.isAns =false
+            this.isAns =false
+            console.log('時間終了時点でしかここは発火しないよ')
 		  }
 	  })
 
@@ -215,7 +216,10 @@ export default {
       // idと正解かどうかもサーバに送る
       this.ans.id = this.name
       this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
+      // sessionStorage.setItem('ansCorrect', false)
       sessionStorage.setItem('ansCorrect', this.ans.correct)
+      console.log('結果をいれるときは(ans.cor)：' + this.ans.correct)
+      console.log('結果をいれるときは：' + sessionStorage.getItem('ansCorrect'))
 
       // サーバー側に回答を送信する
       this.socket.emit('Answer', this.ans)
@@ -252,13 +256,15 @@ export default {
         this.reload = false
         this.top = (this.question.id == 0) ? true : false
         this.corNum_before = sessionStorage.getItem('corNumBefore')
-        this.ans.correct = sessionStorage.getItem('ansCorrect')
+        // this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
+        console.log('問題は：' + this.ans.correct)
         this.timeup = sessionStorage.getItem('timeup')
+        console.log('timeup:' + sessionStorage.getItem('timeup'))
       }
       else {
         sessionStorage.removeItem('isAns')
         sessionStorage.removeItem('showModal_re')
-        sessionStorage.removeItem('ansCorrect')
+        // sessionStorage.removeItem('ansCorrect')
         this.isAns = false
         this.showModal = false
         this.showModal_re = false
