@@ -6,8 +6,7 @@
 		<div id="padding_ud_4030" class="half-circle-spinner" style="margin: auto;">
 			<div class="circle circle-1" style="text-align: center;"></div>
 			<div class="circle circle-2" style="text-align: center;"></div>
-			<div id="padding_u_20">30</div>
-			<!-- <div id="padding_u_20">{{ this.people }}</div> -->
+			<div id="padding_u_20">{{ this.people }}</div>
 		</div>
 	</div>
 </template>

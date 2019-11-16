@@ -127,27 +127,51 @@ export default {
       isAns: false,
       timeLimit: 0,
       timeup: false,
+      reload: false,
     }
   },
+  created () {
+  },
   mounted() {
-    this.isAns = Boolean(sessionStorage.getItem('isAns'));
+    this.isAns = Boolean(sessionStorage.getItem('isAns'))
+    this.showModal_re = Boolean(sessionStorage.getItem('showModal_re'))
 
     // セッションストレージから名前を取り出す
-    this.name = sessionStorage.getItem('name');
+    this.name = sessionStorage.getItem('name')
     if(this.name == null){
 			this.$router.push('/login')
     }
 
     // 最新の情報をとってくる
-    this.corNum = sessionStorage.getItem('corNum') ? sessionStorage.getItem('corNum') : 0 ;
+    this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0 
+    this.corNum = sessionStorage.getItem('corNum') ? sessionStorage.getItem('corNum') : 0 
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
+    // reconnectイベント後
+    this.socket.on('connect', () => {
+      console.log(this.socket.id)
+
+      // this.socketId = sessionStorage.getItem('sessionId') ? sessionStorage.getItem('sessionId') : this.socket.id
+      console.log(sessionStorage.getItem('sessionId'))
+      if (sessionStorage.getItem('sessionId')) {
+        console.log('すでにsocketidをセッションストレージに保存済み')
+      }
+      else {
+        sessionStorage.setItem('sessionId', this.socket.id)
+        console.log('socketidをセッションストレージに保存した')
+      }
+      this.reload = sessionStorage.getItem('sessionId') != this.socket.id
+      console.log(this.reload)
+      sessionStorage.setItem('sessionId', this.socket.id)
+    });
+
+
     // 問題の受け取り
     this.socket.on('Question', question => {
       this.question = questions[question.id]
-			this.timeLimit = this.question.time
+      this.timeLimit = this.question.time
     })
 
 	  // 制限時間の受け取り
@@ -162,8 +186,7 @@ export default {
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
       this.showModal_re = result
-      sessionStorage.setItem('isAns', '')
-      this.isAns = false
+      sessionStorage.setItem('showModal_re', true)
       this.timeup = false
     })
 
@@ -190,6 +213,7 @@ export default {
       // idと正解かどうかもサーバに送る
       this.ans.id = this.name
       this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
+      sessionStorage.setItem('ansCorrect', this.ans.correct)
 
       // サーバー側に回答を送信する
       this.socket.emit('Answer', this.ans)
@@ -210,24 +234,42 @@ export default {
       this.signout = false
     },
     out(){
-      sessionStorage.setItem('name', null)
-      sessionStorage.setItem('corNum', 0)
+      sessionStorage.removeItem('name')
+      sessionStorage.removeItem('corNum')
+      sessionStorage.removeItem('sessionId')
+      console.log('sessionIdをセッションストレージから削除')
 			this.$router.push('/login')
       this.socket.emit('delName', this.name)
     },
   },
   watch: {
     question: function(){
-      this.showModal = false
-      this.showModal_re = false
-      this.top = (this.question.id == 0) ? true : false
-      this.corNum_before = this.corNum
-      this.ans = {}
-      this.timeup = false
-      this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-      this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
-      this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 
-      this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;' 
+      // リロード検知
+      if (this.reload) {
+        console.log('trueばい')
+        this.reload = false
+        this.top = (this.question.id == 0) ? true : false
+        this.corNum_before = sessionStorage.getItem('corNumBefore')
+        this.ans.correct = sessionStorage.getItem('ansCorrect')
+      }
+      else {
+        console.log('falseばい')
+        sessionStorage.removeItem('isAns')
+        sessionStorage.removeItem('showModal_re')
+        sessionStorage.removeItem('ansCorrect')
+        sessionStorage.setItem('corNumBefore', this.corNum_before)
+        this.isAns = false
+        this.showModal = false
+        this.showModal_re = false
+        this.top = (this.question.id == 0) ? true : false
+        this.corNum_before = this.corNum
+        this.ans = {}
+        this.timeup = false
+        this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
+        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
+        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 
+        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;' 
+      }
     }
   },
 }
