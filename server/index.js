@@ -63,14 +63,11 @@ async function start () {
       // 接続されたクライアントのidをコンソールに表示
       console.log('id: ' + socket.id + ' is connected')
 
-      // websocketの確認
+      // for debug: websocketの確認
       var clients = io.sockets.clients()
-      // console.log(clients)
-      // console.log(clients["httpServer"])
-      console.log(clients.server.engine.clientsCount)
-      // console.log(clients.engine)
-      // console.log(clients.server.clientsCount)
-      console.log('-------------------------------------------')
+      console.log('socket count: ', clients.server.engine.clientsCount)
+      // console.log(clients.adapter.rooms)
+      // console.log('-------------------------------------------')
 
       // サーバー側で保持しているクイズをクライアント側に送信
       if (quizId != 0) {
@@ -80,6 +77,15 @@ async function start () {
       // 問題の受け取り
       socket.on('QuizId', quiz => {
         console.log(quiz)
+
+        // for debug: websocketの確認
+        var clients = io.sockets.clients()
+        console.log('socket count: ', clients.server.engine.clientsCount)
+
+        // Top画面のSocketを解放するためのFlag
+        if (quiz != 0) {
+          socket.broadcast.emit('TopSocket', true)
+        }
 
         // サーバーで保持している変数にクイズidを格納する
         quizId = quiz
@@ -265,9 +271,6 @@ async function start () {
 
       // nameの受け取り，クライアントへ送信
       socket.on('name', result => {
-        console.log('people socket: ', socket)
-        console.log('people socket id: ', socket.id)
-        loginSocket.push(socket.id)
         result ? people++ : null
 
         // for debug
@@ -284,6 +287,9 @@ async function start () {
           db.collection('user').add({
             name: result
           })
+          // ログイン時のSocketを解放
+          console.log('login socket id: ', socket.id, 'disconnected')
+          io.sockets.connected[socket.id].disconnect()
         })
 
       })
@@ -292,6 +298,14 @@ async function start () {
       socket.on('delName', result => {
         result ? people-- : null
       })
+
+      // Top画面のSocketを解放
+      socket.on('TopSocketId', topSocketId => {
+        console.log('top socket id: ', topSocketId, 'disconnected')
+        io.sockets.connected[topSocketId].disconnect()
+      })
+
+      // 参加人数を常に送信
       socket.broadcast.emit('People', people)
     })
   }
