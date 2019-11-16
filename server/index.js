@@ -49,6 +49,9 @@ async function start () {
   let people = 0 // 参加人数
   let rank = 5 // 上位表彰者数
   let winner = [] // 上位入賞者
+  let countDownId = '' // カウントダウンID
+  let timeLimit = 0 // 残り回答時間
+  let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -70,6 +73,9 @@ async function start () {
 
         // サーバーで保持している変数にクイズidを格納する
         quizId = quiz
+
+        // サーバーで保持している変数にクイズの制限時間を格納する
+        timeLimit = quiz.time
 
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Question', quiz)
@@ -209,8 +215,19 @@ async function start () {
       })
 
       // トリガ（timeLimit）の受け取り，クライアントへ送信
-      socket.on('timeLimit', timeLimit => {
-        socket.broadcast.emit('timeLimit', timeLimit)
+      socket.on('timeLimit', timeLimitFlag => {
+        if (timeLimitButtonFlag) {
+          timeLimitButtonFlag = false
+          // 残り回答時間を送るようにする
+			    countDownId = setInterval(() => {
+            socket.broadcast.emit('timeLimit', timeLimit)
+				    timeLimit--
+				    if(timeLimit < 0){
+              clearInterval(countDownId)
+              timeLimitButtonFlag = true
+            }
+			    }, 1000)
+        }
       })
 
       // 回答の受け取り
