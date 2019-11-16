@@ -4,15 +4,15 @@
 
     <div class="colmuns">
       <div v-for="(result, index) in final_result" :key="index" id="padding_d_10">
-        <div :class="select_btn" :style="pink">
+        <div v-if='rank_count[result.rank - 1]' :class="rank_component">
           <div :class="[col, textSize]">
             <div class="column is-2 is-offset-1">
               {{ result.rank }}位
             </div>
-            <div v-if='rank_count[result.rank - 1]' class="column is-6 css-fade">
+            <div class="column is-6">
               {{ result.userId }}
             </div>
-            <div v-if='rank_count[result.rank - 1]' class="column is-2 css-fade">
+            <div class="column is-2">
               {{ result.correctNum }}
             </div>
           </div>
@@ -36,14 +36,13 @@ export default {
   data() {
     return {
       col: 'columns',
-      text_size: 'is-size-3',
+      text_size: 'is-size-3 css-fade',
       resetColor_1: '',
       resetColor_2: '',
       resetColor_3: '',
       resetColor_4: '',
-      select_btn: "column is-large is-10 is-offset-1 is-outlined",
+      rank_component: "column is-large is-10 is-offset-1 is-outlined css-fade",
       final_result: this.$route.query,
-      pink: 'background-color: #FFF0F5; color: black; border-radius: 20px;',
       color_text_1: 'background-color: #209cee; border-color: #209cee; color: #209cee;',
       color_text_2: 'background-color: #3273dc; border-color: #3273dc; color: #3273dc;',
       color_text_3: 'background-color: #00d1b2; border-color: #00d1b2; color: #00d1b2;',
@@ -104,10 +103,23 @@ export default {
   animation-iteration-count:1;
   animation-direction:normal;
   animation-fill-mode: forwards;
-  color: #FFF0F5;
+  color: transparent;
+  background-color: transparent;
 }
 @keyframes fade-in1 {
-  0% {opacity: 0; color: black; transform: translate3d(0,-20px,0);}
-  100% {opacity: 1; color: black; transform: translate3d(0,0,0);}
+  0% {
+    opacity: 0;
+    color: black;
+    background-color: #FFF0F5;
+    border-radius: 20px;
+    transform: translate3d(0,-20px,0);
+  }
+  100% {
+    opacity: 1;
+    color: black;
+    background-color: #FFF0F5;
+    border-radius: 20px;
+    transform: translate3d(0,0,0);
+  }
 }
 </style>

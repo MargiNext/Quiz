@@ -97,7 +97,8 @@ export default {
 			count_2: 0,
 			timeLimit: 0,
 			countDownId: '',
-			countD: 'text-align: center; color: white;'
+			countD: 'text-align: center; color: white;',
+			timeup: false,
     }
   },
   mounted() {
