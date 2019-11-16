@@ -238,6 +238,7 @@ export default {
     out(){
       sessionStorage.removeItem('name')
       sessionStorage.removeItem('corNum')
+      sessionStorage.removeItem('corNumBefore')
       sessionStorage.removeItem('sessionId')
       console.log('sessionIdをセッションストレージから削除')
 			this.$router.push('/login')
@@ -258,12 +259,12 @@ export default {
         sessionStorage.removeItem('isAns')
         sessionStorage.removeItem('showModal_re')
         sessionStorage.removeItem('ansCorrect')
-        sessionStorage.setItem('corNumBefore', this.corNum_before)
         this.isAns = false
         this.showModal = false
         this.showModal_re = false
         this.top = (this.question.id == 0) ? true : false
         this.corNum_before = this.corNum
+        sessionStorage.setItem('corNumBefore', this.corNum_before)
         this.ans = {}
         this.timeup = false
         this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
