@@ -268,7 +268,6 @@ async function start () {
 
       // nameの受け取り，クライアントへ送信
       socket.on('name', result => {
-        result ? people++ : null
 
         // for debug
         console.log(result)
@@ -278,7 +277,8 @@ async function start () {
           console.log(doc.docs[0].id)
           console.log("Exist user name ")
           // ログインの失敗をクライアントに送信
-          socket.broadcast.emit('Login', false)
+          io.to(socket.id).emit('Login', false)
+          // socket.broadcast.emit('Login', false)
         })
         // ユーザ名が重複しなかったため新しくDBに格納する
         .catch(function(error) {
@@ -287,17 +287,22 @@ async function start () {
             name: result
           })
           // ログインの成功をクライアントに送信
-          socket.broadcast.emit('Login', true)
+          io.to(socket.id).emit('Login', true)
+          // socket.broadcast.emit('Login', true)
           // ログイン時のSocketを解放
-          console.log('login socket id: ', socket.id, 'disconnected')
           io.sockets.connected[socket.id].disconnect()
+          console.log('login socket id: ', socket.id, 'disconnected')
+          people++
+          console.log(people)
+          socket.broadcast.emit('People', people)
         })
 
       })
 
       // delNameの受け取り，クライアントへ送信
       socket.on('delName', result => {
-        result ? people-- : null
+        people--
+        socket.broadcast.emit('People', people)
       })
 
       // Top画面のSocketを解放
@@ -305,9 +310,6 @@ async function start () {
         console.log('top socket id: ', topSocketId, 'disconnected')
         io.sockets.connected[topSocketId].disconnect()
       })
-
-      // 参加人数を常に送信
-      socket.broadcast.emit('People', people)
     })
   }
   consola.ready({
