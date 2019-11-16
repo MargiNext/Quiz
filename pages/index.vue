@@ -144,8 +144,8 @@ export default {
     }
 
     // 最新の情報をとってくる
-    this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0 
-    this.corNum = sessionStorage.getItem('corNum') ? sessionStorage.getItem('corNum') : 0 
+    this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+    this.corNum = sessionStorage.getItem('corNum') ? sessionStorage.getItem('corNum') : 0
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
@@ -286,9 +286,9 @@ export default {
         this.ans = {}
         this.timeup = false
         this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;' 
-        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;' 
-        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;' 
+        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
+        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
+        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
       }
     }
   },

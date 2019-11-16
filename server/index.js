@@ -62,6 +62,11 @@ async function start () {
       // 接続されたクライアントのidをコンソールに表示
       console.log('id: ' + socket.id + ' is connected')
 
+      // for debug: websocketの確認
+      var clients = io.sockets.clients()
+      console.log('socket count: ', clients.server.engine.clientsCount)
+      // console.log(clients.adapter.rooms)
+
       // サーバー側で保持しているクイズをクライアント側に送信
       if (quizId != 0) {
           socket.emit('Question', quizId)
@@ -70,6 +75,14 @@ async function start () {
       // 問題の受け取り
       socket.on('QuizId', quiz => {
         console.log(quiz)
+
+        // for debug: websocketの確認
+        console.log('socket count: ', clients.server.engine.clientsCount)
+
+        // Top画面のSocketを解放するためのFlag
+        if (quiz != 0) {
+          socket.broadcast.emit('TopSocket', true)
+        }
 
         // サーバーで保持している変数にクイズidを格納する
         quizId = quiz
@@ -264,6 +277,7 @@ async function start () {
         .then(doc => {
           console.log(doc.docs[0].id)
           console.log("Exist user name ")
+          // ログインの失敗をクライアントに送信
           socket.broadcast.emit('Login', false)
         })
         // ユーザ名が重複しなかったため新しくDBに格納する
@@ -272,7 +286,11 @@ async function start () {
           db.collection('user').add({
             name: result
           })
+          // ログインの成功をクライアントに送信
           socket.broadcast.emit('Login', true)
+          // ログイン時のSocketを解放
+          console.log('login socket id: ', socket.id, 'disconnected')
+          io.sockets.connected[socket.id].disconnect()
         })
 
       })
@@ -281,6 +299,14 @@ async function start () {
       socket.on('delName', result => {
         result ? people-- : null
       })
+
+      // Top画面のSocketを解放
+      socket.on('TopSocketId', topSocketId => {
+        console.log('top socket id: ', topSocketId, 'disconnected')
+        io.sockets.connected[topSocketId].disconnect()
+      })
+
+      // 参加人数を常に送信
       socket.broadcast.emit('People', people)
     })
   }
