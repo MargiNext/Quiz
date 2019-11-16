@@ -52,6 +52,7 @@ async function start () {
   let countDownId = '' // カウントダウンID
   let timeLimit = 0 // 残り回答時間
   let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
+  let loginSocket = []
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -64,7 +65,7 @@ async function start () {
 
       // websocketの確認
       var clients = io.sockets.clients()
-      console.log(clients)
+      // console.log(clients)
       // console.log(clients["httpServer"])
       console.log(clients.server.engine.clientsCount)
       // console.log(clients.engine)
@@ -264,6 +265,9 @@ async function start () {
 
       // nameの受け取り，クライアントへ送信
       socket.on('name', result => {
+        console.log('people socket: ', socket)
+        console.log('people socket id: ', socket.id)
+        loginSocket.push(socket.id)
         result ? people++ : null
 
         // for debug

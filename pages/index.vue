@@ -257,11 +257,11 @@ export default {
       sessionStorage.removeItem('corNumBefore')
       sessionStorage.removeItem('sessionId')
       // websocketを閉じる
-      this.socket.onclose = function(event) {
-        console.log(event)
-        console.log("切断しました")
-      }
-      this.socket.close()
+      // this.socket.onclose = function(event) {
+      //   console.log(event)
+      //   console.log("切断しました")
+      // }
+      // this.socket.close()
       console.log('sessionIdをセッションストレージから削除')
 			this.$router.push('/login')
       this.socket.emit('delName', this.name)
