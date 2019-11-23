@@ -3,7 +3,9 @@
       <div class="field">
         <div class="is-mobile" id="padding_u_100">
           <p style="text-align: center; font-size: 30px;">SI部</p>
-          <p style="text-align: center; font-size: 40px;">大忘年会</p>
+          <div style="text-align: center; font-size: 40px;">
+            <div class="rot1">忘</div><div class="rot2">年</div><div class="rot3">会</div>
+          </div>
         </div>
         <div class="columns is-mobile" id="padding_u_100">
           <div :class="box">
@@ -72,5 +74,26 @@ export default {
 <style scoped>
 #padding_u_100 {
   padding: 100px 0px 0px;
+  font-family: 'Kosugi Maru', sans-serif;
+}
+.rot1 {
+	animation: font-anime 0.8s infinite;
+}
+.rot1 {
+	animation: font-anime 1.2s infinite alternate;
+}
+.rot2 {
+  transform: rotate(-5deg);
+}
+.rot3 {
+  transform: rotate(5deg);
+}
+@keyframes font-anime {
+	0% {
+    transform: rotate(-10deg);
+	}
+	100%{
+    transform: rotate(10deg);
+	}
 }
 </style>
