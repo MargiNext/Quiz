@@ -69,7 +69,7 @@ export default {
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
-    // コンソールへ戻るためのトリガの受け取り
+    // 問題へ戻るためのトリガの受け取り
     this.socket.on('goScreen', result => {
 			this.$router.push('/screen')
     })

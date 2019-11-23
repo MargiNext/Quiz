@@ -210,6 +210,11 @@ export default {
       this.isAns = false
     })
 
+    // 最終結果発表トリガの受け取り
+    this.socket.on('finalResult', result => {
+			this.$router.push({ path: '/result'})
+    })
+
     // コンポーネントがマウントされてから1秒間はローディングする
     setTimeout(() => {
       this.isLoading = false
