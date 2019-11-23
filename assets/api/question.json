@@ -1,13 +1,13 @@
 [
 	{
 		"id": "0",
-		"num": "",
-		"content": "",
-		"answer": "0",
-		"select_1": "赤",
-		"select_2": "黃",
-		"select_3": "緑",
-		"select_4": "青",
+		"num": "【練習問題】",
+		"content": "今は何月でしょうか",
+		"answer": "4",
+		"select_1": "9月",
+		"select_2": "10月",
+		"select_3": "11月",
+		"select_4": "12月",
 		"time": "10"
 	},
 	{

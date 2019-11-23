@@ -5,7 +5,11 @@
     <div class="colmuns">
       <div v-for="(result, index) in final_result" :key="index" id="padding_d_10">
         <div v-if='rank_count[result.rank - 1]' :class="rank_component">
-          <div :class="[col, textSize]">
+          <div :class="[col, (result.rank==1) ? rank_1 : 
+            result.rank==2 ? rank_2 : 
+            result.rank==3 ? rank_3 : 
+            result.rank==4 || result.rank==5 || result.rank==6 || result.rank==7 || result.rank==8 || result.rank==9  || result.rank==10 ? rank_4_10 : 
+            rank_other]">
             <div class="column is-2 is-offset-1">
               {{ result.rank }}位
             </div>
@@ -36,7 +40,12 @@ export default {
   data() {
     return {
       col: 'columns',
-      text_size: 'is-size-3 css-fade',
+      text_size: 'is-size-4',
+      rank_1: 'rank_1',
+      rank_2: 'rank_2',
+      rank_3: 'rank_3',
+      rank_4_10: 'rank_4_10',
+      rank_other: 'rank_other',
       resetColor_1: '',
       resetColor_2: '',
       resetColor_3: '',
@@ -60,7 +69,7 @@ export default {
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
-    // コンソールへ戻るためのトリガの受け取り
+    // 問題へ戻るためのトリガの受け取り
     this.socket.on('goScreen', result => {
 			this.$router.push('/screen')
     })
@@ -73,11 +82,11 @@ export default {
     })
     
   },
-  computed: {
-    textSize: function(){
-      return (Object.keys(this.final_result).length > 5) ? 'is-size-3' : 'is-size-2'
-    }
-  },
+  // computed: {
+  //   textSize: function(){
+  //     return (Object.keys(this.final_result).length > 5) ? 'is-size-3' : 'is-size-2'
+  //   }
+  // },
   watch: {
   },
 }
@@ -121,5 +130,23 @@ export default {
     border-radius: 20px;
     transform: translate3d(0,0,0);
   }
+}
+.rank_1 {
+  font-size: 60px;
+  font-weight: bold;
+}
+.rank_2 {
+  font-size: 50px;
+  font-weight: bold;
+}
+.rank_3 {
+  font-size: 40px;
+  font-weight: bold;
+}
+.rank_4_10 {
+  font-size: 30px;
+}
+.rank_other {
+  font-size: 25px;
 }
 </style>

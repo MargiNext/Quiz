@@ -107,9 +107,18 @@ export default {
 
     // 問題の受け取り
     this.socket.on('Question', question => {
-      this.question = questions[question.id]
-			this.timeLimit = this.question.time
-	})
+      if (question.id != null) {
+        this.question = questions[question.id]
+        this.timeLimit = this.question.time
+      }
+      this.top = question.top
+		})
+
+    // 問題の受け取り
+    // this.socket.on('Question', question => {
+    //   this.question = questions[question.id]
+		// 	this.timeLimit = this.question.time
+		// })
 
 	// 制限時間の受け取り
 	this.socket.on('timeLimit', timeLimit => {
@@ -204,7 +213,8 @@ export default {
     question: function(){
 			this.show = false
 			this.rateShow = false
-      this.top = (this.question.id == 0) ? true : false
+			this.top = (this.question.id == null) ? true : false
+      // this.top = (this.question.id == 0) ? true : false
       this.corNum_before = this.corNum
       this.color_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
       this.color_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'

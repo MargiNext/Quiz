@@ -4,11 +4,11 @@
       <div class="modal-wrapper">
         <!-- <div class="modal-container"> -->
 					<div class="load-wrapper">
-						<p>回答送信中...</p>
+						<p>回答を受け付けました！</p>
 						<div class="load">
-							<div class="line"></div>
-							<div class="line"></div>
-							<div class="line"></div>
+							<div class="line" id="color_1"></div>
+							<div class="line" id="color_2"></div>
+							<div class="line" id="color_3"></div>
 						</div>
 					</div>
 					<!-- <button class="modal-default-button" @click="$emit('close')">
@@ -35,7 +35,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, .6);
   display: table;
   transition: opacity .3s ease;
 }
@@ -47,6 +47,9 @@ export default {
 
 .load-wrapper {
 	text-align:  center;
+  color: white;
+  font-size: 20px;
+  font-weight: 900;
 }
 .modal-container {
   width: 300px;
@@ -101,7 +104,15 @@ export default {
     width: 15px;
     height: 15px;
     border-radius: 15px;
-    background-color: #4b9cdb;
+}
+#color_1 {
+    background-color: #FFCC66;
+}
+#color_2 {
+    background-color: #00FF99;
+}
+#color_3 {
+    background-color: #00CCFF;
 }
 .load .line:nth-last-child(1) {animation: loading .6s .1s linear infinite;}
 .load .line:nth-last-child(2) {animation: loading .6s .2s linear infinite;}
