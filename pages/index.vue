@@ -203,6 +203,7 @@ export default {
       sessionStorage.setItem('showModal_re', true)
       this.timeup = false
       sessionStorage.removeItem('timeup')
+      this.isAns = false
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
