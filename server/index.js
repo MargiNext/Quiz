@@ -68,7 +68,7 @@ async function start () {
       // console.log(clients.adapter.rooms)
 
       // サーバー側で保持しているクイズをクライアント側に送信
-      if (quizId != 0) {
+      if (quizId != null) {
           socket.emit('Question', quizId)
       }
 
@@ -85,7 +85,7 @@ async function start () {
           socket.broadcast.emit('TopSocket', true)
         }
 
-        if (quiz.id) {
+        if (quiz.id != null) {
           // サーバーで保持している変数にクイズidを格納する
           quizId = quiz
         }
