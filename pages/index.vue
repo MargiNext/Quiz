@@ -246,9 +246,11 @@ export default {
       // サーバー側に回答を送信する
       this.socket.emit('Answer', this.ans)
 
-      // 正解数をセッションストレージに格納
-      this.ans.correct ? this.corNum++ : this.corNum
-      sessionStorage.setItem('corNum', this.corNum)
+      if (this.question.id != 0){
+        // 正解数をセッションストレージに格納
+        this.ans.correct ? this.corNum++ : this.corNum
+        sessionStorage.setItem('corNum', this.corNum)
+      }
 
       this.loading = true
       this.showModal = true
