@@ -2,9 +2,11 @@
   <section class="section">
     <div id="wrapper" class="container">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
+      <!-- Topのときもindex.jsのロジックを変えるのが手間なのでtimeに10を入れておきます -->
+      <button class="button is-info" @click="send(true,null,Number(10))">Top</button>
       <div v-for="(question, index) in question" :key="index">
-        <button v-if="question.id == 0" class="button is-info" @click="send(Number(question.id),Number(question.time))">Top</button>
-        <button v-else class="button is-info" @click="send(Number(question.id),Number(question.time))">Q{{ Number(question.id)}}</button>
+        <button v-if="question.id == 0" class="button is-info" @click="send(false,Number(question.id),Number(question.time))">練習問題</button>
+        <button v-else class="button is-info" @click="send(false,Number(question.id),Number(question.time))">Q{{ Number(question.id)}}</button>
       </div>
 			<button class="button is-info" @click="rate_trigger(true)">回答割合を表示</button>
 			<button class="button is-info" @click="ans_trigger(true)">答えを表示</button>
@@ -55,8 +57,9 @@ export default {
     }, 1000)
   },
   methods: {
-    send(quizId, quizTime) {
+    send(isTop, quizId, quizTime) {
       let quiz = {
+        top: isTop,
         id: quizId,
         time: quizTime,
       }

@@ -57,6 +57,7 @@
       <top />
     </div>
     <div class="colmuns" v-else>
+    <!-- <div class="colmuns"> -->
       <div id="padding_timer">
         <div :class="timer" class="tag is-danger">{{ timeLimit }}</div>
       </div>
@@ -182,8 +183,11 @@ export default {
 
     // 問題の受け取り
     this.socket.on('Question', question => {
-      this.question = questions[question.id]
-      this.timeLimit = this.question.time
+      if (question.id != null) {
+        this.question = questions[question.id]
+        this.timeLimit = this.question.time
+      }
+      this.top = question.top
     })
 
 	  // 制限時間の受け取り
@@ -267,7 +271,8 @@ export default {
       // リロード検知
       if (this.reload) {
         this.reload = false
-        this.top = (this.question.id == 0) ? true : false
+        this.top = (this.question.id == null) ? true : false
+        // this.top = (this.question.id == 0) ? true : false
         this.corNum_before = sessionStorage.getItem('corNumBefore')
         // this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
         console.log('問題は：' + this.ans.correct)
@@ -281,7 +286,8 @@ export default {
         this.isAns = false
         this.showModal = false
         this.showModal_re = false
-        this.top = (this.question.id == 0) ? true : false
+        this.top = (this.question.id == null) ? true : false
+        // this.top = (this.question.id == 0) ? true : false
         this.corNum_before = this.corNum
         sessionStorage.setItem('corNumBefore', this.corNum_before)
         this.ans = {}
