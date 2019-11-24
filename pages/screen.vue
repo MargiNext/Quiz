@@ -109,9 +109,12 @@ export default {
     this.socket.on('Question', question => {
       if (question.id != null) {
         this.question = questions[question.id]
-        this.timeLimit = this.question.time
+				this.timeLimit = this.question.time
+				this.top = question.top
       }
-      this.top = question.top
+      else {
+        this.top = true
+      }
 		})
 
     // 問題の受け取り
