@@ -47,11 +47,30 @@ async function start () {
   let maxQuizNum = 10 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
-  let rank = 5 // 上位表彰者数
+  let rank = 10 // 上位表彰者数
   let winner = [] // 上位入賞者
   let countDownId = '' // カウントダウンID
   let timeLimit = 0 // 残り回答時間
   let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
+  let observer = db.collection('user') // userデータベース
+
+  // userデータベースの監視
+  observer.onSnapshot(querySnapshot => {
+    querySnapshot.docChanges().forEach(change => {
+    if (change.type === 'added') {
+      console.log('New name: ', change.doc.data()['name']);
+      people++
+    }
+    if (change.type === 'modified') {
+      console.log('Modified name: ', change.doc.data()['name']);
+    }
+    if (change.type === 'removed') {
+      console.log('Removed name: ', change.doc.data()['name']);
+      if (people > 0) people--
+      }
+    console.log('people num: ', people)
+    })
+  })
 
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
@@ -67,9 +86,14 @@ async function start () {
       console.log('socket count: ', clients.server.engine.clientsCount)
       // console.log(clients.adapter.rooms)
 
+      // サーバー側で保持している参加人数をクライアント側に送信
+      if (people > -1) {
+        socket.emit('People', people)
+      }
+
       // サーバー側で保持しているクイズをクライアント側に送信
       if (quizId != null) {
-          socket.emit('Question', quizId)
+        socket.emit('Question', quizId)
       }
 
       // 問題の受け取り
@@ -281,7 +305,6 @@ async function start () {
           console.log("Exist user name ")
           // ログインの失敗をクライアントに送信
           io.to(socket.id).emit('Login', false)
-          // socket.broadcast.emit('Login', false)
         })
         // ユーザ名が重複しなかったため新しくDBに格納する
         .catch(function(error) {
@@ -291,21 +314,26 @@ async function start () {
           })
           // ログインの成功をクライアントに送信
           io.to(socket.id).emit('Login', true)
-          // socket.broadcast.emit('Login', true)
           // ログイン時のSocketを解放
           io.sockets.connected[socket.id].disconnect()
           console.log('login socket id: ', socket.id, 'disconnected')
-          people++
-          console.log(people)
-          socket.broadcast.emit('People', people)
+          // 実際の人数の追加は後で行われる（リアルタイムベースによる更新時）
+          socket.broadcast.emit('People', people+1)
         })
-
       })
 
       // delNameの受け取り，クライアントへ送信
       socket.on('delName', result => {
-        people--
-        socket.broadcast.emit('People', people)
+        // userをDBから削除
+        db.collection('user').where('name','==',result).get()
+        .then(doc => {
+          db.collection('user').doc(doc.docs[0].id).delete()
+          .catch(function(error) {
+            console.log('Error delete name: ', result)
+          })
+        })
+        // 実際の人数減少は後で行われる（リアルタイムベースによる更新時）
+        socket.broadcast.emit('People', people-1)
       })
 
       // Top画面のSocketを解放
