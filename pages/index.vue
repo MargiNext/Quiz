@@ -126,7 +126,7 @@ export default {
       },
       signout: false,
       isAns: false,
-      timeLimit: 30,
+      timeLimit: 0,
       timeup: false,
       reload: false,
       Login: null,
@@ -185,7 +185,7 @@ export default {
     this.socket.on('Question', question => {
       if (question.id != null) {
         this.question = questions[question.id]
-        // this.timeLimit = this.question.time
+        this.timeLimit = this.question.time
         this.top = question.top
       }
       else {
@@ -196,13 +196,13 @@ export default {
 	  // 制限時間の受け取り
 	  this.socket.on('timeLimit', timeLimit => {
 		  this.timeLimit = timeLimit
+		  if (timeLimit <= 0)  {
+        	  this.timeup = true
+            sessionStorage.setItem('timeup', true)
+            this.isAns =false
+            console.log('時間終了時点でしかここは発火しないよ')
+		  }
 	  })
-    if (this.timeLimit <= 0)  {
-          this.timeup = true
-          sessionStorage.setItem('timeup', true)
-          this.isAns =false
-          console.log('時間終了時点でしかここは発火しないよ')
-    }
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
