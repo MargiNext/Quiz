@@ -53,6 +53,25 @@ async function start () {
   let timeLimit = 0 // 残り回答時間
   let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
 
+  // userデータベースの監視
+  let observer = db.collection('user')
+  .onSnapshot(querySnapshot => {
+    querySnapshot.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        console.log('New name: ', change.doc.data()['name']);
+        people++
+      }
+      if (change.type === 'modified') {
+        console.log('Modified name: ', change.doc.data()['name']);
+      }
+      if (change.type === 'removed') {
+        console.log('Removed name: ', change.doc.data()['name']);
+        people--
+      }
+      console.log('people num: ', people)
+    })
+  })
+
   function socketStart(server) {
     // Websocketサーバーインスタンスを生成する
     const io = require('socket.io').listen(server)
@@ -295,8 +314,9 @@ async function start () {
           // ログイン時のSocketを解放
           io.sockets.connected[socket.id].disconnect()
           console.log('login socket id: ', socket.id, 'disconnected')
-          people++
-          console.log(people)
+          // 人数のカウントはデータベース監視で行う
+          // people++
+          // console.log(people)
           socket.broadcast.emit('People', people)
         })
 
