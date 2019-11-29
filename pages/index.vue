@@ -196,13 +196,13 @@ export default {
 	  // 制限時間の受け取り
 	  this.socket.on('timeLimit', timeLimit => {
 		  this.timeLimit = timeLimit
-		  if (timeLimit <= 0)  {
-        	  this.timeup = true
-            sessionStorage.setItem('timeup', true)
-            this.isAns =false
-            console.log('時間終了時点でしかここは発火しないよ')
-		  }
 	  })
+    if (this.timeLimit <= 0)  {
+          this.timeup = true
+          sessionStorage.setItem('timeup', true)
+          this.isAns =false
+          console.log('時間終了時点でしかここは発火しないよ')
+    }
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
