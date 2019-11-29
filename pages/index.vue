@@ -126,7 +126,7 @@ export default {
       },
       signout: false,
       isAns: false,
-      timeLimit: 0,
+      timeLimit: 30,
       timeup: false,
       reload: false,
       Login: null,
