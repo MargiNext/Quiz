@@ -47,7 +47,7 @@ async function start () {
   let maxQuizNum = 10 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
-  let rank = 5 // 上位表彰者数
+  let rank = 10 // 上位表彰者数
   let winner = [] // 上位入賞者
   let countDownId = '' // カウントダウンID
   let timeLimit = 0 // 残り回答時間
