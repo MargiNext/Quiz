@@ -324,8 +324,16 @@ async function start () {
 
       // delNameの受け取り，クライアントへ送信
       socket.on('delName', result => {
-        people--
-        socket.broadcast.emit('People', people)
+        // userをDBから削除
+        db.collection('user').where('name','==',result).get()
+        .then(doc => {
+          db.collection('user').doc(doc.docs[0].id).delete()
+          .catch(function(error) {
+            console.log('Error delete name: ', result)
+          })
+        })
+        // 実際の人数減少は後で行われる（リアルタイムベースによる更新時）
+        socket.broadcast.emit('People', people-1)
       })
 
       // Top画面のSocketを解放
