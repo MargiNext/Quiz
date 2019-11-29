@@ -61,7 +61,7 @@
       <div id="padding_timer">
         <div :class="timer" class="tag is-danger">{{ timeLimit }}</div>
       </div>
-      <p :class="box" id="padding_ud_30">{{ question.num }} {{ question.content }}</p>
+      <p :class="box" id="padding_ud_30"><span style="font-weight: bold;">{{ question.num }}</span> <br> {{ question.content }}</p>
       <div id="padding_d_30">
         <button :class="[select_btn, color_1]" @click="answer('1')" :style="resetColor_1" onfocus="this.blur();">{{ question.select_1 }}</button>
       </div>
