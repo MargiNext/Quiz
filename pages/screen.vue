@@ -11,7 +11,7 @@
 				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
 					<div class="columns">
 						<div :class="box_1"><span style="font-weight: bold;">{{ question.num }}</span> <br> {{ question.content }}</div>
-						<div :class="box_2" :style="countD">{{ timeLimit }}</div>
+						<div :class="box_2" :style="countDown">{{ timeLimit }}</div>
 					</div>
 				</div>
 			</div>
@@ -84,20 +84,15 @@ export default {
       questions: questions,
       question: '',
       loading: false,
-      showModal: false,
-			show: false,
 			rateShow: false,
       top: true,
       name: '',
-      corNum: 0,
-			corNum_before: 0,
 			interval_id_1: '',
 			interval_id_2: '',
 			count_1: 0,
 			count_2: 0,
 			timeLimit: 0,
-			countDownId: '',
-			countD: 'text-align: center; color: white;',
+			countDown: 'text-align: center; color: white;',
 			timeup: false,
     }
   },
@@ -117,25 +112,18 @@ export default {
       }
 		})
 
-    // 問題の受け取り
-    // this.socket.on('Question', question => {
-    //   this.question = questions[question.id]
-		// 	this.timeLimit = this.question.time
-		// })
-
-	// 制限時間の受け取り
-	this.socket.on('timeLimit', timeLimit => {
-		this.timeLimit = timeLimit
-		if (timeLimit <= 0)  {
-        	this.timeup = true
-        	this.isAns =false
-		}
-	})
+		// 制限時間の受け取り
+		this.socket.on('timeLimit', timeLimit => {
+			this.timeLimit = timeLimit
+			if (timeLimit <= 0)  {
+						this.timeup = true
+						this.isAns =false
+			}
+		})
 
     // 割合トリガの受け取り
     this.socket.on('rateResult', result => {
       // for debug
-      console.log("screen(rateResult): ", result)
 			this.rateShow = result
 			this.timeup = false
 			this.regular()
@@ -143,7 +131,6 @@ export default {
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
-			this.show = result
 			this.timeup = false
 
 			// ここから回答表示
@@ -152,6 +139,7 @@ export default {
 				this.count_1++
 				if(this.count_1 > 6){
 					clearInterval(this.interval_id_1)
+					this.solid(this.question.answer)
 				}
 			}, 500)
 			this.interval_id_2 = setInterval(() => {
@@ -159,15 +147,13 @@ export default {
 				this.count_2++
 				if(this.count_2 > 2){
 					clearInterval(this.interval_id_2)
+					this.solid(this.question.answer)
 				}
 			}, 1000)
 		})
 
     // 最終結果発表トリガの受け取り
     this.socket.on('finalResult', result => {
-      // for debug
-			// console.log("screen(finalResult): ", result)
-			console.log('結果：' + result)
 			this.$router.push({ path: '/finalResult', query: result})
     })
 
@@ -216,12 +202,10 @@ export default {
   },
   watch: {
     question: function(){
-			this.show = false
 			this.timeup = false
 			this.rateShow = false
 			this.top = (this.question.id == null) ? true : false
       // this.top = (this.question.id == 0) ? true : false
-      this.corNum_before = this.corNum
       this.color_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
       this.color_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
       this.color_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
@@ -242,10 +226,6 @@ export default {
   margin: 10px auto;
 	padding: 10px 0 0px;
 	font-size: 90px;
-}
-#wrapper
-{
-  max-width: 600px;
 }
 #padding_d_30 {
   padding: 0px 0px 30px;

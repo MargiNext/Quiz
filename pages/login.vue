@@ -43,8 +43,6 @@ export default {
     this.socket.on('Login', Login => {
       this.Login.push(Login)
       this.Login.shift()
-			console.log(typeof Login)
-			console.log('login::' + this.Login[0])
       if(this.Login[0] == false){
         this.$router.push({path: '/login?login=true'})
       }
@@ -52,15 +50,6 @@ export default {
   },
   methods: {
 		login(){
-      // this.socket.on('Login', login => {
-      //   this.login = login
-      // })
-      if (this.Login) {
-        console.log('ログインできそう')
-      }
-      else{
-        console.log('ログインできなさそう')
-      }
       this.$router.push('/')
       this.socket.emit('name', this.name)
 

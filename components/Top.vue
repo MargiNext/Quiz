@@ -27,7 +27,6 @@ export default {
 		// 参加人数の受け取り
     	this.socket.on('People', people => {
 			this.people = people
-			console.log(people)
 		})
 
 		// websocket.idをサーバに送信

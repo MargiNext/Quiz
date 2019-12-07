@@ -65,7 +65,7 @@ export default {
     }
   },
   mounted() {
-    console.log(Object.keys(this.final_result).length)
+    // console.log(Object.keys(this.final_result).length)
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
@@ -78,7 +78,6 @@ export default {
     this.socket.on('Rank', result => {
       this.rank_count.splice(this.countDown, 1, true)
       this.countDown--
-      console.log(this.rank_count)
     })
     
   },
