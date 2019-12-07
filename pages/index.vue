@@ -4,7 +4,7 @@
     <loading v-if="isAns" />
 
     <!-- 各結果を表示 -->
-    <each-result v-if="showModal_re" :is_correct="this.ans.correct" />
+    <each-result v-if="showModal_result" :is_correct="this.ans.correct" />
 
     <!-- タイムアップ画面 -->
     <time-up v-if="timeup" />
@@ -83,7 +83,6 @@ import io from 'socket.io-client'
 import questions from '../assets/api/question.json'
 import loading from '~/components/Loading.vue'
 import eachResult from '~/components/eachResult.vue'
-import Button from '~/components/Button.vue'
 import top from '~/components/Top'
 import timeUp from '~/components/timeUp'
 
@@ -91,7 +90,6 @@ export default {
   components: {
     loading,
     eachResult,
-    Button,
     top,
     timeUp
   },
@@ -113,8 +111,7 @@ export default {
       questions: questions,
       question: '',
       loading: false,
-      showModal: false,
-      showModal_re: false,
+      showModal_result: false,
       top: true,
       name: '',
       corNum: 0,
@@ -135,8 +132,9 @@ export default {
   created () {
   },
   mounted() {
+    console.log('1')
     this.isAns = Boolean(sessionStorage.getItem('isAns'))
-    this.showModal_re = Boolean(sessionStorage.getItem('showModal_re'))
+    this.showModal_result = Boolean(sessionStorage.getItem('showModal_result'))
 
     // セッションストレージから名前を取り出す
     this.name = sessionStorage.getItem('name')
@@ -151,19 +149,9 @@ export default {
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
-		// ログイン可否の受け取り
-    // this.socket.on('Login', Login => {
-		// 	// this.Login = (Login == 'true')? true:false
-		// 	this.Login = Login
-		// 	console.log(typeof Login)
-		// 	console.log('login::' + this.Login)
-    //   if(this.Login == false){
-    //     this.$router.push({path: '/login?login=false'})
-    //   }
-    // })
-
     // reconnectイベント後
     this.socket.on('connect', () => {
+      console.log('2')
       console.log(this.socket.id)
 
       // this.socketId = sessionStorage.getItem('sessionId') ? sessionStorage.getItem('sessionId') : this.socket.id
@@ -184,6 +172,8 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       if (question.id != null) {
+        console.log('3')
+        sessionStorage.removeItem('showModal_result')
         this.question = questions[question.id]
         this.timeLimit = this.question.time
         this.top = question.top
@@ -195,8 +185,10 @@ export default {
 
 	  // 制限時間の受け取り
 	  this.socket.on('timeLimit', timeLimit => {
+      console.log('4')
 		  this.timeLimit = timeLimit
 		  if (timeLimit <= 0)  {
+            console.log('6')
         	  this.timeup = true
             sessionStorage.setItem('timeup', true)
             this.isAns =false
@@ -206,10 +198,11 @@ export default {
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
-      this.showModal_re = result
-      sessionStorage.setItem('showModal_re', true)
-      this.timeup = false
+      console.log('7')
+      this.showModal_result = result
+      sessionStorage.setItem('showModal_result', true)
       sessionStorage.removeItem('timeup')
+      this.timeup = false
       this.isAns = false
     })
 
@@ -256,9 +249,9 @@ export default {
       }
 
       this.loading = true
-      this.showModal = true
       sessionStorage.setItem('isAns', true)
       this.isAns = true
+      console.log('5')
     },
     out_trigger(){
       this.signout = true
@@ -280,22 +273,22 @@ export default {
     question: function(){
       // リロード検知
       if (this.reload) {
-        this.reload = false
         this.top = (this.question.id == null) ? true : false
         // this.top = (this.question.id == 0) ? true : false
         this.corNum_before = sessionStorage.getItem('corNumBefore')
-        // this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
+        this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
         console.log('問題は：' + this.ans.correct)
         this.timeup = sessionStorage.getItem('timeup')
         console.log('timeup:' + sessionStorage.getItem('timeup'))
+        this.reload = false
       }
       else {
         sessionStorage.removeItem('isAns')
-        sessionStorage.removeItem('showModal_re')
+        // sessionStorage.removeItem('showModal_result')
+        sessionStorage.removeItem('timeup')
         // sessionStorage.removeItem('ansCorrect')
         this.isAns = false
-        this.showModal = false
-        this.showModal_re = false
+        this.showModal_result = false
         this.top = (this.question.id == null) ? true : false
         // this.top = (this.question.id == 0) ? true : false
         this.corNum_before = this.corNum
@@ -306,6 +299,7 @@ export default {
         this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
         this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
         this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
+        console.log('8')
       }
     }
   },
