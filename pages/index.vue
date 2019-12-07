@@ -142,14 +142,6 @@ export default {
     this.isAns = Boolean(sessionStorage.getItem('isAns'))
     this.showModal_result = Boolean(sessionStorage.getItem('showModal_result'))
 
-    // if(this.isAns || this.showModal_result || this.timeup){
-    //   this.isFix = 'fixed'
-    //   console.log('isFix')
-    // }
-    // else{
-    //   this.isFix = 'static'
-    // }
-
     // セッションストレージから名前を取り出す
     this.name = sessionStorage.getItem('name')
     if(this.name == null){
