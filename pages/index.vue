@@ -174,6 +174,7 @@ export default {
       if (question.id != null) {
         console.log('3')
         sessionStorage.removeItem('showModal_result')
+        this.showModal_result = false
         this.question = questions[question.id]
         this.timeLimit = this.question.time
         this.top = question.top
