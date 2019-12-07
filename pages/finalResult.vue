@@ -60,8 +60,8 @@ export default {
 			tile_style: '',
       box: "column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile has-text-white has-text-weight-bold",
       rank: '',
-      rank_count: [false, false, false, false, false],
-      countDown: 4,
+      rank_count: [false, false, false, false, false, false, false, false, false, false],
+      countDown: 9,
     }
   },
   mounted() {
