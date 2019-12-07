@@ -15,6 +15,11 @@
 			<button class="button is-info" @click="rank_trigger(true)">順位表示</button>
 			<button class="button is-info" @click="limit_trigger(true)">タイムリミットを表示</button>
     </div>
+
+		<span v-for="(rank, index) in finalResult" :key="index">
+			<span>{{ rank.rank }} </span>
+		</span>
+
 		<div v-for="(ans, index) in reverseAns" :key="index">
 			<p>{{ ans }}</p>
 		</div>
@@ -33,7 +38,8 @@ export default {
       question: question,
 			quiz: '',
 			answers: [],
-			rank: '',
+      rank: '',
+      finalResult: '',
     }
   },
   computed: {
@@ -49,6 +55,11 @@ export default {
 
     this.socket.on('Answer', answer => {
       this.answers.push(answer)
+    })
+
+    // 最終結果発表トリガの受け取り
+    this.socket.on('finalResult', result => {
+      this.finalResult = result
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする

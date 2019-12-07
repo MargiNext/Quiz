@@ -74,7 +74,7 @@ export default {
 			this.$router.push('/screen')
     })
 
-    // 割合トリガの受け取り
+    // 順に順位発表
     this.socket.on('Rank', result => {
       this.rank_count.splice(this.countDown, 1, true)
       this.countDown--

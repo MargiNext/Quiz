@@ -236,6 +236,7 @@ async function start () {
             in_rank++
           }
           console.log(winner)
+          io.to(socket.id).emit('finalResult', winner)
           socket.broadcast.emit('finalResult', winner)
           // 値の初期化
           finalResult = []

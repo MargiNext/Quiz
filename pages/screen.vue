@@ -165,7 +165,8 @@ export default {
     // 最終結果発表トリガの受け取り
     this.socket.on('finalResult', result => {
       // for debug
-      // console.log("screen(finalResult): ", result)
+			// console.log("screen(finalResult): ", result)
+			console.log('結果：' + result)
 			this.$router.push({ path: '/finalResult', query: result})
     })
 
