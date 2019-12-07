@@ -221,19 +221,23 @@ async function start () {
           // 正答数をscreenに送信
           // 上位のみ送信
           let in_rank = 1
+          let plus_rank = 0
           for (let i=0;i < userRank.length;i++) {
             if (winner.length >= rank) break
             // 順位を格納する
             userRank[i].rank = in_rank
             winner.push(userRank[i])
+            plus_rank = 0
             for (let j=i+1;j < userRank.length;j++){
               if (userRank[i].correctNum > userRank[j].correctNum) break
               // 順位を格納する
               userRank[j].rank = in_rank
               winner.push(userRank[j])
               i++
+              plus_rank++
             }
-            in_rank++
+            plus_rank++
+            in_rank += plus_rank
           }
           console.log(winner)
           socket.broadcast.emit('finalResult', winner)
