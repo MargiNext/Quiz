@@ -42,7 +42,7 @@
           </div>
           <div class="media-content">
             <p class="title is-4">{{ name }}</p>
-            <p class="subtitle is-6">score：{{ this.corNum_before }}</p>
+            <p class="subtitle is-6">score：{{ Number(this.corNum_before) }}</p>
           </div>
           <div class="media-right">
             <i class="fas fa-sign-out-alt fa-lg" @click="out_trigger"></i>
@@ -132,7 +132,6 @@ export default {
   created () {
   },
   mounted() {
-    console.log('1')
     this.isAns = Boolean(sessionStorage.getItem('isAns'))
     this.showModal_result = Boolean(sessionStorage.getItem('showModal_result'))
 
@@ -151,7 +150,6 @@ export default {
 
     // reconnectイベント後
     this.socket.on('connect', () => {
-      console.log('2')
       console.log(this.socket.id)
 
       // this.socketId = sessionStorage.getItem('sessionId') ? sessionStorage.getItem('sessionId') : this.socket.id
@@ -172,9 +170,6 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       if (question.id != null) {
-        console.log('3')
-        sessionStorage.removeItem('showModal_result')
-        this.showModal_result = false
         this.question = questions[question.id]
         this.timeLimit = this.question.time
         this.top = question.top
@@ -193,15 +188,15 @@ export default {
         console.log('timeup:' + sessionStorage.getItem('timeup'))
         this.reload = false
       }
+      // リロードでなく問題が切り替わるとき（つまり次の問題に遷移したとき）
       else {
         sessionStorage.removeItem('isAns')
-        // sessionStorage.removeItem('showModal_result')
+        sessionStorage.removeItem('showModal_result')
         sessionStorage.removeItem('timeup')
-        // sessionStorage.removeItem('ansCorrect')
+        sessionStorage.removeItem('ansCorrect')
         this.isAns = false
         this.showModal_result = false
         this.top = (this.question.id == null) ? true : false
-        // this.top = (this.question.id == 0) ? true : false
         this.corNum_before = this.corNum
         sessionStorage.setItem('corNumBefore', this.corNum_before)
         this.ans = {}
@@ -210,26 +205,21 @@ export default {
         this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
         this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
         this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
-        console.log('8')
       }
     })
 
 	  // 制限時間の受け取り
 	  this.socket.on('timeLimit', timeLimit => {
-      console.log('4')
 		  this.timeLimit = timeLimit
 		  if (timeLimit <= 0)  {
-            console.log('6')
         	  this.timeup = true
             sessionStorage.setItem('timeup', true)
             this.isAns =false
-            console.log('時間終了時点でしかここは発火しないよ')
 		  }
 	  })
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
-      console.log('7')
       this.showModal_result = result
       sessionStorage.setItem('showModal_result', true)
       sessionStorage.removeItem('timeup')
@@ -267,8 +257,6 @@ export default {
       this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
       // sessionStorage.setItem('ansCorrect', false)
       sessionStorage.setItem('ansCorrect', this.ans.correct)
-      console.log('結果をいれるときは(ans.cor)：' + this.ans.correct)
-      console.log('結果をいれるときは：' + sessionStorage.getItem('ansCorrect'))
 
       // サーバー側に回答を送信する
       this.socket.emit('Answer', this.ans)
@@ -282,7 +270,6 @@ export default {
       this.loading = true
       sessionStorage.setItem('isAns', true)
       this.isAns = true
-      console.log('5')
     },
     out_trigger(){
       this.signout = true
@@ -295,45 +282,14 @@ export default {
       sessionStorage.removeItem('corNum')
       sessionStorage.removeItem('corNumBefore')
       sessionStorage.removeItem('sessionId')
-      console.log('sessionIdをセッションストレージから削除')
 			this.$router.push('/login')
       this.socket.emit('delName', this.name)
     },
   },
-  watch: {
-    // question: function(){
-    //   // リロード検知
-    //   if (this.reload) {
-    //     this.top = (this.question.id == null) ? true : false
-    //     // this.top = (this.question.id == 0) ? true : false
-    //     this.corNum_before = sessionStorage.getItem('corNumBefore')
-    //     this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
-    //     console.log('問題は：' + this.ans.correct)
-    //     this.timeup = sessionStorage.getItem('timeup')
-    //     console.log('timeup:' + sessionStorage.getItem('timeup'))
-    //     this.reload = false
-    //   }
-    //   else {
-    //     sessionStorage.removeItem('isAns')
-    //     // sessionStorage.removeItem('showModal_result')
-    //     sessionStorage.removeItem('timeup')
-    //     // sessionStorage.removeItem('ansCorrect')
-    //     this.isAns = false
-    //     this.showModal_result = false
-    //     this.top = (this.question.id == null) ? true : false
-    //     // this.top = (this.question.id == 0) ? true : false
-    //     this.corNum_before = this.corNum
-    //     sessionStorage.setItem('corNumBefore', this.corNum_before)
-    //     this.ans = {}
-    //     this.timeup = false
-    //     this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-    //     this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
-    //     this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
-    //     this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
-    //     console.log('8')
-    //   }
-    // }
-  },
+  // watch: {
+  //   question: function(){
+  //   }
+  // },
 }
 </script>
 
@@ -351,8 +307,5 @@ export default {
 }
 #padding_d_30 {
   padding: 0px 0px 30px;
-}
-#button {
-  margin: 0px 0px 30px 0px;
 }
 </style>
