@@ -182,6 +182,36 @@ export default {
       else {
         this.top = true
       }
+      // リロード検知
+      if (this.reload) {
+        this.top = (this.question.id == null) ? true : false
+        // this.top = (this.question.id == 0) ? true : false
+        this.corNum_before = sessionStorage.getItem('corNumBefore')
+        this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
+        console.log('問題は：' + this.ans.correct)
+        this.timeup = sessionStorage.getItem('timeup')
+        console.log('timeup:' + sessionStorage.getItem('timeup'))
+        this.reload = false
+      }
+      else {
+        sessionStorage.removeItem('isAns')
+        // sessionStorage.removeItem('showModal_result')
+        sessionStorage.removeItem('timeup')
+        // sessionStorage.removeItem('ansCorrect')
+        this.isAns = false
+        this.showModal_result = false
+        this.top = (this.question.id == null) ? true : false
+        // this.top = (this.question.id == 0) ? true : false
+        this.corNum_before = this.corNum
+        sessionStorage.setItem('corNumBefore', this.corNum_before)
+        this.ans = {}
+        this.timeup = false
+        this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
+        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
+        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
+        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
+        console.log('8')
+      }
     })
 
 	  // 制限時間の受け取り
@@ -271,38 +301,38 @@ export default {
     },
   },
   watch: {
-    question: function(){
-      // リロード検知
-      if (this.reload) {
-        this.top = (this.question.id == null) ? true : false
-        // this.top = (this.question.id == 0) ? true : false
-        this.corNum_before = sessionStorage.getItem('corNumBefore')
-        this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
-        console.log('問題は：' + this.ans.correct)
-        this.timeup = sessionStorage.getItem('timeup')
-        console.log('timeup:' + sessionStorage.getItem('timeup'))
-        this.reload = false
-      }
-      else {
-        sessionStorage.removeItem('isAns')
-        // sessionStorage.removeItem('showModal_result')
-        sessionStorage.removeItem('timeup')
-        // sessionStorage.removeItem('ansCorrect')
-        this.isAns = false
-        this.showModal_result = false
-        this.top = (this.question.id == null) ? true : false
-        // this.top = (this.question.id == 0) ? true : false
-        this.corNum_before = this.corNum
-        sessionStorage.setItem('corNumBefore', this.corNum_before)
-        this.ans = {}
-        this.timeup = false
-        this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
-        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
-        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
-        console.log('8')
-      }
-    }
+    // question: function(){
+    //   // リロード検知
+    //   if (this.reload) {
+    //     this.top = (this.question.id == null) ? true : false
+    //     // this.top = (this.question.id == 0) ? true : false
+    //     this.corNum_before = sessionStorage.getItem('corNumBefore')
+    //     this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
+    //     console.log('問題は：' + this.ans.correct)
+    //     this.timeup = sessionStorage.getItem('timeup')
+    //     console.log('timeup:' + sessionStorage.getItem('timeup'))
+    //     this.reload = false
+    //   }
+    //   else {
+    //     sessionStorage.removeItem('isAns')
+    //     // sessionStorage.removeItem('showModal_result')
+    //     sessionStorage.removeItem('timeup')
+    //     // sessionStorage.removeItem('ansCorrect')
+    //     this.isAns = false
+    //     this.showModal_result = false
+    //     this.top = (this.question.id == null) ? true : false
+    //     // this.top = (this.question.id == 0) ? true : false
+    //     this.corNum_before = this.corNum
+    //     sessionStorage.setItem('corNumBefore', this.corNum_before)
+    //     this.ans = {}
+    //     this.timeup = false
+    //     this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
+    //     this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
+    //     this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
+    //     this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
+    //     console.log('8')
+    //   }
+    // }
   },
 }
 </script>
