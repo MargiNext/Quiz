@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{ position: isFix }">
     <!-- ローディング画面 -->
     <loading v-if="isAns" />
 
@@ -133,6 +133,7 @@ export default {
       timeup: false,
       reload: false,
       Login: null,
+      isFix: 'static',
     }
   },
   created () {
@@ -184,6 +185,7 @@ export default {
         this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
         this.timeup = sessionStorage.getItem('timeup')
         this.reload = false
+        this.isFix = 'fixed'
       }
       // リロードでなく問題が切り替わるとき（つまり次の問題に遷移したとき）
       else {
@@ -202,6 +204,7 @@ export default {
         this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
         this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
         this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
+        this.isFix = 'static'
       }
     })
 
@@ -212,6 +215,7 @@ export default {
         	  this.timeup = true
             sessionStorage.setItem('timeup', true)
             this.isAns =false
+            this.isFix = 'fixed'
 		  }
 	  })
 
@@ -222,6 +226,7 @@ export default {
       sessionStorage.removeItem('timeup')
       this.timeup = false
       this.isAns = false
+      this.isFix = 'fixed'
     })
 
     // 最終結果発表トリガの受け取り
