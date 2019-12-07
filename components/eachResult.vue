@@ -26,7 +26,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.is_correct)
   }
 }
 </script>

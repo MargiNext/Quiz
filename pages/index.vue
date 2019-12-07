@@ -29,6 +29,7 @@
       </div>
     </div>
 
+    <!-- トップバー -->
     <div class="card">
       <div class="card-content">
         <div class="media">
@@ -50,14 +51,19 @@
         </div>
       </div>
     </div>
+
+    <!-- 1秒間のローディング -->
     <div>
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
     </div>
+
+    <!-- トップ画面 -->
     <div v-if="top">
       <top />
     </div>
+
+    <!-- メイン -->
     <div class="colmuns" v-else>
-    <!-- <div class="colmuns"> -->
       <div id="padding_timer">
         <div :class="timer" class="tag is-danger">{{ timeLimit }}</div>
       </div>
@@ -150,19 +156,13 @@ export default {
 
     // reconnectイベント後
     this.socket.on('connect', () => {
-      console.log(this.socket.id)
 
-      // this.socketId = sessionStorage.getItem('sessionId') ? sessionStorage.getItem('sessionId') : this.socket.id
-      console.log(sessionStorage.getItem('sessionId'))
       if (sessionStorage.getItem('sessionId')) {
-        console.log('すでにsocketidをセッションストレージに保存済み')
       }
       else {
         sessionStorage.setItem('sessionId', this.socket.id)
-        console.log('socketidをセッションストレージに保存した')
       }
       this.reload = sessionStorage.getItem('sessionId') != this.socket.id
-      console.log(this.reload)
       sessionStorage.setItem('sessionId', this.socket.id)
     });
 
@@ -180,12 +180,9 @@ export default {
       // リロード検知
       if (this.reload) {
         this.top = (this.question.id == null) ? true : false
-        // this.top = (this.question.id == 0) ? true : false
         this.corNum_before = sessionStorage.getItem('corNumBefore')
         this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
-        console.log('問題は：' + this.ans.correct)
         this.timeup = sessionStorage.getItem('timeup')
-        console.log('timeup:' + sessionStorage.getItem('timeup'))
         this.reload = false
       }
       // リロードでなく問題が切り替わるとき（つまり次の問題に遷移したとき）
@@ -255,7 +252,6 @@ export default {
       // idと正解かどうかもサーバに送る
       this.ans.id = this.name
       this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
-      // sessionStorage.setItem('ansCorrect', false)
       sessionStorage.setItem('ansCorrect', this.ans.correct)
 
       // サーバー側に回答を送信する
@@ -295,10 +291,6 @@ export default {
 
 <style scoped>
 @import "https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css";
-#wrapper
-{
-  max-width: 600px;
-}
 #padding_timer {
   padding: 20px 0px 0px;
 }

@@ -227,10 +227,6 @@ export default {
 	padding: 10px 0 0px;
 	font-size: 90px;
 }
-#wrapper
-{
-  max-width: 600px;
-}
 #padding_d_30 {
   padding: 0px 0px 30px;
 }

@@ -48,8 +48,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.question)
-
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
@@ -121,8 +119,4 @@ export default {
 </script>
 
 <style scoped>
-#wrapper
-{
-  max-width: 600px;
-}
 </style>
