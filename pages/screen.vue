@@ -144,6 +144,7 @@ export default {
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
 			this.show = result
+			this.timeup = false
 
 			// ここから回答表示
 			this.interval_id_1 = setInterval(() => {
@@ -216,6 +217,7 @@ export default {
   watch: {
     question: function(){
 			this.show = false
+			this.timeup = false
 			this.rateShow = false
 			this.top = (this.question.id == null) ? true : false
       // this.top = (this.question.id == 0) ? true : false
