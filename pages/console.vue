@@ -3,17 +3,25 @@
     <div id="wrapper" class="container">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <!-- Topのときもindex.jsのロジックを変えるのが手間なのでtimeに10を入れておきます -->
-      <button class="button is-outlined is-info" @click="send(true,null,Number(10))">Top</button>
-      <div v-for="(question, index) in question" :key="index">
-        <button v-if="question.id == 0" class="button is-outlined is-info" @click="send(false,Number(question.id),Number(question.time))">練習問題</button>
+      <button class="button is-outlined is-info" @click="send(true,null,Number(10))">Top</button><br>
+      <span v-for="(question, index) in question" :key="index">
+        <div v-if="question.id == 0" style="padding: 20px 0 20px;">
+          <button class="button is-outlined is-info" @click="send(false,Number(question.id),Number(question.time))">練習問題</button>
+        </div>
         <button v-else class="button is-outlined is-info" @click="send(false,Number(question.id),Number(question.time))">{{ question.num }}</button>
+      </span><br><br>
+      <div style="padding: 20px 0 20px;">
+        <button class="button is-outlined is-info" @click="limit_trigger(true)">タイムリミットを表示</button>
+        <button class="button is-outlined is-info" @click="rate_trigger(true)">回答割合を表示</button>
+        <button class="button is-outlined is-info" @click="ans_trigger(true)">答えを表示</button>
       </div>
-			<button class="button is-outlined is-info" @click="rate_trigger(true)">回答割合を表示</button>
-			<button class="button is-outlined is-info" @click="ans_trigger(true)">答えを表示</button>
-			<button class="button is-outlined is-info" @click="res_trigger(true)">結果発表</button>
-			<button class="button is-outlined is-danger" @click="con_trigger(true)">緊急！スクリーンに戻りたい！</button>
-			<button class="button is-outlined is-info" @click="rank_trigger(true)">順位表示</button>
-			<button class="button is-outlined is-info" @click="limit_trigger(true)">タイムリミットを表示</button>
+      <div style="padding: 20px 0 20px;">
+        <button class="button is-outlined is-info" @click="res_trigger(true)">結果発表</button>
+        <button class="button is-outlined is-info" @click="rank_trigger(true)">順位表示</button>
+      </div>
+      <div style="padding: 20px 0 20px;">
+        <button class="button is-outlined is-danger" @click="con_trigger(true)">緊急！スクリーンに戻りたい！</button>
+      </div>
     </div>
 
 		<span v-for="(rank, index) in finalResult" :key="index">
