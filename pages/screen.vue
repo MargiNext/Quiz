@@ -10,7 +10,7 @@
 			<div class="columns" id="padding_d_30">
 				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
 					<div class="columns">
-						<div :class="box_1"><span style="font-weight: bold;">{{ question.num }}</span> <br> {{ question.content }}</div>
+						<div :class="box_1"><span style="font-weight: bold; font-size: 4.5rem;">{{ question.num }}</span> <br> {{ question.content }}</div>
 						<div :class="box_2" :style="countDown">{{ timeLimit }}</div>
 					</div>
 				</div>
@@ -18,24 +18,24 @@
 			<div class="columns">
 				<div :style="color_1 + tile_style" :class="[tile_class, front]">{{ question.select_1 }}
 					<div v-if="rateShow" :style="color_text_1 + tile_style2">
-						<div :style="rate_style + rate_color_1" class="is-size-1">{{this.rateShow[1]}}</div>
+						<div :style="rate_style + rate_color_1">{{this.rateShow[1]}}</div>
 					</div>
 				</div>
 				<div :style="color_2 + tile_style" :class="[tile_class]">{{ question.select_2 }}
 					<div v-if="rateShow" :style="color_text_2 + tile_style2">
-						<div :style="rate_style + rate_color_2" class="is-size-1">{{this.rateShow[2]}}</div>
+						<div :style="rate_style + rate_color_2">{{this.rateShow[2]}}</div>
 					</div>
 				</div>
 			</div>
 			<div class="columns">
 				<div :style="color_3 + tile_style" :class="[tile_class, front]">{{ question.select_3 }}
 					<div v-if="rateShow" :style="color_text_3 + tile_style2">
-						<div :style="rate_style + rate_color_3" class="is-size-1">{{this.rateShow[3]}}</div>
+						<div :style="rate_style + rate_color_3">{{this.rateShow[3]}}</div>
 					</div>
 				</div>
 				<div :style="color_4 + tile_style" :class="[tile_class]">{{ question.select_4 }}
 					<div v-if="rateShow" :style="color_text_4 + tile_style2">
-						<div :style="rate_style + rate_color_4" class="is-size-1">{{this.rateShow[4]}}</div>
+						<div :style="rate_style + rate_color_4">{{this.rateShow[4]}}</div>
 					</div>
 				</div>
 			</div>
@@ -68,13 +68,13 @@ export default {
       color_text_2: 'background-color: #3273dc; border-color: #3273dc; color: #3273dc;',
       color_text_3: 'background-color: #00d1b2; border-color: #00d1b2; color: #00d1b2;',
       color_text_4: 'background-color: #23d160; border-color: #23d160; color: #23d160;',
-			tile_class: 'column is-4-desktop is-size-3',
-			tile_style: 'border-style: solid; border-radius: 1em; height: 250px; position: relative;',
-			tile_style2: 'border-style: solid; border-radius: 0.8em; height: 50%; width: 50%; bottom: 0; right: 0; position: absolute;',
+			tile_class: 'column is-4-desktop is-size-2',
+			tile_style: 'border-style: solid; border-radius: 0.6em; height: 300px; position: relative;',
+			tile_style2: 'border-style: solid; border-radius: 0.4em; height: 50%; width: 50%; bottom: 0; right: 0; position: absolute;',
 			front: 'is-offset-2-desktop',
-			box_1: "column is-10 is-size-3",
+			box_1: "column is-10 is-size-2",
 			box_2: "column is-2 has-text-weight-bold circle",
-			rate_style: 'text-align: center; padding-top: 25px; font-weight: bold;',
+			rate_style: 'text-align: center; padding-top: 15px; font-size: 4.5rem; font-weight: bold;',
 			rate_color_1: 'color: white',
 			rate_color_2: 'color: white',
 			rate_color_3: 'color: white',
