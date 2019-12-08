@@ -4,7 +4,7 @@
     <time-up v-if="timeup" />
 
     <div v-if="top">
-			<top />
+			<top x="3" />
     </div>
     <div v-else>
 			<div class="columns" id="padding_d_30">
