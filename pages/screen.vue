@@ -10,7 +10,7 @@
 			<div class="columns" id="padding_d_30">
 				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
 					<div class="columns">
-						<div :class="box_1"><span style="font-weight: bold;">{{ question.num }}</span> <br> {{ question.content }}</div>
+						<div :class="box_1"><span style="font-weight: bold; font-size: 4.5rem;">{{ question.num }}</span> <br> {{ question.content }}</div>
 						<div :class="box_2" :style="countDown">{{ timeLimit }}</div>
 					</div>
 				</div>
