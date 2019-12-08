@@ -8,8 +8,8 @@
         <div v-if="question.id == 0" style="padding: 20px 0 20px;">
           <button class="button is-outlined is-info" @click="send(false,Number(question.id),Number(question.time))">練習問題</button>
         </div>
-        <button v-else class="button is-outlined is-info" @click="send(false,Number(question.id),Number(question.time))">{{ question.num }}</button>
-      </span><br><br>
+        <button v-else class="button is-outlined is-info" style="margin: 10px 5px 10px;" @click="send(false,Number(question.id),Number(question.time))">{{ question.num }}</button>
+      </span><br>
       <div style="padding: 20px 0 20px;">
         <button class="button is-outlined is-info" @click="limit_trigger(true)">タイムリミットを表示</button>
         <button class="button is-outlined is-info" @click="rate_trigger(true)">回答割合を表示</button>
