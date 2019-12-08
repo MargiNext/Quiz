@@ -18,24 +18,24 @@
 			<div class="columns">
 				<div :style="color_1 + tile_style" :class="[tile_class, front]">{{ question.select_1 }}
 					<div v-if="rateShow" :style="color_text_1 + tile_style2">
-						<div :style="rate_style + rate_color_1" class="is-size-1">{{this.rateShow[1]}}</div>
+						<div :style="rate_style + rate_color_1">{{this.rateShow[1]}}</div>
 					</div>
 				</div>
 				<div :style="color_2 + tile_style" :class="[tile_class]">{{ question.select_2 }}
 					<div v-if="rateShow" :style="color_text_2 + tile_style2">
-						<div :style="rate_style + rate_color_2" class="is-size-1">{{this.rateShow[2]}}</div>
+						<div :style="rate_style + rate_color_2">{{this.rateShow[2]}}</div>
 					</div>
 				</div>
 			</div>
 			<div class="columns">
 				<div :style="color_3 + tile_style" :class="[tile_class, front]">{{ question.select_3 }}
 					<div v-if="rateShow" :style="color_text_3 + tile_style2">
-						<div :style="rate_style + rate_color_3" class="is-size-1">{{this.rateShow[3]}}</div>
+						<div :style="rate_style + rate_color_3">{{this.rateShow[3]}}</div>
 					</div>
 				</div>
 				<div :style="color_4 + tile_style" :class="[tile_class]">{{ question.select_4 }}
 					<div v-if="rateShow" :style="color_text_4 + tile_style2">
-						<div :style="rate_style + rate_color_4" class="is-size-1">{{this.rateShow[4]}}</div>
+						<div :style="rate_style + rate_color_4">{{this.rateShow[4]}}</div>
 					</div>
 				</div>
 			</div>
@@ -74,7 +74,7 @@ export default {
 			front: 'is-offset-2-desktop',
 			box_1: "column is-10 is-size-2",
 			box_2: "column is-2 has-text-weight-bold circle",
-			rate_style: 'text-align: center; padding-top: 25px; font-weight: bold;',
+			rate_style: 'text-align: center; padding-top: 15px; font-size: 4.5rem; font-weight: bold;',
 			rate_color_1: 'color: white',
 			rate_color_2: 'color: white',
 			rate_color_3: 'color: white',
