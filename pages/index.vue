@@ -43,7 +43,8 @@
           </div>
           <div class="media-content">
             <p class="title is-4">{{ name }}</p>
-            <p class="subtitle is-6">score：{{ Number(this.corNum_before) }}</p>
+            <!-- <p class="subtitle is-6">score：{{ Number(this.corNum_before) }}</p> -->
+            <progress class="subtitle progress is-primary is-small" :value="this.corNum_before" max="21"></progress>
           </div>
           <div class="media-right">
             <i class="fas fa-sign-out-alt fa-lg" @click="out_trigger"></i>
@@ -59,7 +60,7 @@
 
     <!-- トップ画面 -->
     <div v-if="top">
-      <top />
+      <top x="1" />
     </div>
 
     <!-- メイン -->
@@ -214,6 +215,7 @@ export default {
         	  this.timeup = true
             sessionStorage.setItem('timeup', true)
             this.isAns =false
+            this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
 		  }
 	  })
 
@@ -224,6 +226,7 @@ export default {
       sessionStorage.removeItem('timeup')
       this.timeup = false
       this.isAns = false
+      this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
     })
 
     // 最終結果発表トリガの受け取り

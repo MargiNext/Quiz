@@ -1,12 +1,17 @@
 
 <template>
 	<div class="is-3" id="padding_ud_4030" style="text-align: center;">
-		<div class="is-size-3">SI部2019年忘年会<br>クイズ大会！</div>
-		<div class="is-size-5" id="padding_u_50">みんなが入るまで待っててね！</div>
-		<div id="padding_ud_4030" class="half-circle-spinner" style="margin: auto;">
-			<div class="circle circle-1" style="text-align: center;"></div>
-			<div class="circle circle-2" style="text-align: center;"></div>
-			<div id="padding_u_20">{{ this.people }}</div>
+		<!-- <div class="is-size-3">SI部2019年忘年会<br>クイズ大会！</div> -->
+		<div :style="'font-size:' + this.title_1 + 'rem;'">SI部2019年忘年会<br>クイズ大会！</div>
+		<!-- <div style="font-size: 3.75rem;" id="padding_u_50">みんなが入るまで待っててね！</div> -->
+		<div :style="'font-size:' + this.title_2 + 'rem;'" id="padding_u_50">みんなが入るまで待っててね！</div>
+		<div id="padding_ud_4030" class="half-circle-spinner" :style="'margin: auto;' + 'width:' + this.circleStyle + 'px;' + 'height:' + this.circleStyle + 'px;' + 'border-radius: 100%;position: relative;'">
+
+			<!-- <div class="circle circle-1" style="'text-align: center;"></div>
+			<div class="circle circle-2" style="'text-align: center;"></div> -->
+			<div class="circle circle-1" :style="'text-align: center; border:' + this.circleBorderStyle + 'px solid transparent; border-top-color: #ff1d5e;'"></div>
+			<div class="circle circle-2" :style="'text-align: center; border:' + this.circleBorderStyle + 'px solid transparent; border-bottom-color: #ff1d5e;'"></div>
+			<div :style="'font-size:' + this.title_1 + 'rem; padding:' + this.circleFontStyle + 'px 0px 0px'" id="padding_u_20">{{ this.people }}</div>
 		</div>
 	</div>
 </template>
@@ -15,6 +20,7 @@
 import io from 'socket.io-client'
 
 export default {
+	props: ['x'],
 	data(){
 		return{
 			people: 0,
@@ -33,6 +39,24 @@ export default {
     	this.socket.on('TopSocket', topSocket => {
 			this.socket.emit('TopSocketId', this.socket.id)
     	})
+	},
+	computed: {
+		title_1 : function() {
+			return 2 * Number(this.x)
+		},
+		title_2 : function() {
+			return 1.25 * Number(this.x)
+		},
+		circleStyle : function() {
+			return 100 * Number(this.x)
+		},
+		circleFontStyle : function() {
+			return 27 * Number(this.x)
+		},
+		circleBorderStyle : function() {
+			return 8 * Number(this.x)
+			// return 8
+		}
 	}
 }
 </script>
@@ -44,11 +68,6 @@ export default {
 }
 #padding_u_50 {
   padding: 50px 0px 0px;
-}
-#padding_u_20 {
-  padding: 27px 0px 0px;
-	font-size: 30px;
-	/* font-weight: 100; */
 }
 .half-circle-spinner, .half-circle-spinner * {
 	box-sizing: border-box;
@@ -70,13 +89,14 @@ export default {
 	border: calc(80px / 10) solid transparent;
 }
 
-.half-circle-spinner .circle.circle-1 {
-	border-top-color: #ff1d5e;
+.half-circle-spinner .circle-1 {
+	/* border-top-color: #ff1d5e; */
 	animation: half-circle-spinner-animation 1s infinite;
 }
 
 .half-circle-spinner .circle.circle-2 {
-	border-bottom-color: #ff1d5e;
+	/* border-bottom-color: #ff1d5e; */
+	/* animation: half-circle-spinner-animation 1s infinite; */
 	animation: half-circle-spinner-animation 1s infinite alternate;
 }
 
