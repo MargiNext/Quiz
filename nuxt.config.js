@@ -20,10 +20,8 @@ module.exports = {
         href: 'https://fonts.googleapis.com/css?family=Kosugi+Maru&display=swap'
       },
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet',
-        href:
-          'https://use.fontawesome.com/releases/v5.6.1/css/all.css'  
-      }
+      { rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.6.1/css/all.css' },
+      { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css' }
     ]
   },
   /*
@@ -55,7 +53,8 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    'nuxt-buefy'
+    'nuxt-buefy',
+    'bootstrap-vue/nuxt',
   ],
   /*
   ** Axios module configuration
