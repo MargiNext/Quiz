@@ -11,9 +11,11 @@
         <button v-else class="button is-outlined is-info" style="margin: 10px 5px 10px;" @click="send(false,Number(question.id),Number(question.time))">{{ question.num }}</button>
       </span><br>
       <div style="padding: 20px 0 20px;">
-        <button class="button is-outlined is-info" @click="limit_trigger(true)">タイムリミットを表示</button>
-        <button class="button is-outlined is-info" @click="rate_trigger(true)">回答割合を表示</button>
-        <button class="button is-outlined is-info" @click="ans_trigger(true)">答えを表示</button>
+        <button class="button is-outlined is-danger" @click="limit_trigger(true)">タイムリミットを表示</button>
+      </div>
+      <div style="padding: 20px 0 20px;">
+        <button class="button is-outlined is-success" @click="rate_trigger(true)">回答割合を表示</button>
+        <button class="button is-outlined is-success" @click="ans_trigger(true)">答えを表示</button>
       </div>
       <div style="padding: 20px 0 20px;">
         <button class="button is-outlined is-info" @click="res_trigger(true)">結果発表</button>

@@ -214,6 +214,7 @@ export default {
         	  this.timeup = true
             sessionStorage.setItem('timeup', true)
             this.isAns =false
+            this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
 		  }
 	  })
 
@@ -224,6 +225,7 @@ export default {
       sessionStorage.removeItem('timeup')
       this.timeup = false
       this.isAns = false
+      this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
     })
 
     // 最終結果発表トリガの受け取り
