@@ -69,32 +69,17 @@
       </div>
       <p :class="box" id="padding_ud_30"><span style="font-weight: bold;">{{ question.num }}</span> <br> {{ question.content }}</p>
       <div id="padding_d_30">
-        <button :class="select_btn" @click="answer('1')" :style="resetColor_1" onfocus="this.blur();">{{ question.select_1 }}</button>
+        <button :class="select_btn" @click="answer('1')" :style="resetColor_1" onfocus="this.blur();" :disabled="isPush">{{ question.select_1 }}</button>
       </div>
       <div id="padding_d_30">
-        <button :class="select_btn" @click="answer('2')" :style="resetColor_2" onfocus="this.blur();">{{ question.select_2 }}</button>
+        <button :class="select_btn" @click="answer('2')" :style="resetColor_2" onfocus="this.blur();" :disabled="isPush">{{ question.select_2 }}</button>
       </div>
       <div id="padding_d_30">
-        <button :class="select_btn" @click="answer('3')" :style="resetColor_3" onfocus="this.blur();">{{ question.select_3 }}</button>
+        <button :class="select_btn" @click="answer('3')" :style="resetColor_3" onfocus="this.blur();" :disabled="isPush">{{ question.select_3 }}</button>
       </div>
       <div id="padding_d_30">
-        <button :class="select_btn" @click="answer('4')" :style="resetColor_4" onfocus="this.blur();">{{ question.select_4 }}</button>
+        <button :class="select_btn" @click="answer('4')" :style="resetColor_4" onfocus="this.blur();" :disabled="isPush">{{ question.select_4 }}</button>
       </div>
-      <!-- <div id="padding_d_30">
-        <button :class="[select_btn, color_1]" @click="answer('1')" :style="resetColor_1" onfocus="this.blur();">{{ question.select_1 }}</button>
-      </div>
-      <div id="padding_d_30">
-        <button :class="[select_btn, color_2]" @click="answer('2')" :style="resetColor_2" onfocus="this.blur();">{{ question.select_2 }}</button>
-      </div>
-      <div id="padding_d_30">
-        <button :class="[select_btn, color_3]" @click="answer('3')" :style="resetColor_3" onfocus="this.blur();">{{ question.select_3 }}</button>
-      </div>
-      <div id="padding_d_30">
-        <button :class="[select_btn, color_4]" @click="answer('4')" :style="resetColor_4" onfocus="this.blur();">{{ question.select_4 }}</button>
-      </div>
-      <div id="padding_d_30">
-        <button class="btn btn-lg column is-offset-1-mobile is-10-mobile outline btn-col-1" onfocus="this.blur();">{{ question.select_4 }}</button>
-      </div> -->
     </div>
   </div>
 </template>
@@ -125,7 +110,6 @@ export default {
       color_3: 'is-primary',
       color_4: 'is-success',
       select_btn: "btn btn-lg column is-offset-3-desktop is-6-desktop is-offset-2-tablet is-8-tablet is-offset-1-mobile is-10-mobile",
-      // select_btn: "button column is-large is-offset-3-desktop is-6-desktop is-offset-2-tablet is-8-tablet is-offset-1-mobile is-10-mobile is-outlined",
       box: "column title is-offset-3-desktop is-6-desktop is-offset-2-tablet is-8-tablet is-offset-1-mobile is-10-mobile",
       timer: "column title is-offset-5-desktop is-2-desktop is-offset-5-tablet is-2-tablet is-offset-5-mobile is-2-mobile",
       socket: '',
@@ -149,6 +133,7 @@ export default {
       timeup: false,
       reload: false,
       Login: null,
+      isPush: false,
     }
   },
   created () {
@@ -203,6 +188,7 @@ export default {
       }
       // リロードでなく問題が切り替わるとき（つまり次の問題に遷移したとき）
       else {
+        this.isPush = false
         sessionStorage.removeItem('isAns')
         sessionStorage.removeItem('showModal_result')
         sessionStorage.removeItem('timeup')
@@ -252,6 +238,7 @@ export default {
   },
   methods: {
     answer(value){
+      this.isPush = true
       if (value == 1){
         this.resetColor_1 = 'background-color: #209cee; border-color: #209cee; color: #fff;'
       }
@@ -318,29 +305,5 @@ export default {
 }
 .btn {
   white-space: normal;
-  text-overflow: ellipsis;
-}
-.btn-col-1 {
-    background: none; 
-    color: #23d160; 
-}
-
-.btn-col-1:hover, .btn-col-1:focus, 
-.btn-col-1:active, .btn-col-1:active:focus, .btn-col-1:active:hover, .btn-col-1:active.focus,
-.btn-col-1.active, .btn-col-1.active:focus, .btn-col-1.active:hover, .btn-col-1.active.focus,
-.open > .dropdown-toggle.btn-col-1, 
-.open > .dropdown-toggle.btn-col-1:hover,
-.open > .dropdown-toggle.btn-col-1:focus, 
-.open > .dropdown-toggle.btn-col-1.focus,
-.btn-col-1.disabled:hover, .btn-col-1[disabled]:hover, fieldset[disabled] .btn-col-1:hover,
-.btn-col-1.disabled:focus, .btn-col-1[disabled]:focus, fieldset[disabled] .btn-col-1:focus,
-.btn-col-1.disabled.focus, .btn-col-1[disabled].focus, fieldset[disabled] .btn-col-1.focus {
-    background: #23d160;
-    color: #FFF;
-}
-
-.btn-col-1.outline {
-    border: 3px solid #23d160;
-    color: #FFF;
 }
 </style>
