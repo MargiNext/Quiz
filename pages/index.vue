@@ -43,7 +43,8 @@
           </div>
           <div class="media-content">
             <p class="title is-4">{{ name }}</p>
-            <p class="subtitle is-6">score：{{ Number(this.corNum_before) }}</p>
+            <!-- <p class="subtitle is-6">score：{{ Number(this.corNum_before) }}</p> -->
+            <progress class="subtitle progress is-primary is-small" :value="this.corNum_before" max="21"></progress>
           </div>
           <div class="media-right">
             <i class="fas fa-sign-out-alt fa-lg" @click="out_trigger"></i>
