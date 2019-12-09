@@ -150,7 +150,7 @@ export default {
     }
 
     // 最新の情報をとってくる
-    this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+    this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 10
     this.corNum = sessionStorage.getItem('corNum') ? sessionStorage.getItem('corNum') : 0
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
