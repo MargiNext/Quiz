@@ -42,11 +42,13 @@ async function start () {
 
   let quizId = 0 // クイズの問題番号
   let ansSelect = [] // 回答数
+  let ansUser = [] // 回答ユーザ
   let finalResult = [] // 最終結果時のデータ
   let userResult = {} // ユーザごとの正答数
   let maxQuizNum = 19 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
+  let peopleList = [] // 参加者リスト
   let rank = 10 // 上位表彰者数
   let winner = [] // 上位入賞者
   let countDownId = '' // カウントダウンID
@@ -59,13 +61,17 @@ async function start () {
     querySnapshot.docChanges().forEach(change => {
     if (change.type === 'added') {
       console.log('New name: ', change.doc.data()['name']);
+      peopleList.push(change.doc.data()['name'])
       people++
     }
     if (change.type === 'modified') {
       console.log('Modified name: ', change.doc.data()['name']);
+      let numIndex = array.lastIndexOf(change.doc.data()['name'])
+      peopleList[numIndex] = change.doc.data()['name']
     }
     if (change.type === 'removed') {
       console.log('Removed name: ', change.doc.data()['name']);
+      peopleList = peopleList.filter(n => n !== change.doc.data()['name'])
       if (people > 0) people--
       }
     console.log('people num: ', people)
@@ -130,6 +136,7 @@ async function start () {
             db.collection(String(quizId.id)).get().then(function(querySnapshot) {
               querySnapshot.forEach(function(doc) {
                   ansSelect.push(doc.data().select_num)
+                  ansUser.push(doc.data().user_id)
               })
             })
             // エラー処理
@@ -142,6 +149,24 @@ async function start () {
           })
         }
         dbResult().then(function(value) {
+          // 回答者数
+          console.log("ans num: ", ansSelect.length)
+          // 登録ユーザリスト
+          console.log("peopleList: ", peopleList)
+          // 回答ユーザリスト
+          console.log("ansUser: ", ansUser)
+          // 未回答ユーザリスト
+          let listDiff = peopleList.filter(itemA =>
+            // 配列Bに存在しない要素が返る
+            ansUser.indexOf(itemA) == -1
+          )
+          console.log("not answer user: ", listDiff)
+          // 重複ユーザリスト
+          let listDuplicate = ansUser.filter(function (x, i, self) {
+            return self.indexOf(x) !== self.lastIndexOf(x)
+          })
+          console.log("duplicate user: ", listDuplicate)
+          // 回答選択肢リスト
           console.log("ansSelect: ", ansSelect)
           let counts = {}
           for(let i=0;i< ansSelect.length;i++)
@@ -158,8 +183,9 @@ async function start () {
           // 回答割合の送信
           socket.broadcast.emit('rateResult', counts)
 
-          // ansSelectの初期化
+          // 値の初期化
           ansSelect = []
+          ansUser = []
         })
       })
 
