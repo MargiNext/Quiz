@@ -193,7 +193,7 @@ export default {
         sessionStorage.removeItem('isAns')
         sessionStorage.removeItem('showModal_result')
         sessionStorage.removeItem('timeup')
-        sessionStorage.removeItem('ansCorrect')
+        if(sessionStorage.getItem('ansCorrect')) sessionStorage.removeItem('ansCorrect')
         this.isAns = false
         this.showModal_result = false
         this.top = (this.question.id == null) ? true : false
@@ -258,7 +258,7 @@ export default {
       // idと正解かどうかもサーバに送る
       this.ans.id = this.name
       this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
-      sessionStorage.setItem('ansCorrect', this.ans.correct)
+      if (this.ans.correct) sessionStorage.setItem('ansCorrect', this.ans.correct)
 
       // サーバー側に回答を送信する
       this.socket.emit('Answer', this.ans)
