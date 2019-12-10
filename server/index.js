@@ -45,7 +45,7 @@ async function start () {
   let ansUser = [] // 回答ユーザ
   let finalResult = [] // 最終結果時のデータ
   let userResult = {} // ユーザごとの正答数
-  let maxQuizNum = 19 // クイズの問題数
+  let maxQuizNum = 21 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
   let peopleList = [] // 参加者リスト
