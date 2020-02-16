@@ -3,12 +3,12 @@
     <div id="wrapper" class="container">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <!-- Topのときもindex.jsのロジックを変えるのが手間なのでtimeに10を入れておきます -->
-      <button class="button is-outlined is-info" @click="send(true,null,Number(10))">Top</button><br>
+      <button class="button is-outlined is-info" @click="send(-1,null)">Top</button><br>
       <span v-for="(question, index) in question" :key="index">
         <div v-if="question.id == 0" style="padding: 20px 0 20px;">
-          <button class="button is-outlined is-info" @click="send(false,Number(question.id),Number(question.time))">練習問題</button>
+          <button class="button is-outlined is-info" @click="send(Number(question.id),Number(question.time))">練習問題</button>
         </div>
-        <button v-else class="button is-outlined is-info" style="margin: 10px 5px 10px;" @click="send(false,Number(question.id),Number(question.time))">{{ question.num }}</button>
+        <button v-else class="button is-outlined is-info" style="margin: 10px 5px 10px;" @click="send(Number(question.id),Number(question.time))">{{ question.num }}</button>
       </span><br>
       <div style="padding: 20px 0 20px;">
         <button class="button is-outlined is-danger" @click="limit_trigger(true)">タイムリミットを表示</button>
@@ -76,9 +76,8 @@ export default {
     }, 1000)
   },
   methods: {
-    send(isTop, quizId, quizTime) {
+    send(quizId, quizTime) {
       let quiz = {
-        top: isTop,
         id: quizId,
         time: quizTime,
       }

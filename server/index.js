@@ -109,16 +109,8 @@ async function start () {
         // for debug: websocketの確認
         console.log('socket count: ', clients.server.engine.clientsCount)
 
-        // Top画面のSocketを解放するためのFlag
-        // ここを確認お願い．多分 quiz != 0 はおかしくなるよね
-        if (quiz != 0) {
-          socket.broadcast.emit('TopSocket', true)
-        }
-
-        if (quiz.id != null) {
-          // サーバーで保持している変数にクイズidを格納する
-          quizId = quiz
-        }
+        // サーバーで保持している変数にクイズidを格納する
+        quizId = quiz
 
         // サーバーで保持している変数にクイズの制限時間を格納する
         timeLimit = quiz.time
