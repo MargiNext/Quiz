@@ -59,7 +59,8 @@
     </div>
 
     <!-- トップ画面 -->
-    <div v-if="top">
+    <!-- <div v-if="question.id == -1"> -->
+    <div v-if="isTop[0]">
       <top x="1" />
     </div>
 
@@ -119,7 +120,6 @@ export default {
       question: '',
       loading: false,
       showModal_result: false,
-      top: true,
       name: '',
       corNum: 0,
       corNum_before: 0,
@@ -135,6 +135,7 @@ export default {
       reload: false,
       Login: null,
       isPush: false,
+      isTop: [true],
     }
   },
   created () {
@@ -171,17 +172,16 @@ export default {
 
     // 問題の受け取り
     this.socket.on('Question', question => {
-      if (question.id != null) {
+      if (question.id > -1) {
+        this.isTop.splice(0, 1, false)
         this.question = questions[question.id]
         this.timeLimit = this.question.time
-        this.top = question.top
       }
       else {
-        this.top = true
+        this.isTop.splice(0, 1, true)
       }
       // リロード検知
       if (this.reload) {
-        this.top = (this.question.id == null) ? true : false
         this.corNum_before = sessionStorage.getItem('corNumBefore')
         this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
         this.timeup = sessionStorage.getItem('timeup')
@@ -196,7 +196,6 @@ export default {
         if(sessionStorage.getItem('ansCorrect')) sessionStorage.removeItem('ansCorrect')
         this.isAns = false
         this.showModal_result = false
-        this.top = (this.question.id == null) ? true : false
         this.corNum_before = this.corNum
         sessionStorage.setItem('corNumBefore', this.corNum_before)
         this.ans = {}
