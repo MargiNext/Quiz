@@ -105,7 +105,7 @@ async function start () {
 
       // 問題の受け取り
       socket.on('QuizId', quiz => {
-        console.log(quiz)
+        console.log(quiz.id)
 
         // for debug: websocketの確認
         console.log('socket count: ', clients.server.engine.clientsCount)
