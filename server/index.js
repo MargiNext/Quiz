@@ -54,6 +54,7 @@ async function start () {
   let countDownId = '' // カウントダウンID
   let timeLimit = 0 // 残り回答時間
   let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
+  let rateResultButtonFlag = true // 回答割合表示ボタンが起動しているか判断するフラグ
   let observer = db.collection('user') // userデータベース
 
   // userデータベースの監視
@@ -121,64 +122,68 @@ async function start () {
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', result => {
-        console.log("quiz: ", quizId.id)
-        // データベースから回答割合を算出する
-        function dbResult() {
-          return new Promise(function(resolve,reject) {
-            db.collection(String(quizId.id)).get().then(function(querySnapshot) {
-              querySnapshot.forEach(function(doc) {
-                  ansSelect.push(doc.data().select_num)
-                  ansUser.push(doc.data().user_id)
+        if (rateResultButtonFlag) {
+          rateResultButtonFlag = false
+          console.log("quiz: ", quizId.id)
+          // データベースから回答割合を算出する
+          function dbResult() {
+            return new Promise(function(resolve,reject) {
+              db.collection(String(quizId.id)).get().then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    ansSelect.push(doc.data().select_num)
+                    ansUser.push(doc.data().user_id)
+                })
               })
+              // エラー処理
+              .catch(function(error) {
+                console.log("Error getting documents: ", error)
+              })
+              setTimeout(function() {
+                resolve(1);
+              }, 1000)
             })
-            // エラー処理
-            .catch(function(error) {
-              console.log("Error getting documents: ", error)
+          }
+          dbResult().then(function(value) {
+            // 回答者数
+            console.log("ans num: ", ansSelect.length)
+            // 登録ユーザリスト
+            console.log("peopleList: ", peopleList)
+            // 回答ユーザリスト
+            console.log("ansUser: ", ansUser)
+            // 未回答ユーザリスト
+            let listDiff = peopleList.filter(itemA =>
+              // 配列Bに存在しない要素が返る
+              ansUser.indexOf(itemA) == -1
+            )
+            console.log("not answer user: ", listDiff)
+            // 重複ユーザリスト
+            let listDuplicate = ansUser.filter(function (x, i, self) {
+              return self.indexOf(x) !== self.lastIndexOf(x)
             })
-            setTimeout(function() {
-              resolve(1);
-            }, 1000)
+            console.log("duplicate user: ", listDuplicate)
+            // 回答選択肢リスト
+            console.log("ansSelect: ", ansSelect)
+            let counts = {}
+            for(let i=0;i< ansSelect.length;i++)
+            {
+              let key = ansSelect[i]
+              counts[key] = (counts[key])? counts[key] + 1 : 1
+            }
+            // 回答者がいない選択肢に0を代入する
+            for(let i = 1;i <= maxAnsNum;i++) {
+              if (!counts[String(i)]) counts[String(i)] = 0
+            }
+            console.log("counts: ", counts)
+
+            // 回答割合の送信
+            socket.broadcast.emit('rateResult', counts)
+
+            // 値の初期化
+            ansSelect = []
+            ansUser = []
+            rateResultButtonFlag = true
           })
         }
-        dbResult().then(function(value) {
-          // 回答者数
-          console.log("ans num: ", ansSelect.length)
-          // 登録ユーザリスト
-          console.log("peopleList: ", peopleList)
-          // 回答ユーザリスト
-          console.log("ansUser: ", ansUser)
-          // 未回答ユーザリスト
-          let listDiff = peopleList.filter(itemA =>
-            // 配列Bに存在しない要素が返る
-            ansUser.indexOf(itemA) == -1
-          )
-          console.log("not answer user: ", listDiff)
-          // 重複ユーザリスト
-          let listDuplicate = ansUser.filter(function (x, i, self) {
-            return self.indexOf(x) !== self.lastIndexOf(x)
-          })
-          console.log("duplicate user: ", listDuplicate)
-          // 回答選択肢リスト
-          console.log("ansSelect: ", ansSelect)
-          let counts = {}
-          for(let i=0;i< ansSelect.length;i++)
-          {
-            let key = ansSelect[i]
-            counts[key] = (counts[key])? counts[key] + 1 : 1
-          }
-          // 回答者がいない選択肢に0を代入する
-          for(let i = 1;i <= maxAnsNum;i++) {
-            if (!counts[String(i)]) counts[String(i)] = 0
-          }
-          console.log("counts: ", counts)
-
-          // 回答割合の送信
-          socket.broadcast.emit('rateResult', counts)
-
-          // 値の初期化
-          ansSelect = []
-          ansUser = []
-        })
       })
 
       // トリガ（eachResult）の受け取り，クライアントへ送信
