@@ -2,15 +2,17 @@
   <!-- <section class="section"> -->
       <div class="field">
         <div class="is-mobile" id="padding_u_100">
-          <p style="text-align: center; font-size: 30px;">SI部</p>
+          <!-- <p style="text-align: center; font-size: 30px;">SI部</p> -->
           <div style="text-align: center; font-size: 40px;">
-            <div class="rot1">忘</div><div class="rot2">年</div><div class="rot3">会</div>
+            <div class="rot1">ク</div><div class="rot2">イ</div><div class="rot3">ズ</div>
           </div>
         </div>
         <div class="columns is-mobile" id="padding_u_100">
           <div :class="box">
             <input class="input" type="text" placeholder="Team Name" v-model="name">
-            <p v-if='isLogin' style="color: red;">※このグループ名はすでに使用済みです</p>
+            <input class="input" type="text" placeholder="Group ID" v-model="groupId">
+            <p v-if='isLogin_name' style="color: red;">※このユーザ名はすでに使用済みです</p>
+            <p v-if='isLogin_groupId' style="color: red;">※このグループIDは存在しません</p>
           </div>
         </div>
         <div class="columns is-mobile">
@@ -31,30 +33,45 @@ export default {
   data() {
     return {
       name: '',
-      isLogin: true,
+      groupId: '',
+      isLogin_name: false,
+      isLogin_groupId: false,
       Login: [false],
       box: 'column is-10 is-offset-1'
     }
   },
   mounted() {
-    this.isLogin = this.$route.query.login
+    this.isLogin_name = this.$route.query.name
+    this.isLogin_groupId = this.$route.query.groupId
     this.socket = io()
 		// ログイン可否の受け取り
     this.socket.on('Login', Login => {
       this.Login.push(Login)
       this.Login.shift()
-      if(this.Login[0] == false){
-        this.$router.push({path: '/login?login=true'})
+      console.log(this.Login)
+      if(this.Login[0].name == true){
+        this.$router.push({path: '/login?name=true'})
+      }
+      else if(this.Login[0].groupId == true){
+        this.$router.push({path: '/login?groupId=true'})
+      }
+      else{
+        console.log('無事にログインできたね！')
       }
     })
   },
   methods: {
 		login(){
+      let user = {
+        name: this.name,
+        groupId: this.groupId,
+      }
       this.$router.push('/')
-      this.socket.emit('name', this.name)
+      this.socket.emit('user', user)
 
-			// セッションストレージを使用
-			sessionStorage.setItem('name', this.name);
+      // セッションストレージを使用
+      sessionStorage.setItem('name', user.name);
+      sessionStorage.setItem('groupId', user.groupId);
 		}
   },
 }

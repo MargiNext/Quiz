@@ -321,32 +321,68 @@ async function start () {
 
       })
 
-      // nameの受け取り，クライアントへ送信
-      socket.on('name', result => {
+      // groupIdの受け取り
+      socket.on('admin', admin => {
+        // for debug
+        console.log(admin)
+        // DBにadmin情報を登録
+        db.collection('admin').add({
+          name: admin.name,
+          groupId: admin.groupId
+        })
+        .then(function() {
+          console.log("Document successfully written!")
+        })
+        .catch(function(error) {
+          console.error("Error writing document: ", error)
+        })
+      })
+
+      // userの受け取り，クライアントへ送信
+      socket.on('user', user => {
+        let error_check = {
+          name: '',
+          groupId: ''
+        }
 
         // for debug
-        console.log(result)
-        db.collection('user').where('name','==',result).get()
-        // すでにユーザ名が存在するため登録し直し
-        .then(doc => {
-          console.log(doc.docs[0].id)
-          console.log("Exist user name ")
-          // ログインの失敗をクライアントに送信
-          io.to(socket.id).emit('Login', false)
-        })
-        // ユーザ名が重複しなかったため新しくDBに格納する
-        .catch(function(error) {
-          console.log("Not Exist user name")
-          db.collection('user').add({
-            name: result
-          })
-          // ログインの成功をクライアントに送信
-          io.to(socket.id).emit('Login', true)
-          // ログイン時のSocketを解放
-          io.sockets.connected[socket.id].disconnect()
-          console.log('login socket id: ', socket.id, 'disconnected')
-          // 実際の人数の追加は後で行われる（リアルタイムベースによる更新時）
-          socket.broadcast.emit('People', people+1)
+        console.log(user)
+        adminDB = db.collection('admin').where('groupId','==',Number(user.groupId))
+        adminDB.get().then(function(querySnapshot) {
+          if (querySnapshot.empty) {
+            console.log("Not Exist groupId")
+            // ログインの失敗をクライアントに送信
+            error_check.groupId = true
+            io.to(socket.id).emit('Login', error_check)
+          } else {
+            console.log("Exist groupId")
+            db.collection('user').where('name','==',user.name).get()
+            // すでにユーザ名が存在するため登録し直し
+            .then(function(querySnapshot) {
+              if (querySnapshot.empty) {
+                console.log(user)
+                console.log("Not Exist user name")
+                db.collection('user').add({
+                  name: user.name,
+                  groupId: user.groupId
+                })
+                // ログインの成功をクライアントに送信
+                io.to(socket.id).emit('Login', true)
+                // ログイン時のSocketを解放
+                io.sockets.connected[socket.id].disconnect()
+                console.log('login socket id: ', socket.id, 'disconnected')
+                // 実際の人数の追加は後で行われる（リアルタイムベースによる更新時）
+                socket.broadcast.emit('People', people+1)
+              }
+              // ユーザ名が重複しなかったため新しくDBに格納する
+              else {
+                console.log("Exist user name")
+                // ログインの失敗をクライアントに送信
+                error_check.name = true
+                io.to(socket.id).emit('Login', error_check)
+              }
+            })
+          }
         })
       })
 
