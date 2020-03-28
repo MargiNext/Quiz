@@ -103,6 +103,7 @@ export default {
   },
   data() {
     return {
+      groupId: '1234',
       resetColor_1: 'background-color: transparent; border-color: #209cee; color: #209cee;',
       resetColor_2: 'background-color: transparent; border-color: #3273dc; color: #3273dc;',
       resetColor_3: 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;',
@@ -172,38 +173,40 @@ export default {
 
     // 問題の受け取り
     this.socket.on('Question', question => {
-      if (question.id > -1) {
-        this.isTop.splice(0, 1, false)
-        this.question = questions[question.id]
-        this.timeLimit = this.question.time
-      }
-      else {
-        this.isTop.splice(0, 1, true)
-      }
-      // リロード検知
-      if (this.reload) {
-        this.corNum_before = sessionStorage.getItem('corNumBefore')
-        this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
-        this.timeup = sessionStorage.getItem('timeup')
-        this.reload = false
-      }
-      // リロードでなく問題が切り替わるとき（つまり次の問題に遷移したとき）
-      else {
-        this.isPush = false
-        sessionStorage.removeItem('isAns')
-        sessionStorage.removeItem('showModal_result')
-        sessionStorage.removeItem('timeup')
-        if(sessionStorage.getItem('ansCorrect')) sessionStorage.removeItem('ansCorrect')
-        this.isAns = false
-        this.showModal_result = false
-        this.corNum_before = this.corNum
-        sessionStorage.setItem('corNumBefore', this.corNum_before)
-        this.ans = {}
-        this.timeup = false
-        this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
-        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
-        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
+      if (question.groupId == this.groupId) {
+        if (question.id > -1) {
+          this.isTop.splice(0, 1, false)
+          this.question = questions[question.id]
+          this.timeLimit = this.question.time
+        }
+        else {
+          this.isTop.splice(0, 1, true)
+        }
+        // リロード検知
+        if (this.reload) {
+          this.corNum_before = sessionStorage.getItem('corNumBefore')
+          this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
+          this.timeup = sessionStorage.getItem('timeup')
+          this.reload = false
+        }
+        // リロードでなく問題が切り替わるとき（つまり次の問題に遷移したとき）
+        else {
+          this.isPush = false
+          sessionStorage.removeItem('isAns')
+          sessionStorage.removeItem('showModal_result')
+          sessionStorage.removeItem('timeup')
+          if(sessionStorage.getItem('ansCorrect')) sessionStorage.removeItem('ansCorrect')
+          this.isAns = false
+          this.showModal_result = false
+          this.corNum_before = this.corNum
+          sessionStorage.setItem('corNumBefore', this.corNum_before)
+          this.ans = {}
+          this.timeup = false
+          this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
+          this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
+          this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
+          this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
+        }
       }
     })
 
