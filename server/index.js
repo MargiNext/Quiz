@@ -316,7 +316,7 @@ async function start () {
         console.log(ans)
         // DBに格納
         db.collection(String(ans.groupId+'_'+ans.quizId)).add({
-          user_id: ans.id,
+          user_id: ans.name,
           groupId: ans.groupId,
           select_num: ans.ans,
           is_correct: ans.correct
