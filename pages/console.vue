@@ -3,7 +3,7 @@
     <div id="wrapper" class="container">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <!-- Topのときもindex.jsのロジックを変えるのが手間なのでtimeに10を入れておきます -->
-      <button class="button is-outlined is-info" @click="send(-1,null,null)">Top</button><br>
+      <button class="button is-outlined is-info" @click="send(-1,null,groupId)">Top</button><br>
       <span v-for="(question, index) in question" :key="index">
         <div v-if="question.id == 0" style="padding: 20px 0 20px;">
           <button class="button is-outlined is-info" @click="send(Number(question.id),Number(question.time),groupId)">練習問題</button>

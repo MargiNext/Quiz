@@ -42,7 +42,7 @@
             />
           </div>
           <div class="media-content">
-            <p class="title is-4">{{ name }}</p>
+            <p class="title is-4">{{ this.user.name }}</p>
             <!-- <p class="subtitle is-6">score：{{ Number(this.corNum_before) }}</p> -->
             <progress class="subtitle progress is-primary is-small" :value="this.corNum_before" max="21"></progress>
           </div>
@@ -125,6 +125,7 @@ export default {
       corNum_before: 0,
       ans: {
         id: '',
+        groupId: '',
         ans: '',
         correct: false,
       },
@@ -259,7 +260,8 @@ export default {
       }
       this.ans.ans = value
       // idと正解かどうかもサーバに送る
-      this.ans.id = this.name
+      this.ans.id = this.user.name
+      this.ans.groupId = this.user.groupId
       this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
       if (this.ans.correct) sessionStorage.setItem('ansCorrect', this.ans.correct)
 
