@@ -103,7 +103,6 @@ export default {
   },
   data() {
     return {
-      groupId: '1234',
       resetColor_1: 'background-color: transparent; border-color: #209cee; color: #209cee;',
       resetColor_2: 'background-color: transparent; border-color: #3273dc; color: #3273dc;',
       resetColor_3: 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;',
@@ -137,17 +136,19 @@ export default {
       Login: null,
       isPush: false,
       isTop: [true],
+      user: '',
     }
   },
   created () {
   },
   mounted() {
+
     this.isAns = Boolean(sessionStorage.getItem('isAns'))
     this.showModal_result = Boolean(sessionStorage.getItem('showModal_result'))
 
     // セッションストレージから名前を取り出す
-    this.name = sessionStorage.getItem('name')
-    if(this.name == null){
+    this.user = JSON.parse(sessionStorage.getItem('user'))
+    if(this.user == null){
 			this.$router.push('/login')
     }
 
@@ -173,7 +174,7 @@ export default {
 
     // 問題の受け取り
     this.socket.on('Question', question => {
-      if (question.groupId == this.groupId) {
+      if (question.groupId == this.user.groupId) {
         if (question.id > -1) {
           this.isTop.splice(0, 1, false)
           this.question = questions[question.id]

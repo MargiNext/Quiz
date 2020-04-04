@@ -43,7 +43,7 @@ import question from '../assets/api/question.json'
 export default {
   data() {
     return {
-      groupId: '1234',
+      groupId: '',
       socket: '',
       isLoading: true,
       question: question,
@@ -62,10 +62,10 @@ export default {
   mounted() {
     // セッションストレージから名前を取り出す
     this.admin = JSON.parse(sessionStorage.getItem('admin'))
-    console.log(this.admin)
     if(this.admin == null){
 			this.$router.push('/console_login')
     }
+    this.groupId = this.admin.groupId
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
@@ -91,6 +91,7 @@ export default {
         time: quizTime,
         groupId: groupId,
       }
+      console.log(quiz)
 
       // サーバー側にクイズ番号を送信する
       this.socket.emit('QuizId', quiz)
