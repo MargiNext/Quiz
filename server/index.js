@@ -40,8 +40,7 @@ async function start () {
   socketStart(server)
   console.log('Socket.IO starts')
 
-  // let quizId = new Map() // クイズの問題番号
-  // let quizId = 0 // クイズの問題番号
+  let quizId = new Map() // クイズの問題番号
   let maxQuizNum = 21 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
@@ -110,11 +109,6 @@ async function start () {
         socket.emit('People', people)
       }
 
-      // サーバー側で保持しているクイズをクライアント側に送信
-      // if (quizId != null) {
-      //   socket.emit('Question', quizId)
-      // }
-
       // 問題の受け取り
       socket.on('QuizId', quiz => {
         console.log(quiz)
@@ -123,7 +117,7 @@ async function start () {
         console.log('socket count: ', clients.server.engine.clientsCount)
 
         // サーバーで保持している変数にクイズidを格納する
-        // quizId = quiz
+        quizId[groupId] = quiz.id
 
         // サーバーで保持している変数にクイズの制限時間を格納する
         timeLimit = quiz.time
@@ -139,11 +133,11 @@ async function start () {
         if (ansUser.has(groupId) == false) ansUser[groupId] = []
         if (rateResultButtonFlag[groupId]) {
           rateResultButtonFlag = false
-          console.log("quiz: ", quizId)
+          console.log("quiz: ", quizId[groupId])
           // データベースから回答割合を算出する
           function dbResult() {
             return new Promise(function(resolve,reject) {
-              db.collection(String(groupId+'_'+quizId)).get().then(function(querySnapshot) {
+              db.collection(String(groupId+'_'+quizId[groupId])).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     ansSelect[groupId].push(doc.data().select_num)
                     ansUser[groupId].push(doc.data().user_id)
@@ -321,7 +315,7 @@ async function start () {
         console.log('receive')
         console.log(ans)
         // DBに格納
-        db.collection(String(ans.groupId+'_'+ans.quizId)).add({
+        db.collection(String(ans.groupId+'_'+quizId[ans.groupId])).add({
           user_id: ans.name,
           groupId: ans.groupId,
           select_num: ans.ans,
