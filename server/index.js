@@ -302,13 +302,10 @@ async function start () {
       socket.on('Answer', ans => {
         console.log('receive')
         console.log(ans)
-
-        // クライアントに対してクイズidを送信する
-        socket.broadcast.emit('Answer', ans)
-
-        // dbに格納
+        // DBに格納
         db.collection(String(quizId.id)).add({
           user_id: ans.id,
+          groupId: ans.groupId,
           select_num: ans.ans,
           is_correct: ans.correct
         })
