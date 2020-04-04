@@ -96,13 +96,19 @@ export default {
 			timeup: false,
 			groupId: '',
     }
-  },
-  mounted() {
-    // セッションストレージから名前を取り出す
-    this.groupId = sessionStorage.getItem('groupId')
-    if(this.groupId == null){
+	},
+	beforeMount () {
+    if(!this.$route.query.login){
+			console.log(this.$route.query.login)
+			console.log('だめでした')
 			this.$router.push('/screen_login')
 		}
+		else {
+			console.log(this.$route.query.login)
+			console.log('はいれたね')
+		}
+  },
+  mounted() {
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()

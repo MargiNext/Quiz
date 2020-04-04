@@ -9,7 +9,7 @@
         <div class="columns is-mobile" id="padding_u_100">
           <div :class="box">
             <input class="input" type="text" placeholder="groupId" v-model="groupId">
-            <p v-if='isLogin_groupId' style="color: red;">※このグループIDは存在しません</p>
+            <p v-if='Login[0]' style="color: red;">※そのグループIDは存在しません</p>
           </div>
         </div>
         <div class="columns is-mobile">
@@ -30,33 +30,30 @@ export default {
   data() {
     return {
       groupId: '',
-      isLogin: true,
+      isLogin: [false],
       Login: [false],
       box: 'column is-10 is-offset-1',
-      isLogin_groupId: '',
     }
   },
   mounted() {
-    this.isLogin_groupId = this.$route.query.groupId
+    // this.isLogin_groupId = this.$route.query.groupId
     this.socket = io()
-
-		// ログイン可否の受け取り
-    this.socket.on('screenLogin', Login => {
-      this.Login.push(Login)
-      this.Login.shift()
-      if(this.Login[0] == true){
-        this.$router.push({path: '/screen_login?groupId=true'})
-      }
-      else{
-        console.log('無事にログインできたね！')
-      }
-    })
   },
   methods: {
 		login(){
       this.socket.emit('screen', this.groupId)
       sessionStorage.setItem('groupId', this.groupId);
-      this.$router.push('/screen')
+
+      // ログイン可否の受け取り
+      this.socket.on('screenLogin', Login => {
+        this.Login.push(Login)
+        this.Login.shift()
+        if(this.Login[0] == true){
+        }
+        else{
+          this.$router.push({path: '/screen?login=true'})
+        }
+      })
 		}
   },
 }
