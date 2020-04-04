@@ -124,7 +124,6 @@ export default {
       corNum: 0,
       corNum_before: 0,
       ans: {
-        quizId: '',
         name: '',
         groupId: '',
         ans: '',
@@ -176,7 +175,6 @@ export default {
 
     // 問題の受け取り
     this.socket.on('Question', question => {
-			sessionStorage.setItem('quizId', question.id);
       if (question.groupId == this.user.groupId) {
         if (question.id > -1) {
           this.isTop.splice(0, 1, false)
@@ -215,29 +213,35 @@ export default {
     })
 
 	  // 制限時間の受け取り
-	  this.socket.on('timeLimit', timeLimit => {
-		  this.timeLimit = timeLimit
-		  if (timeLimit <= 0)  {
-        	  this.timeup = true
-            sessionStorage.setItem('timeup', true)
-            this.isAns =false
-            this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
-		  }
+	  this.socket.on('timeLimit', limit => {
+		  this.timeLimit = limit.time
+      if (limit.groupId == this.user.groupId) {
+        if (limit.time <= 0)  {
+              this.timeup = true
+              sessionStorage.setItem('timeup', true)
+              this.isAns =false
+              this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+        }
+      }
 	  })
 
     // 回答トリガの受け取り
     this.socket.on('eachResult', result => {
-      this.showModal_result = result
-      sessionStorage.setItem('showModal_result', true)
-      sessionStorage.removeItem('timeup')
-      this.timeup = false
-      this.isAns = false
-      this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+      if (result.groupId == this.user.groupId) {
+        this.showModal_result = result
+        sessionStorage.setItem('showModal_result', true)
+        sessionStorage.removeItem('timeup')
+        this.timeup = false
+        this.isAns = false
+        this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+      }
     })
 
     // 最終結果発表トリガの受け取り
     this.socket.on('finalResult', result => {
-			this.$router.push({ path: '/result'})
+      if (result.groupId == this.user.groupId) {
+        this.$router.push({ path: '/result'})
+      }
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
@@ -262,7 +266,6 @@ export default {
       }
 
       this.ans.ans = value
-      this.ans.quizId = sessionStorage.getItem('quizId')
       this.ans.name = this.user.name
       this.ans.groupId = this.user.groupId
       // idと正解かどうかもサーバに送る
@@ -293,8 +296,12 @@ export default {
       sessionStorage.removeItem('corNum')
       sessionStorage.removeItem('corNumBefore')
       sessionStorage.removeItem('sessionId')
-			this.$router.push('/login')
-      this.socket.emit('delName', this.name)
+      this.$router.push('/login')
+      let info = {
+        name: this.name,
+        groupId: this.groupId
+      }
+      this.socket.emit('delName', info)
     },
   },
   // watch: {
