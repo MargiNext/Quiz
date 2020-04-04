@@ -69,9 +69,10 @@ export default {
       this.$router.push('/')
       this.socket.emit('user', user)
 
-      // セッションストレージを使用
-      sessionStorage.setItem('name', user.name);
-      sessionStorage.setItem('groupId', user.groupId);
+      let jstr = JSON.stringify(user);
+
+			// セッションストレージを使用
+			sessionStorage.setItem('user', jstr);
 		}
   },
 }
