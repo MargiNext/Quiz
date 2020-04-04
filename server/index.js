@@ -40,21 +40,27 @@ async function start () {
   socketStart(server)
   console.log('Socket.IO starts')
 
-  let quizId = 0 // クイズの問題番号
-  let ansSelect = [] // 回答数
-  let ansUser = [] // 回答ユーザ
-  let finalResult = [] // 最終結果時のデータ
-  let userResult = {} // ユーザごとの正答数
+  // let quizId = new Map() // クイズの問題番号
+  // let quizId = 0
   let maxQuizNum = 21 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
   let peopleList = [] // 参加者リスト
+
+  let ansSelect = [] // 回答数
+  let ansUser = [] // 回答ユーザ
+
+  let finalResult = [] // 最終結果時のデータ
+  let userResult = {} // ユーザごとの正答数
   let rank = 10 // 上位表彰者数
   let winner = [] // 上位入賞者
+
   let countDownId = '' // カウントダウンID
   let timeLimit = 0 // 残り回答時間
+
   let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
   let rateResultButtonFlag = true // 回答割合表示ボタンが起動しているか判断するフラグ
+
   let observer = db.collection('user') // userデータベース
 
   // userデータベースの監視
@@ -99,9 +105,9 @@ async function start () {
       }
 
       // サーバー側で保持しているクイズをクライアント側に送信
-      if (quizId != null) {
-        socket.emit('Question', quizId)
-      }
+      // if (quizId != null) {
+      //   socket.emit('Question', quizId)
+      // }
 
       // 問題の受け取り
       socket.on('QuizId', quiz => {
@@ -111,7 +117,7 @@ async function start () {
         console.log('socket count: ', clients.server.engine.clientsCount)
 
         // サーバーで保持している変数にクイズidを格納する
-        quizId = quiz
+        // quizId = quiz
 
         // サーバーで保持している変数にクイズの制限時間を格納する
         timeLimit = quiz.time
@@ -124,11 +130,11 @@ async function start () {
       socket.on('rateResult', result => {
         if (rateResultButtonFlag) {
           rateResultButtonFlag = false
-          console.log("quiz: ", quizId.id)
+          console.log("quiz: ", result.quizId)
           // データベースから回答割合を算出する
           function dbResult() {
             return new Promise(function(resolve,reject) {
-              db.collection(String(quizId.id)).get().then(function(querySnapshot) {
+              db.collection(String(result.quizId)).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     ansSelect.push(doc.data().select_num)
                     ansUser.push(doc.data().user_id)
@@ -303,7 +309,7 @@ async function start () {
         console.log('receive')
         console.log(ans)
         // DBに格納
-        db.collection(String(quizId.id)).add({
+        db.collection(String(ans.groupId+'_'+ans.quizId)).add({
           user_id: ans.id,
           groupId: ans.groupId,
           select_num: ans.ans,
@@ -318,7 +324,7 @@ async function start () {
 
       })
 
-      // groupIdの受け取り
+      // 管理者登録時のgroupIdの受け取り
       socket.on('admin', admin => {
         // for debug
         console.log(admin)
