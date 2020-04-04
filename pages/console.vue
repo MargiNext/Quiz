@@ -1,5 +1,27 @@
 <template>
-  <section class="section">
+  <!-- <section class="section"> -->
+  <div>
+    <!-- トップバー -->
+    <div class="card">
+      <div class="card-content">
+        <div class="media">
+          <div class="media-left">
+            <b-icon
+              icon="account"
+              size="is-large"
+              type="is-success"
+              class="colmun"
+            />
+          </div>
+          <div class="media-content">
+            <p class="is-4" style="font-weight: bold; font-size:20px;">{{ this.admin.name }}
+              <p>{{this.admin.groupId}}</p>
+          </div>
+          <div class="media-right">
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="wrapper" class="container">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <!-- Topのときもindex.jsのロジックを変えるのが手間なのでtimeに10を入れておきます -->
@@ -33,7 +55,8 @@
 		<div v-for="(ans, index) in reverseAns" :key="index">
 			<p>{{ ans }}</p>
 		</div>
-  </section>
+  </div>
+  <!-- </section> -->
 </template>
 
 <script>
@@ -99,10 +122,10 @@ export default {
       this.quiz = ''
     },
     rate_trigger(boolean) {
-      let trigger = boolean
+      let groupId = this.groupId
 
       // サーバー側に回答結果を表示するためのトリガを送信する
-			this.socket.emit('rateResult', trigger)
+			this.socket.emit('rateResult', groupId)
     },
     ans_trigger(boolean) {
       let trigger = boolean
@@ -111,10 +134,10 @@ export default {
 			this.socket.emit('eachResult', trigger)
     },
     res_trigger(boolean) {
-      let trigger = boolean
+      let groupId = this.groupId
 
       // サーバー側に最終結果を表示するためのトリガを送信する
-			this.socket.emit('finalResult', trigger)
+			this.socket.emit('finalResult', groupId)
     },
     con_trigger(boolean) {
       let trigger = boolean
@@ -129,10 +152,10 @@ export default {
       this.socket.emit('Rank', trigger)
     },
     limit_trigger(boolean) {
-      let trigger = boolean
+      let groupId = this.groupId
 
       // サーバー側に制限時間開始のトリガを送信する
-      this.socket.emit('timeLimit', trigger)
+      this.socket.emit('timeLimit', groupId)
     }
   }
 }
