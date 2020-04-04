@@ -45,7 +45,7 @@ export default {
       this.Login.push(Login)
       this.Login.shift()
       if(this.Login[0] == true){
-        this.$router.push({path: '/login?groupId=true'})
+        this.$router.push({path: '/screen_login?groupId=true'})
       }
       else{
         console.log('無事にログインできたね！')

@@ -226,9 +226,9 @@ export default {
 	  })
 
     // 回答トリガの受け取り
-    this.socket.on('eachResult', result => {
-      if (result.groupId == this.user.groupId) {
-        this.showModal_result = result
+    this.socket.on('eachResult', groupId => {
+      if (groupId == this.user.groupId) {
+        this.showModal_result = true
         sessionStorage.setItem('showModal_result', true)
         sessionStorage.removeItem('timeup')
         this.timeup = false

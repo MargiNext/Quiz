@@ -120,10 +120,10 @@ async function start () {
         console.log('socket count: ', clients.server.engine.clientsCount)
 
         // サーバーで保持している変数にクイズidを格納する
-        quizId[groupId] = quiz.id
+        quizId[quiz.groupId] = quiz.id
 
         // サーバーで保持している変数にクイズの制限時間を格納する
-        timeLimit[groupId] = quiz.time
+        timeLimit[quiz.groupId] = quiz.time
 
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Question', quiz)
@@ -131,6 +131,7 @@ async function start () {
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', groupId => {
+        console.log('debug------------------: ', groupId)
         if (rateResultButtonFlag.has(groupId) == false) rateResultButtonFlag[groupId] = true
         if (ansSelect.has(groupId) == false) ansSelect[groupId] = []
         if (ansUser.has(groupId) == false) ansUser[groupId] = []

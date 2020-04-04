@@ -137,7 +137,7 @@ export default {
     // 割合トリガの受け取り
     this.socket.on('rateResult', info => {
 			if (info.groupId == this.groupId) {
-				this.rateShow = result.counts
+				this.rateShow = info.counts
 				this.timeup = false
 				this.regular()
 			}
@@ -169,9 +169,9 @@ export default {
 		})
 
     // 最終結果発表トリガの受け取り
-    this.socket.on('finalResult', groupId => {
-			if (groupId == this.groupId) {
-				this.$router.push({ path: '/finalResult', query: result.rank})
+    this.socket.on('finalResult', info => {
+			if (info.groupId == this.groupId) {
+				this.$router.push({ path: '/finalResult', query: info.rank})
 			}
     })
 
