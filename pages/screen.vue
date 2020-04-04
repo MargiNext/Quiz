@@ -100,15 +100,14 @@ export default {
 	beforeMount () {
     if(!this.$route.query.login){
 			console.log(this.$route.query.login)
-			console.log('だめでした')
 			this.$router.push('/screen_login')
 		}
 		else {
 			console.log(this.$route.query.login)
-			console.log('はいれたね')
 		}
   },
   mounted() {
+		this.groupId = sessionStorage.getItem('groupId')
 
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
