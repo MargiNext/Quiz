@@ -58,8 +58,10 @@ export default {
       this.$router.push('/console')
       this.socket.emit('admin', admin)
 
+      let jstr = JSON.stringify(admin);
+
 			// セッションストレージを使用
-			sessionStorage.setItem('admin', this.admin);
+			sessionStorage.setItem('admin', jstr);
 		}
   },
 }

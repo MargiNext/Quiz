@@ -51,6 +51,7 @@ export default {
 			answers: [],
       rank: '',
       finalResult: '',
+      admin: '',
     }
   },
   computed: {
@@ -59,6 +60,13 @@ export default {
     },
   },
   mounted() {
+    // セッションストレージから名前を取り出す
+    this.admin = JSON.parse(sessionStorage.getItem('admin'))
+    console.log(this.admin)
+    if(this.admin == null){
+			this.$router.push('/console_login')
+    }
+
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
