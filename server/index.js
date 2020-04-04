@@ -52,10 +52,13 @@ async function start () {
   // let ansUser = [] // 回答ユーザ
   let ansUser = new Map() // 回答ユーザ
 
-  let finalResult = [] // 最終結果時のデータ
-  let userResult = {} // ユーザごとの正答数
+  // let finalResult = [] // 最終結果時のデータ
+  let finalResult = new Map() // 最終結果時のデータ
+  // let userResult = {} // ユーザごとの正答数
+  let userResult = new Map() // ユーザごとの正答数
   let rank = 10 // 上位表彰者数
-  let winner = [] // 上位入賞者
+  // let winner = [] // 上位入賞者
+  let winner = new Map() // 上位入賞者
 
   let countDownId = '' // カウントダウンID
   let timeLimit = 0 // 残り回答時間
@@ -130,20 +133,20 @@ async function start () {
       })
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
-      socket.on('rateResult', result => {
-        if (rateResultButtonFlag.has(result.groupId) == false) rateResultButtonFlag[result.groupId] = true
-        if (ansSelect.has(result.groupId) == false) ansSelect[result.groupId] = []
-        if (ansUser.has(result.groupId) == false) ansUser[result.groupId] = []
-        if (rateResultButtonFlag[result.groupId]) {
+      socket.on('rateResult', groupId => {
+        if (rateResultButtonFlag.has(groupId) == false) rateResultButtonFlag[groupId] = true
+        if (ansSelect.has(groupId) == false) ansSelect[groupId] = []
+        if (ansUser.has(groupId) == false) ansUser[groupId] = []
+        if (rateResultButtonFlag[groupId]) {
           rateResultButtonFlag = false
-          console.log("quiz: ", result.quizId)
+          console.log("quiz: ", quizId)
           // データベースから回答割合を算出する
           function dbResult() {
             return new Promise(function(resolve,reject) {
-              db.collection(String(result.groupId+'_'+result.quizId)).get().then(function(querySnapshot) {
+              db.collection(String(groupId+'_'+quizId)).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
-                    ansSelect[result.groupId].push(doc.data().select_num)
-                    ansUser[result.groupId].push(doc.data().user_id)
+                    ansSelect[groupId].push(doc.data().select_num)
+                    ansUser[groupId].push(doc.data().user_id)
                 })
               })
               // エラー処理
@@ -193,7 +196,7 @@ async function start () {
             // 値の初期化
             ansSelect[groupId] = []
             ansUser[groupId] = []
-            rateResultButtonFlag[result.groupId] = true
+            rateResultButtonFlag[groupId] = true
           })
         }
       })
@@ -205,11 +208,14 @@ async function start () {
 
       // トリガ（finalResult）の受け取り，クライアントへ送信
       socket.on('finalResult', result => {
+        if (finalResult.has(result.groupId) == false) finalResult[result.groupId] = []
+        if (userResult.has(result.groupId) == false) userResult[result.groupId] = {}
+        if (winner.has(result.groupId) == false) winner[result.groupId] = []
         // データベースから結果を算出する
         function dbResult() {
           return new Promise(function(resolve,reject) {
             for(let i=1;i<=maxQuizNum;i++) {
-              db.collection(String(i)).get().then(function(querySnapshot) {
+              db.collection(result.groupId+'_'+String(i)).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                   finalResult.push(doc.data())
                   if (!userResult[doc.data().user_id]) {
