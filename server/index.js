@@ -207,19 +207,19 @@ async function start () {
       })
 
       // トリガ（finalResult）の受け取り，クライアントへ送信
-      socket.on('finalResult', result => {
-        if (finalResult.has(result.groupId) == false) finalResult[result.groupId] = []
-        if (userResult.has(result.groupId) == false) userResult[result.groupId] = {}
-        if (winner.has(result.groupId) == false) winner[result.groupId] = []
+      socket.on('finalResult', groupId => {
+        if (finalResult.has(groupId) == false) finalResult[groupId] = []
+        if (userResult.has(groupId) == false) userResult[groupId] = {}
+        if (winner.has(groupId) == false) winner[groupId] = []
         // データベースから結果を算出する
         function dbResult() {
           return new Promise(function(resolve,reject) {
             for(let i=1;i<=maxQuizNum;i++) {
-              db.collection(result.groupId+'_'+String(i)).get().then(function(querySnapshot) {
+              db.collection(groupId+'_'+String(i)).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
-                  finalResult.push(doc.data())
-                  if (!userResult[doc.data().user_id]) {
-                    userResult[doc.data().user_id] = 0
+                  finalResult[groupId].push(doc.data())
+                  if (!userResult[groupId][doc.data().user_id]) {
+                    userResult[groupId][doc.data().user_id] = 0
                   }
                 })
               })
@@ -235,19 +235,19 @@ async function start () {
         }
         dbResult().then(function(value) {
           // ユーザごとに正答数をカウントする
-          for(let i=0;i < finalResult.length;i++)
+          for(let i=0;i < finalResult[groupId].length;i++)
           {
-            user_ = finalResult[i].user_id
-            is_correct = finalResult[i].is_correct
+            user_ = finalResult[groupId][i].user_id
+            is_correct = finalResult[groupId][i].is_correct
             if (is_correct) {
-              userResult[user_]++
+              userResult[groupId][user_]++
             }
           }
           let userRank = [] // 連想配列に変換してソートする
-          for (let i in userResult) {
+          for (let i in userResult[groupId]) {
             userRank.push({
               "userId": i,
-              "correctNum": userResult[i],
+              "correctNum": userResult[groupId][i],
             })
           }
           // 正答数順にソートする
@@ -264,29 +264,29 @@ async function start () {
           let in_rank = 1
           let plus_rank = 0
           for (let i=0;i < userRank.length;i++) {
-            if (winner.length >= rank) break
+            if (winner[groupId].length >= rank) break
             // 順位を格納する
             userRank[i].rank = in_rank
-            winner.push(userRank[i])
+            winner[groupId].push(userRank[i])
             plus_rank = 0
             for (let j=i+1;j < userRank.length;j++){
               if (userRank[i].correctNum > userRank[j].correctNum) break
               // 順位を格納する
               userRank[j].rank = in_rank
-              winner.push(userRank[j])
+              winner[groupId].push(userRank[j])
               i++
               plus_rank++
             }
             plus_rank++
             in_rank += plus_rank
           }
-          console.log(winner)
-          io.to(socket.id).emit('finalResult', winner)
-          socket.broadcast.emit('finalResult', winner)
+          console.log(winner[groupId])
+          io.to(socket.id).emit('finalResult', winner[groupId])
+          socket.broadcast.emit('finalResult', winner[groupId])
           // 値の初期化
-          finalResult = []
-          userResult = {}
-          winner = []
+          finalResult[groupId] = []
+          userResult[groupId] = {}
+          winner[groupId] = []
         })
       })
 
