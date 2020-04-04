@@ -39,11 +39,12 @@ export default {
   mounted() {
     this.isLogin_groupId = this.$route.query.groupId
     this.socket = io()
+
 		// ログイン可否の受け取り
-    this.socket.on('Login', Login => {
+    this.socket.on('screenLogin', Login => {
       this.Login.push(Login)
       this.Login.shift()
-      if(this.Login[0].groupId == true){
+      if(this.Login[0] == true){
         this.$router.push({path: '/login?groupId=true'})
       }
       else{
@@ -53,6 +54,7 @@ export default {
   },
   methods: {
 		login(){
+      this.socket.emit('screen', this.groupId)
       sessionStorage.setItem('groupId', this.groupId);
       this.$router.push('/screen')
 		}
