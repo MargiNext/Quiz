@@ -347,8 +347,9 @@ async function start () {
 
         // for debug
         console.log(user)
-        adminDB = db.collection('admin').where('groupId','==',Number(user.groupId))
+        adminDB = db.collection('admin').where('groupId','==',user.groupId)
         adminDB.get().then(function(querySnapshot) {
+          // groupIDが存在しない場合
           if (querySnapshot.empty) {
             console.log("Not Exist groupId")
             // ログインの失敗をクライアントに送信
@@ -356,9 +357,9 @@ async function start () {
             io.to(socket.id).emit('Login', error_check)
           } else {
             console.log("Exist groupId")
-            db.collection('user').where('name','==',user.name).get()
-            // すでにユーザ名が存在するため登録し直し
+            db.collection('user').where('groupId','==',user.groupId).where('name','==',user.name).get()
             .then(function(querySnapshot) {
+              // 同一グループ内でユーザ名が重複しなかったため新しくDBに格納する
               if (querySnapshot.empty) {
                 console.log(user)
                 console.log("Not Exist user name")
@@ -373,9 +374,7 @@ async function start () {
                 console.log('login socket id: ', socket.id, 'disconnected')
                 // 実際の人数の追加は後で行われる（リアルタイムベースによる更新時）
                 socket.broadcast.emit('People', people+1)
-              }
-              // ユーザ名が重複しなかったため新しくDBに格納する
-              else {
+              } else { // 既にユーザが登録されているため登録し直し
                 console.log("Exist user name")
                 // ログインの失敗をクライアントに送信
                 error_check.name = true
