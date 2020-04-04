@@ -358,7 +358,6 @@ async function start () {
           name: '',
           groupId: ''
         }
-
         // for debug
         console.log(user)
         adminDB = db.collection('admin').where('groupId','==',user.groupId)
@@ -395,6 +394,25 @@ async function start () {
                 io.to(socket.id).emit('Login', error_check)
               }
             })
+          }
+        })
+      })
+
+      // screen groupIdの受け取り
+      socket.on('screen', groupId => {
+        // for debug
+        console.log(groupId)
+        adminDB = db.collection('admin').where('groupId','==',groupId)
+        adminDB.get().then(function(querySnapshot) {
+          // groupIDが存在しない場合
+          if (querySnapshot.empty) {
+            console.log("Not Exist groupId")
+            // ログインの失敗をクライアントに送信
+            io.to(socket.id).emit('screenLogin', true)
+          } else {
+            console.log("Exist groupId")
+            // ログインの成功をクライアントに送信
+            io.to(socket.id).emit('screenLogin', false)
           }
         })
       })
