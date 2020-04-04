@@ -51,8 +51,7 @@ export default {
 		login(){
       let admin = {
         name: this.name,
-        // groupId: Math.random().toString(32).substring(2),
-        groupId: 1234,
+        groupId: Math.random().toString(32).substring(2)
       }
       console.log(admin)
 
