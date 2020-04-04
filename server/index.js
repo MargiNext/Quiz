@@ -356,8 +356,8 @@ async function start () {
       // userの受け取り，クライアントへ送信
       socket.on('user', user => {
         let error_check = {
-          name: '',
-          groupId: ''
+          name: false,
+          groupId: false
         }
         // for debug
         console.log(user)
@@ -382,7 +382,7 @@ async function start () {
                   groupId: user.groupId
                 })
                 // ログインの成功をクライアントに送信
-                io.to(socket.id).emit('Login', true)
+                io.to(socket.id).emit('Login', error_check)
                 // ログイン時のSocketを解放
                 io.sockets.connected[socket.id].disconnect()
                 console.log('login socket id: ', socket.id, 'disconnected')
