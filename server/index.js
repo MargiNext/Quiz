@@ -59,10 +59,13 @@ async function start () {
   // let winner = [] // 上位入賞者
   let winner = new Map() // 上位入賞者
 
-  let countDownId = '' // カウントダウンID
-  let timeLimit = 0 // 残り回答時間
+  // let countDownId = '' // カウントダウンID
+  let countDownId = new Map() // カウントダウンID
+  // let timeLimit = 0 // 残り回答時間
+  let timeLimit = new Map() // 残り回答時間
 
-  let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
+  // let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
+  let timeLimitButtonFlag = new Map() // タイムリミットが起動しているか判断するフラグ
   // let rateResultButtonFlag = true // 回答割合表示ボタンが起動しているか判断するフラグ
   let rateResultButtonFlag = new Map() // 回答割合表示ボタンが起動しているか判断するフラグ
 
@@ -120,7 +123,7 @@ async function start () {
         quizId[groupId] = quiz.id
 
         // サーバーで保持している変数にクイズの制限時間を格納する
-        timeLimit = quiz.time
+        timeLimit[groupId] = quiz.time
 
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Question', quiz)
@@ -295,16 +298,18 @@ async function start () {
       })
 
       // トリガ（timeLimit）の受け取り，クライアントへ送信
-      socket.on('timeLimit', timeLimitFlag => {
-        if (timeLimitButtonFlag) {
-          timeLimitButtonFlag = false
+      socket.on('timeLimit', groupId => {
+        if (timeLimitButtonFlag.has(groupId) == false) timeLimitButtonFlag[groupId] = true
+        if (countDownId.has(groupId) == false) countDownId[groupId] = ''
+        if (timeLimitButtonFlag[groupId]) {
+          timeLimitButtonFlag[groupId] = false
           // 残り回答時間を送るようにする
-			    countDownId = setInterval(() => {
-            socket.broadcast.emit('timeLimit', timeLimit)
-				    timeLimit--
-				    if(timeLimit < 0){
-              clearInterval(countDownId)
-              timeLimitButtonFlag = true
+			    countDownId[groupId] = setInterval(() => {
+            socket.broadcast.emit('timeLimit', {'time':timeLimit[groupId], 'groupId':groupId})
+				    timeLimit[groupId]--
+				    if(timeLimit[groupId] < 0){
+              clearInterval(countDownId[groupId])
+              timeLimitButtonFlag[groupId] = true
             }
 			    }, 1000)
         }
