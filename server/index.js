@@ -41,14 +41,16 @@ async function start () {
   console.log('Socket.IO starts')
 
   // let quizId = new Map() // クイズの問題番号
-  // let quizId = 0
+  // let quizId = 0 // クイズの問題番号
   let maxQuizNum = 21 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
   let peopleList = [] // 参加者リスト
 
-  let ansSelect = [] // 回答数
-  let ansUser = [] // 回答ユーザ
+  // let ansSelect = [] // 回答数
+  let ansSelect = new Map() // 回答数
+  // let ansUser = [] // 回答ユーザ
+  let ansUser = new Map() // 回答ユーザ
 
   let finalResult = [] // 最終結果時のデータ
   let userResult = {} // ユーザごとの正答数
@@ -59,7 +61,8 @@ async function start () {
   let timeLimit = 0 // 残り回答時間
 
   let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
-  let rateResultButtonFlag = true // 回答割合表示ボタンが起動しているか判断するフラグ
+  // let rateResultButtonFlag = true // 回答割合表示ボタンが起動しているか判断するフラグ
+  let rateResultButtonFlag = new Map() // 回答割合表示ボタンが起動しているか判断するフラグ
 
   let observer = db.collection('user') // userデータベース
 
@@ -128,16 +131,19 @@ async function start () {
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', result => {
-        if (rateResultButtonFlag) {
+        if (rateResultButtonFlag.has(result.groupId) == false) rateResultButtonFlag[result.groupId] = true
+        if (ansSelect.has(result.groupId) == false) ansSelect[result.groupId] = []
+        if (ansUser.has(result.groupId) == false) ansUser[result.groupId] = []
+        if (rateResultButtonFlag[result.groupId]) {
           rateResultButtonFlag = false
           console.log("quiz: ", result.quizId)
           // データベースから回答割合を算出する
           function dbResult() {
             return new Promise(function(resolve,reject) {
-              db.collection(String(result.quizId)).get().then(function(querySnapshot) {
+              db.collection(String(result.groupId+'_'+result.quizId)).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
-                    ansSelect.push(doc.data().select_num)
-                    ansUser.push(doc.data().user_id)
+                    ansSelect[result.groupId].push(doc.data().select_num)
+                    ansUser[result.groupId].push(doc.data().user_id)
                 })
               })
               // エラー処理
@@ -151,28 +157,28 @@ async function start () {
           }
           dbResult().then(function(value) {
             // 回答者数
-            console.log("ans num: ", ansSelect.length)
+            console.log("ans num: ", ansSelect[groupId].length)
             // 登録ユーザリスト
-            console.log("peopleList: ", peopleList)
+            // console.log("peopleList: ", peopleList)
             // 回答ユーザリスト
-            console.log("ansUser: ", ansUser)
+            console.log("ansUser: ", ansUser[groupId])
             // 未回答ユーザリスト
-            let listDiff = peopleList.filter(itemA =>
-              // 配列Bに存在しない要素が返る
-              ansUser.indexOf(itemA) == -1
-            )
-            console.log("not answer user: ", listDiff)
+            // let listDiff = peopleList.filter(itemA =>
+            //   // 配列Bに存在しない要素が返る
+            //   ansUser.indexOf(itemA) == -1
+            // )
+            // console.log("not answer user: ", listDiff)
             // 重複ユーザリスト
-            let listDuplicate = ansUser.filter(function (x, i, self) {
+            let listDuplicate = ansUser[groupId].filter(function (x, i, self) {
               return self.indexOf(x) !== self.lastIndexOf(x)
             })
             console.log("duplicate user: ", listDuplicate)
             // 回答選択肢リスト
-            console.log("ansSelect: ", ansSelect)
+            console.log("ansSelect: ", ansSelect[groupId])
             let counts = {}
-            for(let i=0;i< ansSelect.length;i++)
+            for(let i=0;i< ansSelect[groupId].length;i++)
             {
-              let key = ansSelect[i]
+              let key = ansSelect[groupId][i]
               counts[key] = (counts[key])? counts[key] + 1 : 1
             }
             // 回答者がいない選択肢に0を代入する
@@ -185,9 +191,9 @@ async function start () {
             socket.broadcast.emit('rateResult', counts)
 
             // 値の初期化
-            ansSelect = []
-            ansUser = []
-            rateResultButtonFlag = true
+            ansSelect[groupId] = []
+            ansUser[groupId] = []
+            rateResultButtonFlag[result.groupId] = true
           })
         }
       })
