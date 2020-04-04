@@ -9,13 +9,13 @@
             <b-icon
               icon="account"
               size="is-large"
-              type="is-success"
+              type="is-grey"
               class="colmun"
             />
           </div>
           <div class="media-content">
-            <p class="is-4" style="font-weight: bold; font-size:20px;">{{ this.admin.name }}
-              <p>{{this.admin.groupId}}</p>
+            <p class="is-4" style="font-weight: bold; font-size:18px;">{{ this.admin.name }}
+            <p>groupId : {{this.admin.groupId}}</p>
           </div>
           <div class="media-right">
           </div>
@@ -25,10 +25,10 @@
     <div id="wrapper" class="container">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
       <!-- Topのときもindex.jsのロジックを変えるのが手間なのでtimeに10を入れておきます -->
-      <button class="button is-outlined is-info" @click="send(-1,null,groupId)">Top</button><br>
+      <button class="button is-outlined is-info" style="margin: 0px 5px;" @click="send(-1,null,groupId)">Top</button><br>
       <span v-for="(question, index) in question" :key="index">
         <div v-if="question.id == 0" style="padding: 20px 0 20px;">
-          <button class="button is-outlined is-info" @click="send(Number(question.id),Number(question.time),groupId)">練習問題</button>
+          <button class="button is-outlined is-info" style="margin: 0px 5px;" @click="send(Number(question.id),Number(question.time),groupId)">練習問題</button>
         </div>
         <button v-else class="button is-outlined is-info" style="margin: 10px 5px 10px;" @click="send(Number(question.id),Number(question.time),groupId)">{{ question.num }}</button>
       </span><br>
@@ -128,10 +128,10 @@ export default {
 			this.socket.emit('rateResult', groupId)
     },
     ans_trigger(boolean) {
-      let trigger = boolean
+      let groupId = this.groupId
 
       // サーバー側に回答結果を表示するためのトリガを送信する
-			this.socket.emit('eachResult', trigger)
+			this.socket.emit('eachResult', groupId)
     },
     res_trigger(boolean) {
       let groupId = this.groupId

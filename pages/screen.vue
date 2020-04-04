@@ -3,7 +3,7 @@
     <!-- タイムアップ画面 -->
     <time-up v-if="timeup" />
 
-    <div v-if="top">
+    <div v-if="isTop[0]">
 			<top x="3" />
     </div>
     <div v-else>
@@ -85,7 +85,7 @@ export default {
       question: '',
       loading: false,
 			rateShow: false,
-      top: true,
+      isTop: [true],
       name: '',
 			interval_id_1: '',
 			interval_id_2: '',
@@ -94,67 +94,85 @@ export default {
 			timeLimit: 0,
 			countDown: 'text-align: center; color: white;',
 			timeup: false,
+			groupId: '',
     }
   },
   mounted() {
+    // セッションストレージから名前を取り出す
+    this.groupId = sessionStorage.getItem('groupId')
+    if(this.groupId == null){
+			this.$router.push('/screen_login')
+		}
+
     // VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
     this.socket = io()
 
     // 問題の受け取り
     this.socket.on('Question', question => {
-      if (question.id != null) {
-        this.question = questions[question.id]
-				this.timeLimit = this.question.time
-				this.top = question.top
-      }
-      else {
-        this.top = true
+      if (question.groupId == this.groupId) {
+        if (question.id > -1) {
+          this.isTop.splice(0, 1, false)
+          this.question = questions[question.id]
+          this.timeLimit = this.question.time
+        }
+        else {
+          this.isTop.splice(0, 1, true)
+        }
       }
 		})
 
-		// 制限時間の受け取り
-		this.socket.on('timeLimit', timeLimit => {
-			this.timeLimit = timeLimit
-			if (timeLimit <= 0)  {
-						this.timeup = true
-						this.isAns =false
+	  // 制限時間の受け取り
+	  this.socket.on('timeLimit', limit => {
+		  this.timeLimit = limit.time
+      if (limit.groupId == this.groupId) {
+        if (limit.time <= 0)  {
+              this.timeup = true
+              sessionStorage.setItem('timeup', true)
+              this.isAns =false
+              this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+        }
+      }
+	  })
+
+    // 割合トリガの受け取り
+    this.socket.on('rateResult', info => {
+			if (info.groupId == this.groupId) {
+				this.rateShow = result.counts
+				this.timeup = false
+				this.regular()
 			}
 		})
 
-    // 割合トリガの受け取り
-    this.socket.on('rateResult', result => {
-      // for debug
-			this.rateShow = result
-			this.timeup = false
-			this.regular()
-		})
-
     // 回答トリガの受け取り
-    this.socket.on('eachResult', result => {
-			this.timeup = false
+    this.socket.on('eachResult', groupId => {
+			if (groupId == this.groupId) {
+				this.timeup = false
 
-			// ここから回答表示
-			this.interval_id_1 = setInterval(() => {
-				this.solid(this.question.answer)
-				this.count_1++
-				if(this.count_1 > 6){
-					clearInterval(this.interval_id_1)
+				// ここから回答表示
+				this.interval_id_1 = setInterval(() => {
 					this.solid(this.question.answer)
-				}
-			}, 500)
-			this.interval_id_2 = setInterval(() => {
-				this.regular()
-				this.count_2++
-				if(this.count_2 > 2){
-					clearInterval(this.interval_id_2)
-					this.solid(this.question.answer)
-				}
-			}, 1000)
+					this.count_1++
+					if(this.count_1 > 6){
+						clearInterval(this.interval_id_1)
+						this.solid(this.question.answer)
+					}
+				}, 500)
+				this.interval_id_2 = setInterval(() => {
+					this.regular()
+					this.count_2++
+					if(this.count_2 > 2){
+						clearInterval(this.interval_id_2)
+						this.solid(this.question.answer)
+					}
+				}, 1000)
+			}
 		})
 
     // 最終結果発表トリガの受け取り
-    this.socket.on('finalResult', result => {
-			this.$router.push({ path: '/finalResult', query: result})
+    this.socket.on('finalResult', groupId => {
+			if (groupId == this.groupId) {
+				this.$router.push({ path: '/finalResult', query: result.rank})
+			}
     })
 
     // コンポーネントがマウントされてから1秒間はローディングする
@@ -204,7 +222,7 @@ export default {
     question: function(){
 			this.timeup = false
 			this.rateShow = false
-			this.top = (this.question.id == null) ? true : false
+			// this.top = (this.question.id == null) ? true : false
       // this.top = (this.question.id == 0) ? true : false
       this.color_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
       this.color_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
