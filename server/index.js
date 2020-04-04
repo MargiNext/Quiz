@@ -40,21 +40,35 @@ async function start () {
   socketStart(server)
   console.log('Socket.IO starts')
 
-  let quizId = 0 // クイズの問題番号
-  let ansSelect = [] // 回答数
-  let ansUser = [] // 回答ユーザ
-  let finalResult = [] // 最終結果時のデータ
-  let userResult = {} // ユーザごとの正答数
+  let quizId = new Map() // クイズの問題番号
   let maxQuizNum = 21 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
   let people = 0 // 参加人数
   let peopleList = [] // 参加者リスト
+
+  // let ansSelect = [] // 回答数
+  let ansSelect = new Map() // 回答数
+  // let ansUser = [] // 回答ユーザ
+  let ansUser = new Map() // 回答ユーザ
+
+  // let finalResult = [] // 最終結果時のデータ
+  let finalResult = new Map() // 最終結果時のデータ
+  // let userResult = {} // ユーザごとの正答数
+  let userResult = new Map() // ユーザごとの正答数
   let rank = 10 // 上位表彰者数
-  let winner = [] // 上位入賞者
-  let countDownId = '' // カウントダウンID
-  let timeLimit = 0 // 残り回答時間
-  let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
-  let rateResultButtonFlag = true // 回答割合表示ボタンが起動しているか判断するフラグ
+  // let winner = [] // 上位入賞者
+  let winner = new Map() // 上位入賞者
+
+  // let countDownId = '' // カウントダウンID
+  let countDownId = new Map() // カウントダウンID
+  // let timeLimit = 0 // 残り回答時間
+  let timeLimit = new Map() // 残り回答時間
+
+  // let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
+  let timeLimitButtonFlag = new Map() // タイムリミットが起動しているか判断するフラグ
+  // let rateResultButtonFlag = true // 回答割合表示ボタンが起動しているか判断するフラグ
+  let rateResultButtonFlag = new Map() // 回答割合表示ボタンが起動しているか判断するフラグ
+
   let observer = db.collection('user') // userデータベース
 
   // userデータベースの監視
@@ -98,11 +112,6 @@ async function start () {
         socket.emit('People', people)
       }
 
-      // サーバー側で保持しているクイズをクライアント側に送信
-      if (quizId != null) {
-        socket.emit('Question', quizId)
-      }
-
       // 問題の受け取り
       socket.on('QuizId', quiz => {
         console.log(quiz)
@@ -111,27 +120,30 @@ async function start () {
         console.log('socket count: ', clients.server.engine.clientsCount)
 
         // サーバーで保持している変数にクイズidを格納する
-        quizId = quiz
+        quizId[groupId] = quiz.id
 
         // サーバーで保持している変数にクイズの制限時間を格納する
-        timeLimit = quiz.time
+        timeLimit[groupId] = quiz.time
 
         // クライアントに対してクイズidを送信する
         socket.broadcast.emit('Question', quiz)
       })
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
-      socket.on('rateResult', result => {
-        if (rateResultButtonFlag) {
+      socket.on('rateResult', groupId => {
+        if (rateResultButtonFlag.has(groupId) == false) rateResultButtonFlag[groupId] = true
+        if (ansSelect.has(groupId) == false) ansSelect[groupId] = []
+        if (ansUser.has(groupId) == false) ansUser[groupId] = []
+        if (rateResultButtonFlag[groupId]) {
           rateResultButtonFlag = false
-          console.log("quiz: ", quizId.id)
+          console.log("quiz: ", quizId[groupId])
           // データベースから回答割合を算出する
           function dbResult() {
             return new Promise(function(resolve,reject) {
-              db.collection(String(quizId.id)).get().then(function(querySnapshot) {
+              db.collection(String(groupId+'_'+quizId[groupId])).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
-                    ansSelect.push(doc.data().select_num)
-                    ansUser.push(doc.data().user_id)
+                    ansSelect[groupId].push(doc.data().select_num)
+                    ansUser[groupId].push(doc.data().user_id)
                 })
               })
               // エラー処理
@@ -145,28 +157,28 @@ async function start () {
           }
           dbResult().then(function(value) {
             // 回答者数
-            console.log("ans num: ", ansSelect.length)
+            console.log("ans num: ", ansSelect[groupId].length)
             // 登録ユーザリスト
-            console.log("peopleList: ", peopleList)
+            // console.log("peopleList: ", peopleList)
             // 回答ユーザリスト
-            console.log("ansUser: ", ansUser)
+            console.log("ansUser: ", ansUser[groupId])
             // 未回答ユーザリスト
-            let listDiff = peopleList.filter(itemA =>
-              // 配列Bに存在しない要素が返る
-              ansUser.indexOf(itemA) == -1
-            )
-            console.log("not answer user: ", listDiff)
+            // let listDiff = peopleList.filter(itemA =>
+            //   // 配列Bに存在しない要素が返る
+            //   ansUser.indexOf(itemA) == -1
+            // )
+            // console.log("not answer user: ", listDiff)
             // 重複ユーザリスト
-            let listDuplicate = ansUser.filter(function (x, i, self) {
+            let listDuplicate = ansUser[groupId].filter(function (x, i, self) {
               return self.indexOf(x) !== self.lastIndexOf(x)
             })
             console.log("duplicate user: ", listDuplicate)
             // 回答選択肢リスト
-            console.log("ansSelect: ", ansSelect)
+            console.log("ansSelect: ", ansSelect[groupId])
             let counts = {}
-            for(let i=0;i< ansSelect.length;i++)
+            for(let i=0;i< ansSelect[groupId].length;i++)
             {
-              let key = ansSelect[i]
+              let key = ansSelect[groupId][i]
               counts[key] = (counts[key])? counts[key] + 1 : 1
             }
             // 回答者がいない選択肢に0を代入する
@@ -176,12 +188,12 @@ async function start () {
             console.log("counts: ", counts)
 
             // 回答割合の送信
-            socket.broadcast.emit('rateResult', counts)
+            socket.broadcast.emit('rateResult', {'counts': counts, 'groupId': groupId})
 
             // 値の初期化
-            ansSelect = []
-            ansUser = []
-            rateResultButtonFlag = true
+            ansSelect[groupId] = []
+            ansUser[groupId] = []
+            rateResultButtonFlag[groupId] = true
           })
         }
       })
@@ -192,16 +204,19 @@ async function start () {
       })
 
       // トリガ（finalResult）の受け取り，クライアントへ送信
-      socket.on('finalResult', result => {
+      socket.on('finalResult', groupId => {
+        if (finalResult.has(groupId) == false) finalResult[groupId] = []
+        if (userResult.has(groupId) == false) userResult[groupId] = {}
+        if (winner.has(groupId) == false) winner[groupId] = []
         // データベースから結果を算出する
         function dbResult() {
           return new Promise(function(resolve,reject) {
             for(let i=1;i<=maxQuizNum;i++) {
-              db.collection(String(i)).get().then(function(querySnapshot) {
+              db.collection(groupId+'_'+String(i)).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
-                  finalResult.push(doc.data())
-                  if (!userResult[doc.data().user_id]) {
-                    userResult[doc.data().user_id] = 0
+                  finalResult[groupId].push(doc.data())
+                  if (!userResult[groupId][doc.data().user_id]) {
+                    userResult[groupId][doc.data().user_id] = 0
                   }
                 })
               })
@@ -217,19 +232,19 @@ async function start () {
         }
         dbResult().then(function(value) {
           // ユーザごとに正答数をカウントする
-          for(let i=0;i < finalResult.length;i++)
+          for(let i=0;i < finalResult[groupId].length;i++)
           {
-            user_ = finalResult[i].user_id
-            is_correct = finalResult[i].is_correct
+            user_ = finalResult[groupId][i].user_id
+            is_correct = finalResult[groupId][i].is_correct
             if (is_correct) {
-              userResult[user_]++
+              userResult[groupId][user_]++
             }
           }
           let userRank = [] // 連想配列に変換してソートする
-          for (let i in userResult) {
+          for (let i in userResult[groupId]) {
             userRank.push({
               "userId": i,
-              "correctNum": userResult[i],
+              "correctNum": userResult[groupId][i],
             })
           }
           // 正答数順にソートする
@@ -246,29 +261,29 @@ async function start () {
           let in_rank = 1
           let plus_rank = 0
           for (let i=0;i < userRank.length;i++) {
-            if (winner.length >= rank) break
+            if (winner[groupId].length >= rank) break
             // 順位を格納する
             userRank[i].rank = in_rank
-            winner.push(userRank[i])
+            winner[groupId].push(userRank[i])
             plus_rank = 0
             for (let j=i+1;j < userRank.length;j++){
               if (userRank[i].correctNum > userRank[j].correctNum) break
               // 順位を格納する
               userRank[j].rank = in_rank
-              winner.push(userRank[j])
+              winner[groupId].push(userRank[j])
               i++
               plus_rank++
             }
             plus_rank++
             in_rank += plus_rank
           }
-          console.log(winner)
-          io.to(socket.id).emit('finalResult', winner)
-          socket.broadcast.emit('finalResult', winner)
+          console.log(winner[groupId])
+          io.to(socket.id).emit('finalResult', {'rank':winner[groupId], 'groupId': groupId})
+          socket.broadcast.emit('finalResult', {'rank':winner[groupId], 'groupId': groupId})
           // 値の初期化
-          finalResult = []
-          userResult = {}
-          winner = []
+          finalResult[groupId] = []
+          userResult[groupId] = {}
+          winner[groupId] = []
         })
       })
 
@@ -283,16 +298,18 @@ async function start () {
       })
 
       // トリガ（timeLimit）の受け取り，クライアントへ送信
-      socket.on('timeLimit', timeLimitFlag => {
-        if (timeLimitButtonFlag) {
-          timeLimitButtonFlag = false
+      socket.on('timeLimit', groupId => {
+        if (timeLimitButtonFlag.has(groupId) == false) timeLimitButtonFlag[groupId] = true
+        if (countDownId.has(groupId) == false) countDownId[groupId] = ''
+        if (timeLimitButtonFlag[groupId]) {
+          timeLimitButtonFlag[groupId] = false
           // 残り回答時間を送るようにする
-			    countDownId = setInterval(() => {
-            socket.broadcast.emit('timeLimit', timeLimit)
-				    timeLimit--
-				    if(timeLimit < 0){
-              clearInterval(countDownId)
-              timeLimitButtonFlag = true
+			    countDownId[groupId] = setInterval(() => {
+            socket.broadcast.emit('timeLimit', {'time':timeLimit[groupId], 'groupId':groupId})
+				    timeLimit[groupId]--
+				    if(timeLimit[groupId] < 0){
+              clearInterval(countDownId[groupId])
+              timeLimitButtonFlag[groupId] = true
             }
 			    }, 1000)
         }
@@ -302,13 +319,10 @@ async function start () {
       socket.on('Answer', ans => {
         console.log('receive')
         console.log(ans)
-
-        // クライアントに対してクイズidを送信する
-        socket.broadcast.emit('Answer', ans)
-
-        // dbに格納
-        db.collection(String(quizId.id)).add({
-          user_id: ans.id,
+        // DBに格納
+        db.collection(String(ans.groupId+'_'+quizId[ans.groupId])).add({
+          user_id: ans.name,
+          groupId: ans.groupId,
           select_num: ans.ans,
           is_correct: ans.correct
         })
@@ -321,7 +335,7 @@ async function start () {
 
       })
 
-      // groupIdの受け取り
+      // 管理者登録時のgroupIdの受け取り
       socket.on('admin', admin => {
         // for debug
         console.log(admin)
@@ -388,11 +402,11 @@ async function start () {
       // delNameの受け取り，クライアントへ送信
       socket.on('delName', result => {
         // userをDBから削除
-        db.collection('user').where('name','==',result).get()
+        db.collection('user').where('groupId','==',result.groupId).where('name','==',result.name).get()
         .then(doc => {
           db.collection('user').doc(doc.docs[0].id).delete()
           .catch(function(error) {
-            console.log('Error delete name: ', result)
+            console.log('Error delete (groupId, name): (', result.groupId, ', ',result.name, ')')
           })
         })
         // 実際の人数減少は後で行われる（リアルタイムベースによる更新時）
