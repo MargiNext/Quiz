@@ -191,7 +191,7 @@ async function start () {
             console.log("counts: ", counts)
 
             // 回答割合の送信
-            socket.broadcast.emit('rateResult', counts)
+            socket.broadcast.emit('rateResult', {'counts': counts, 'groupId': groupId})
 
             // 値の初期化
             ansSelect[groupId] = []
@@ -281,8 +281,9 @@ async function start () {
             in_rank += plus_rank
           }
           console.log(winner[groupId])
-          io.to(socket.id).emit('finalResult', winner[groupId])
-          socket.broadcast.emit('finalResult', winner[groupId])
+          socket.broadcast.emit('rateResult', {'counts': counts, 'groupId': groupId})
+          io.to(socket.id).emit('finalResult', {'rank':winner[groupId], 'groupId': groupId})
+          socket.broadcast.emit('finalResult', {'rank':winner[groupId], 'groupId': groupId})
           // 値の初期化
           finalResult[groupId] = []
           userResult[groupId] = {}
