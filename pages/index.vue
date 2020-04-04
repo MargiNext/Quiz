@@ -124,7 +124,8 @@ export default {
       corNum: 0,
       corNum_before: 0,
       ans: {
-        id: '',
+        quizId: '',
+        name: '',
         groupId: '',
         ans: '',
         correct: false,
@@ -175,6 +176,7 @@ export default {
 
     // 問題の受け取り
     this.socket.on('Question', question => {
+			sessionStorage.setItem('quizId', question.id);
       if (question.groupId == this.user.groupId) {
         if (question.id > -1) {
           this.isTop.splice(0, 1, false)
@@ -258,10 +260,12 @@ export default {
       if (value == 4){
         this.resetColor_4 = 'background-color: #23d160; border-color: #23d160; color: #fff;'
       }
+
       this.ans.ans = value
-      // idと正解かどうかもサーバに送る
-      this.ans.id = this.user.name
+      this.ans.quizId = sessionStorage.getItem('quizId')
+      this.ans.name = this.user.name
       this.ans.groupId = this.user.groupId
+      // idと正解かどうかもサーバに送る
       this.ans.correct = (this.ans.ans == this.question.answer) ? true : false
       if (this.ans.correct) sessionStorage.setItem('ansCorrect', this.ans.correct)
 
