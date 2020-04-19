@@ -132,6 +132,7 @@ export default {
       signout: false,
       isAns: false,
       timeLimit: 0,
+      // timeLimit: [30],
       timeup: false,
       reload: false,
       Login: null,
@@ -151,17 +152,26 @@ export default {
 			console.log(this.$route.query.login)
 		}
   },
-  mounted() {
-
-    if(this.start_time){
-      setInterval(function () {
-        console.log('hoge')
-      }, 1000)
+  watch: {
+    start_time: {
+      handler: function (start_time) {
+        let that = this
+        var id = setInterval(function () {
+          let date = new Date()
+          this.current_time = date.setTime(date.getTime() + 1000*60*60*9)
+          that.timeLimit = Number(sessionStorage.getItem('timeLimit')) - Math.floor((this.current_time - start_time)/1000)
+          if(that.timeLimit <= 0){
+            that.timeup = true
+            sessionStorage.setItem('timeup', true)
+            that.isAns =false
+            that.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+            clearInterval(id)
+          }
+        }, 1000)
+      }
     }
-
-    this.current_time = new Date();
-    console.log(this.current_time)
-
+  },
+  mounted() {
     this.isAns = Boolean(sessionStorage.getItem('isAns'))
     this.showModal_result = Boolean(sessionStorage.getItem('showModal_result'))
 
@@ -190,7 +200,6 @@ export default {
       sessionStorage.setItem('sessionId', this.socket.id)
     });
 
-
     // 問題の受け取り
     this.socket.on('Question', question => {
       if (question.groupId == this.user.groupId) {
@@ -198,6 +207,8 @@ export default {
           this.isTop.splice(0, 1, false)
           this.question = questions[question.id]
           this.timeLimit = this.question.time
+          sessionStorage.setItem('timeLimit', this.question.time)
+          console.log(this.question.time)
         }
         else {
           this.isTop.splice(0, 1, true)
@@ -234,7 +245,10 @@ export default {
 	  this.socket.on('timeLimit', limit => {
 		  // this.timeLimit = limit.time
       if (limit.groupId == this.user.groupId) {
-        this.start_time = sessionStorage.setItem('start_time', limit.time)
+        console.log(limit.date)
+        console.log(this.user.groupId)
+        sessionStorage.setItem('start_time', limit.date)
+        this.start_time = limit.date
         // if (limit.time <= 0)  {
         //       this.timeup = true
         //       sessionStorage.setItem('timeup', true)
