@@ -57,12 +57,24 @@ async function start () {
 
   let rateResultButtonFlag = new Map() // 回答割合表示ボタンが起動しているか判断するフラグ
 
+  let observerAdmin = db.collection('admin') // userデータベース
   let observer = db.collection('user') // userデータベース
 
-  // user数カウントの初期化
-  db.collection('admin').get().then(function(querySnapshot) {
-    querySnapshot.forEach(function(doc) {
-      people[doc.data().groupId] = 0
+  // adminデータベースの監視
+  // user数カウントの初期化のため
+  observerAdmin.onSnapshot(querySnapshot => {
+    querySnapshot.docChanges().forEach(change => {
+      let groupId = change.doc.data()['groupId']
+      if (change.type === 'added') {
+        console.log('New group: ', groupId);
+        people[groupId] = 0
+      }
+      if (change.type === 'modified') {
+        console.log('Modified groupId ', groupId);
+      }
+      if (change.type === 'removed') {
+        console.log('Removed groupId: ', groupId);
+      }
     })
   })
 
@@ -71,11 +83,9 @@ async function start () {
     querySnapshot.docChanges().forEach(change => {
       let groupId = change.doc.data()['groupId']
       let name = change.doc.data()['name']
-      console.log(groupId)
-      console.log(name)
       if (change.type === 'added') {
         console.log('New name: ', name);
-        people[groupId]++
+        people[groupId]++;
       }
       if (change.type === 'modified') {
         console.log('Modified name: ', name);
@@ -358,6 +368,7 @@ async function start () {
                 io.sockets.connected[socket.id].disconnect()
                 console.log('login socket id: ', socket.id, 'disconnected')
                 // 実際の人数の追加は後で行われる（リアルタイムベースによる更新時）
+                socket.broadcast.emit('People', {'people_num': people[user.groupId]+1, 'groupId':user.groupId})
               } else { // 既にユーザが登録されているため登録し直し
                 console.log("Exist user name")
                 // ログインの失敗をクライアントに送信
