@@ -307,8 +307,8 @@ export default {
       sessionStorage.removeItem('sessionId')
       this.$router.push('/login')
       let info = {
-        name: this.name,
-        groupId: this.groupId
+        name: this.user.name,
+        groupId: this.user.groupId
       }
       this.socket.emit('delName', info)
     },
