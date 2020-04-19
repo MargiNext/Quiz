@@ -46,27 +46,16 @@ async function start () {
   let people = 0 // 参加人数
   let peopleList = [] // 参加者リスト
 
-  // let ansSelect = [] // 回答数
   let ansSelect = new Map() // 回答数
-  // let ansUser = [] // 回答ユーザ
   let ansUser = new Map() // 回答ユーザ
 
-  // let finalResult = [] // 最終結果時のデータ
   let finalResult = new Map() // 最終結果時のデータ
-  // let userResult = {} // ユーザごとの正答数
   let userResult = new Map() // ユーザごとの正答数
   let rank = 10 // 上位表彰者数
-  // let winner = [] // 上位入賞者
   let winner = new Map() // 上位入賞者
 
-  // let countDownId = '' // カウントダウンID
-  let countDownId = new Map() // カウントダウンID
-  // let timeLimit = 0 // 残り回答時間
   let timeLimit = new Map() // 残り回答時間
 
-  // let timeLimitButtonFlag = true // タイムリミットが起動しているか判断するフラグ
-  let timeLimitButtonFlag = new Map() // タイムリミットが起動しているか判断するフラグ
-  // let rateResultButtonFlag = true // 回答割合表示ボタンが起動しているか判断するフラグ
   let rateResultButtonFlag = new Map() // 回答割合表示ボタンが起動しているか判断するフラグ
 
   let observer = db.collection('user') // userデータベース
