@@ -138,6 +138,8 @@ export default {
       isPush: false,
       isTop: [true],
       user: '',
+      current_time: '',
+      start_time: '',
     }
   },
 	beforeMount () {
@@ -149,9 +151,16 @@ export default {
 			console.log(this.$route.query.login)
 		}
   },
-  created () {
-  },
   mounted() {
+
+    if(this.start_time){
+      setInterval(function () {
+        console.log('hoge')
+      }, 1000)
+    }
+
+    this.current_time = new Date();
+    console.log(this.current_time)
 
     this.isAns = Boolean(sessionStorage.getItem('isAns'))
     this.showModal_result = Boolean(sessionStorage.getItem('showModal_result'))
@@ -223,14 +232,15 @@ export default {
 
 	  // 制限時間の受け取り
 	  this.socket.on('timeLimit', limit => {
-		  this.timeLimit = limit.time
+		  // this.timeLimit = limit.time
       if (limit.groupId == this.user.groupId) {
-        if (limit.time <= 0)  {
-              this.timeup = true
-              sessionStorage.setItem('timeup', true)
-              this.isAns =false
-              this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
-        }
+        this.start_time = sessionStorage.setItem('start_time', limit.time)
+        // if (limit.time <= 0)  {
+        //       this.timeup = true
+        //       sessionStorage.setItem('timeup', true)
+        //       this.isAns =false
+        //       this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+        // }
       }
 	  })
 
