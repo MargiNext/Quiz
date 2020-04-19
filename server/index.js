@@ -283,6 +283,7 @@ async function start () {
       // トリガ（timeLimit）の受け取り，クライアントへ送信
       socket.on('timeLimit', groupId => {
         let date = new Date()
+        date = date.setTime(date.getTime() + 1000*60*60*9)
         socket.broadcast.emit('timeLimit', {'date':date, 'groupId':groupId})
       })
 

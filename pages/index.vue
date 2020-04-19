@@ -43,7 +43,6 @@
           </div>
           <div class="media-content">
             <p class="title is-4">{{ this.user.name }}</p>
-            <!-- <p class="subtitle is-6">score：{{ Number(this.corNum_before) }}</p> -->
             <progress class="subtitle progress is-primary is-small" :value="this.corNum_before" max="21"></progress>
           </div>
           <div class="media-right">
@@ -59,28 +58,32 @@
     </div>
 
     <!-- トップ画面 -->
-    <!-- <div v-if="question.id == -1"> -->
     <div v-if="isTop[0]">
       <top x="1" />
     </div>
 
     <!-- メイン -->
     <div class="colmuns" v-else>
-      <div id="padding_timer">
-        <div :class="timer" class="tag is-danger">{{ timeLimit }}</div>
+      <div v-if="question==''">
+        <top x="1" />
       </div>
-      <p :class="box" id="padding_ud_30"><span style="font-weight: bold;">{{ question.num }}</span> <br> {{ question.content }}</p>
-      <div id="padding_d_30">
-        <button :class="select_btn" @click="answer('1')" :style="resetColor_1" onfocus="this.blur();" :disabled="isPush">{{ question.select_1 }}</button>
-      </div>
-      <div id="padding_d_30">
-        <button :class="select_btn" @click="answer('2')" :style="resetColor_2" onfocus="this.blur();" :disabled="isPush">{{ question.select_2 }}</button>
-      </div>
-      <div id="padding_d_30">
-        <button :class="select_btn" @click="answer('3')" :style="resetColor_3" onfocus="this.blur();" :disabled="isPush">{{ question.select_3 }}</button>
-      </div>
-      <div id="padding_d_30">
-        <button :class="select_btn" @click="answer('4')" :style="resetColor_4" onfocus="this.blur();" :disabled="isPush">{{ question.select_4 }}</button>
+      <div v-else>
+        <div id="padding_timer">
+          <div :class="timer" class="tag is-danger">{{ timeLimit[0] }}</div>
+        </div>
+        <p :class="box" id="padding_ud_30"><span style="font-weight: bold;">{{ question.num }}</span> <br> {{ question.content }}</p>
+        <div id="padding_d_30">
+          <button :class="select_btn" @click="answer('1')" :style="resetColor_1" onfocus="this.blur();" :disabled="isPush">{{ question.select_1 }}</button>
+        </div>
+        <div id="padding_d_30">
+          <button :class="select_btn" @click="answer('2')" :style="resetColor_2" onfocus="this.blur();" :disabled="isPush">{{ question.select_2 }}</button>
+        </div>
+        <div id="padding_d_30">
+          <button :class="select_btn" @click="answer('3')" :style="resetColor_3" onfocus="this.blur();" :disabled="isPush">{{ question.select_3 }}</button>
+        </div>
+        <div id="padding_d_30">
+          <button :class="select_btn" @click="answer('4')" :style="resetColor_4" onfocus="this.blur();" :disabled="isPush">{{ question.select_4 }}</button>
+        </div>
       </div>
     </div>
   </div>
@@ -131,13 +134,15 @@ export default {
       },
       signout: false,
       isAns: false,
-      timeLimit: 0,
+      timeLimit: [30],
       timeup: false,
       reload: false,
       Login: null,
       isPush: false,
       isTop: [true],
       user: '',
+      current_time: '',
+      start_time: '',
     }
   },
 	beforeMount () {
@@ -149,10 +154,35 @@ export default {
 			console.log(this.$route.query.login)
 		}
   },
-  created () {
+  watch: {
+    start_time: {
+      handler: function (start_time) {
+        let that = this
+        if(that.timeLimit[0] <= 0){
+        }
+        else{
+          var id = setInterval(function () {
+            if(that.timeLimit[0] <= 0){
+              clearInterval(id)
+              that.timeup = true
+              sessionStorage.removeItem('start_time')
+              sessionStorage.setItem('timeup', true)
+              that.isAns =false
+              that.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
+              start_time = ''
+            }
+            else{
+              let date = new Date()
+              this.current_time = date.setTime(date.getTime() + 1000*60*60*9)
+              // that.timeLimit = Number(sessionStorage.getItem('timeLimit')) - Math.floor((this.current_time - start_time)/1000)
+              that.timeLimit.splice(0, 1, Number(sessionStorage.getItem('timeLimit')) - Math.floor((this.current_time - start_time)/1000))
+            }
+          }, 1000)
+        }
+      }
+    }
   },
   mounted() {
-
     this.isAns = Boolean(sessionStorage.getItem('isAns'))
     this.showModal_result = Boolean(sessionStorage.getItem('showModal_result'))
 
@@ -177,60 +207,71 @@ export default {
       else {
         sessionStorage.setItem('sessionId', this.socket.id)
       }
+      this.isTop.splice(0, 1, false)
       this.reload = sessionStorage.getItem('sessionId') != this.socket.id
       sessionStorage.setItem('sessionId', this.socket.id)
-    });
 
+      // リロード検知
+      if (this.reload) {
+        if(sessionStorage.getItem('question_id')){
+          this.start_time = sessionStorage.getItem('start_time')
+          this.corNum_before = sessionStorage.getItem('corNumBefore')
+          this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
+          this.timeup = sessionStorage.getItem('timeup')
+          this.question = questions[sessionStorage.getItem('question_id')]
+          this.timeLimit.splice(0, 1, this.question.time)
+        }
+
+        if(this.timeup){
+          this.timeLimit[0] = 0
+        }
+        this.reload = false
+      }
+    })
 
     // 問題の受け取り
     this.socket.on('Question', question => {
       if (question.groupId == this.user.groupId) {
+        console.log(question)
         if (question.id > -1) {
+          sessionStorage.setItem('question_id', question.id)
           this.isTop.splice(0, 1, false)
           this.question = questions[question.id]
-          this.timeLimit = this.question.time
+          this.timeLimit.splice(0, 1, this.question.time)
+          // this.timeLimit = this.question.time
+          sessionStorage.setItem('timeLimit', this.question.time)
+          console.log(this.question.time)
         }
         else {
           this.isTop.splice(0, 1, true)
         }
-        // リロード検知
-        if (this.reload) {
-          this.corNum_before = sessionStorage.getItem('corNumBefore')
-          this.ans.correct = Boolean(sessionStorage.getItem('ansCorrect'))
-          this.timeup = sessionStorage.getItem('timeup')
-          this.reload = false
-        }
-        // リロードでなく問題が切り替わるとき（つまり次の問題に遷移したとき）
-        else {
-          this.isPush = false
-          sessionStorage.removeItem('isAns')
-          sessionStorage.removeItem('showModal_result')
-          sessionStorage.removeItem('timeup')
-          if(sessionStorage.getItem('ansCorrect')) sessionStorage.removeItem('ansCorrect')
-          this.isAns = false
-          this.showModal_result = false
-          this.corNum_before = this.corNum
-          sessionStorage.setItem('corNumBefore', this.corNum_before)
-          this.ans = {}
-          this.timeup = false
-          this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
-          this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
-          this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
-          this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
-        }
+
+        this.isPush = false
+        sessionStorage.removeItem('isAns')
+        sessionStorage.removeItem('showModal_result')
+        sessionStorage.removeItem('timeup')
+        if(sessionStorage.getItem('ansCorrect')) sessionStorage.removeItem('ansCorrect')
+        this.isAns = false
+        this.showModal_result = false
+        this.corNum_before = this.corNum
+        sessionStorage.setItem('corNumBefore', this.corNum_before)
+        this.ans = {}
+        this.timeup = false
+        this.resetColor_1 = 'background-color: transparent; border-color: #209cee; color: #209cee;'
+        this.resetColor_2 = 'background-color: transparent; border-color: #3273dc; color: #3273dc;'
+        this.resetColor_3 = 'background-color: transparent; border-color: #00d1b2; color: #00d1b2;'
+        this.resetColor_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
       }
     })
 
 	  // 制限時間の受け取り
 	  this.socket.on('timeLimit', limit => {
-		  this.timeLimit = limit.time
+		  // this.timeLimit = limit.time
       if (limit.groupId == this.user.groupId) {
-        if (limit.time <= 0)  {
-              this.timeup = true
-              sessionStorage.setItem('timeup', true)
-              this.isAns =false
-              this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
-        }
+        console.log(limit.date)
+        console.log(this.user.groupId)
+        sessionStorage.setItem('start_time', limit.date)
+        this.start_time = limit.date
       }
 	  })
 
@@ -313,10 +354,6 @@ export default {
       this.socket.emit('delName', info)
     },
   },
-  // watch: {
-  //   question: function(){
-  //   }
-  // },
 }
 </script>
 
