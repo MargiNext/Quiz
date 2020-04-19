@@ -35,9 +35,7 @@ export default {
 
 		// 参加人数の受け取り
     	this.socket.on('People', people => {
-			console.log(people)
 			if (people.groupId == this.user.groupId) {
-				console.log(people)
 				this.people = people.people_num
 			}
 		})
