@@ -43,8 +43,7 @@ async function start () {
   let quizId = new Map() // クイズの問題番号
   let maxQuizNum = 21 // クイズの問題数
   let maxAnsNum = 4 // クイズの選択肢数
-  let people = 0 // 参加人数
-  let peopleList = [] // 参加者リスト
+  let people = new Map() // 参加人数
 
   let ansSelect = new Map() // 回答数
   let ansUser = new Map() // 回答ユーザ
@@ -60,25 +59,32 @@ async function start () {
 
   let observer = db.collection('user') // userデータベース
 
+  // user数カウントの初期化
+  db.collection('admin').get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      people[doc.data().groupId] = 0
+    })
+  })
+
   // userデータベースの監視
   observer.onSnapshot(querySnapshot => {
     querySnapshot.docChanges().forEach(change => {
-    if (change.type === 'added') {
-      console.log('New name: ', change.doc.data()['name']);
-      peopleList.push(change.doc.data()['name'])
-      people++
-    }
-    if (change.type === 'modified') {
-      console.log('Modified name: ', change.doc.data()['name']);
-      let numIndex = array.lastIndexOf(change.doc.data()['name'])
-      peopleList[numIndex] = change.doc.data()['name']
-    }
-    if (change.type === 'removed') {
-      console.log('Removed name: ', change.doc.data()['name']);
-      peopleList = peopleList.filter(n => n !== change.doc.data()['name'])
-      if (people > 0) people--
+      let groupId = change.doc.data()['groupId']
+      let name = change.doc.data()['name']
+      console.log(groupId)
+      console.log(name)
+      if (change.type === 'added') {
+        console.log('New name: ', name);
+        people[groupId]++
       }
-    console.log('people num: ', people)
+      if (change.type === 'modified') {
+        console.log('Modified name: ', name);
+        let numIndex = array.lastIndexOf(name)
+      }
+      if (change.type === 'removed') {
+        console.log('Removed name: ', name);
+      }
+      console.log('people_num:' , people[groupId], ', groupId: ', groupId)
     })
   })
 
@@ -97,9 +103,12 @@ async function start () {
       // console.log(clients.adapter.rooms)
 
       // サーバー側で保持している参加人数をクライアント側に送信
-      if (people > -1) {
-        socket.emit('People', people)
-      }
+      db.collection('admin').get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          let groupId = doc.data().groupId
+          socket.broadcast.emit('People', {'people_num': people[groupId], 'groupId':groupId})
+        })
+      })
 
       // 問題の受け取り
       socket.on('QuizId', quiz => {
@@ -120,7 +129,6 @@ async function start () {
 
       // トリガ（rateResult）の受け取り，クライアントへ送信
       socket.on('rateResult', groupId => {
-        console.log('debug------------------: ', groupId)
         if (rateResultButtonFlag.has(groupId) == false) rateResultButtonFlag[groupId] = true
         if (ansSelect.has(groupId) == false) ansSelect[groupId] = []
         if (ansUser.has(groupId) == false) ansUser[groupId] = []
@@ -148,21 +156,6 @@ async function start () {
           dbResult().then(function(value) {
             // 回答者数
             console.log("ans num: ", ansSelect[groupId].length)
-            // 登録ユーザリスト
-            // console.log("peopleList: ", peopleList)
-            // 回答ユーザリスト
-            console.log("ansUser: ", ansUser[groupId])
-            // 未回答ユーザリスト
-            // let listDiff = peopleList.filter(itemA =>
-            //   // 配列Bに存在しない要素が返る
-            //   ansUser.indexOf(itemA) == -1
-            // )
-            // console.log("not answer user: ", listDiff)
-            // 重複ユーザリスト
-            let listDuplicate = ansUser[groupId].filter(function (x, i, self) {
-              return self.indexOf(x) !== self.lastIndexOf(x)
-            })
-            console.log("duplicate user: ", listDuplicate)
             // 回答選択肢リスト
             console.log("ansSelect: ", ansSelect[groupId])
             let counts = {}
@@ -364,7 +357,6 @@ async function start () {
                 io.sockets.connected[socket.id].disconnect()
                 console.log('login socket id: ', socket.id, 'disconnected')
                 // 実際の人数の追加は後で行われる（リアルタイムベースによる更新時）
-                socket.broadcast.emit('People', people+1)
               } else { // 既にユーザが登録されているため登録し直し
                 console.log("Exist user name")
                 // ログインの失敗をクライアントに送信
@@ -406,7 +398,7 @@ async function start () {
           })
         })
         // 実際の人数減少は後で行われる（リアルタイムベースによる更新時）
-        socket.broadcast.emit('People', people-1)
+        socket.broadcast.emit('People', {'people_num': people[result.groupId]--, 'groupId':result.groupId})
       })
 
       // Top画面のSocketを解放

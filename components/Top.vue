@@ -28,11 +28,16 @@ export default {
 	},
 	mounted(){
     	// VueインスタンスがDOMにマウントされたらSocketインスタンスを生成する
-    	this.socket = io()
+		this.socket = io()
+
+		// セッションストレージから名前を取り出す
+    	this.user = JSON.parse(sessionStorage.getItem('user'))
 
 		// 参加人数の受け取り
     	this.socket.on('People', people => {
-			this.people = people
+			if (people.groupId == this.user.groupId) {
+				this.people = people.people_num
+			}
 		})
 
 		// websocket.idをサーバに送信
