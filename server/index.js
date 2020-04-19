@@ -300,20 +300,8 @@ async function start () {
 
       // トリガ（timeLimit）の受け取り，クライアントへ送信
       socket.on('timeLimit', groupId => {
-        if (timeLimitButtonFlag.has(groupId) == false) timeLimitButtonFlag[groupId] = true
-        if (countDownId.has(groupId) == false) countDownId[groupId] = ''
-        if (timeLimitButtonFlag[groupId]) {
-          timeLimitButtonFlag[groupId] = false
-          // 残り回答時間を送るようにする
-			    countDownId[groupId] = setInterval(() => {
-            socket.broadcast.emit('timeLimit', {'time':timeLimit[groupId], 'groupId':groupId})
-				    timeLimit[groupId]--
-				    if(timeLimit[groupId] < 0){
-              clearInterval(countDownId[groupId])
-              timeLimitButtonFlag[groupId] = true
-            }
-			    }, 1000)
-        }
+        let date = new Date()
+        socket.broadcast.emit('timeLimit', {'date':date, 'groupId':groupId})
       })
 
       // 回答の受け取り
