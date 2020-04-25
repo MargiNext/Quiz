@@ -84,8 +84,8 @@ export default {
   },
   mounted() {
     // セッションストレージから名前を取り出す
-    this.admin = JSON.parse(sessionStorage.getItem('admin'))
-    if(this.admin == null){
+    this.admin = sessionStorage.getItem('admin') ? JSON.parse(sessionStorage.getItem('admin')) : ''
+    if(this.admin == ''){
 			this.$router.push('/console_login')
     }
     this.groupId = this.admin.groupId
