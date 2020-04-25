@@ -20,7 +20,6 @@
           ログアウトしますか？
           <br>
           一度ログアウトすると戻れません．
-          <!-- Content ... -->
         </section>
         <footer class="modal-card-foot">
           <button class="button is-danger" @click="out">Logout</button>
@@ -147,11 +146,7 @@ export default {
   },
 	beforeMount () {
     if(!this.$route.query.login){
-			console.log(this.$route.query.login)
 			this.$router.push('/login')
-		}
-		else {
-			console.log(this.$route.query.login)
 		}
   },
   watch: {
@@ -187,7 +182,7 @@ export default {
     this.showModal_result = Boolean(sessionStorage.getItem('showModal_result'))
 
     // セッションストレージから名前を取り出す
-    this.user = JSON.parse(sessionStorage.getItem('user'))
+    this.user = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')) : ''
     if(this.user == null){
 			this.$router.push('/login')
     }
@@ -268,8 +263,6 @@ export default {
 	  this.socket.on('timeLimit', limit => {
 		  // this.timeLimit = limit.time
       if (limit.groupId == this.user.groupId) {
-        console.log(limit.date)
-        console.log(this.user.groupId)
         sessionStorage.setItem('start_time', limit.date)
         this.start_time = limit.date
       }

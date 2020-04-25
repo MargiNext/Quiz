@@ -31,7 +31,7 @@ export default {
 		this.socket = io()
 
 		// セッションストレージから名前を取り出す
-    	this.user = JSON.parse(sessionStorage.getItem('user'))
+		this.user = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')) : ''
 
 		// 参加人数の受け取り
     	this.socket.on('People', people => {

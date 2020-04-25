@@ -9,6 +9,7 @@
         </div>
         <div class="columns is-mobile" id="padding_u_100">
           <div :class="box">
+            <p>{{ this.a.b }}</p>
             <input class="input" type="text" placeholder="Team Name" v-model="name">
             <input class="input" type="text" placeholder="Group ID" v-model="groupId">
             <p v-if='Login[0].name' style="color: red;">※このユーザ名はすでに使用済みです</p>
@@ -37,7 +38,8 @@ export default {
       isLogin_name: false,
       isLogin_groupId: false,
       Login: [false],
-      box: 'column is-10 is-offset-1'
+      box: 'column is-10 is-offset-1',
+      a: ''
     }
   },
   mounted() {
@@ -62,10 +64,8 @@ export default {
       this.socket.on('Login', Login => {
         this.Login.push(Login)
         this.Login.shift()
-        console.log(this.Login)
         if(this.Login[0].name || this.Login[0].groupId){
           console.log("ログイン失敗")
-          console.log(this.Login[0].groupId)
         }
         else{
           this.$router.push({path: '/?login=true'})
