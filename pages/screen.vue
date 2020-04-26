@@ -11,7 +11,7 @@
 				<div class="column is-8-desktop is-offset-2-desktop is-offset-1-mobile is-10-mobile">
 					<div class="columns">
 						<div :class="box_1"><span style="font-weight: bold; font-size: 4.5rem;">{{ question.num }}</span> <br> {{ question.content }}</div>
-						<div :class="box_2" :style="countDown">{{ timeLimit }}</div>
+						<div :class="box_2" :style="countDown">{{ timeLimit[0] }}</div>
 					</div>
 				</div>
 			</div>
@@ -91,10 +91,11 @@ export default {
 			interval_id_2: '',
 			count_1: 0,
 			count_2: 0,
-			timeLimit: 0,
+			timeLimit: [30],
 			countDown: 'text-align: center; color: white;',
 			timeup: false,
 			groupId: '',
+			start_time: '',
     }
 	},
 	beforeMount () {
@@ -105,6 +106,8 @@ export default {
 		else {
 			console.log(this.$route.query.login)
 		}
+  },
+  watch: {
   },
   mounted() {
 		this.groupId = sessionStorage.getItem('groupId')
@@ -118,7 +121,8 @@ export default {
         if (question.id > -1) {
           this.isTop.splice(0, 1, false)
           this.question = questions[question.id]
-          this.timeLimit = this.question.time
+          sessionStorage.setItem('timeLimit', this.question.time)
+          this.timeLimit.splice(0, 1, this.question.time)
         }
         else {
           this.isTop.splice(0, 1, true)
@@ -128,14 +132,9 @@ export default {
 
 	  // 制限時間の受け取り
 	  this.socket.on('timeLimit', limit => {
-		  this.timeLimit = limit.time
+		  // this.timeLimit = limit.time
       if (limit.groupId == this.groupId) {
-        if (limit.time <= 0)  {
-              this.timeup = true
-              sessionStorage.setItem('timeup', true)
-              this.isAns =false
-              this.corNum_before = sessionStorage.getItem('corNumBefore') ? sessionStorage.getItem('corNumBefore') : 0
-        }
+				this.start_time = limit.date
       }
 	  })
 
@@ -235,6 +234,29 @@ export default {
 			this.color_4 = 'background-color: transparent; border-color: #23d160; color: #23d160;'
 			this.count_1 = 0
 			this.count_2 = 0
+		},
+    start_time: {
+      handler: function (start_time) {
+        let that = this
+        if(that.timeLimit[0] <= 0){
+        }
+        else{
+          var id = setInterval(function () {
+            if(that.timeLimit[0] <= 0){
+              clearInterval(id)
+              that.timeup = true
+              that.isAns =false
+              start_time = ''
+            }
+            else{
+              let date = new Date()
+              this.current_time = date.setTime(date.getTime() + 1000*60*60*9)
+              // that.timeLimit = Number(sessionStorage.getItem('timeLimit')) - Math.floor((this.current_time - start_time)/1000)
+              that.timeLimit.splice(0, 1, Number(sessionStorage.getItem('timeLimit')) - Math.floor((this.current_time - start_time)/1000))
+            }
+          }, 1000)
+        }
+			},
     }
   }
 }
