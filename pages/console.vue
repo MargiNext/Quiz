@@ -114,7 +114,6 @@ export default {
         time: quizTime,
         groupId: groupId,
       }
-      console.log(quiz)
 
       // サーバー側にクイズ番号を送信する
       this.socket.emit('QuizId', quiz)

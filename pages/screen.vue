@@ -100,11 +100,9 @@ export default {
 	},
 	beforeMount () {
     if(!this.$route.query.login){
-			console.log(this.$route.query.login)
 			this.$router.push('/screen_login')
 		}
 		else {
-			console.log(this.$route.query.login)
 		}
   },
   watch: {

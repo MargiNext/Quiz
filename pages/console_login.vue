@@ -53,8 +53,6 @@ export default {
         name: this.name,
         groupId: Math.random().toString(32).substring(2)
       }
-      console.log(admin)
-
       this.$router.push('/console')
       this.socket.emit('admin', admin)
 

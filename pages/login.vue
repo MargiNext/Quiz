@@ -65,11 +65,9 @@ export default {
         this.Login.push(Login)
         this.Login.shift()
         if(this.Login[0].name || this.Login[0].groupId){
-          console.log("ログイン失敗")
         }
         else{
           this.$router.push({path: '/?login=true'})
-          console.log("ログイン成功")
         }
       })
 		}

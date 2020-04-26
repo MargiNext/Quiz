@@ -227,7 +227,6 @@ export default {
     // 問題の受け取り
     this.socket.on('Question', question => {
       if (question.groupId == this.user.groupId) {
-        console.log(question)
         if (question.id > -1) {
           sessionStorage.setItem('question_id', question.id)
           this.isTop.splice(0, 1, false)
@@ -235,7 +234,6 @@ export default {
           this.timeLimit.splice(0, 1, this.question.time)
           // this.timeLimit = this.question.time
           sessionStorage.setItem('timeLimit', this.question.time)
-          console.log(this.question.time)
         }
         else {
           this.isTop.splice(0, 1, true)
