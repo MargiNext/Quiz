@@ -12,20 +12,21 @@
     "heroku-postbuild": "npm run build"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.3.6",
-    "@nuxtjs/bulma": "^1.2.1",
-    "@nuxtjs/pwa": "^3.0.0-0",
+    "@nuxtjs/axios": "^5.10.3",
+    "@nuxtjs/bulma": "^1.2.7",
+    "@nuxtjs/pwa": "^3.0.0-beta.20",
     "@nuxtjs/vuetify": "0.5.5",
-    "bootstrap-vue": "^2.1.0",
+    "bootstrap-vue": "^2.13.0",
     "cross-env": "^5.2.0",
     "express": "^4.16.4",
-    "firebase": "^7.2.0",
-    "nuxt": "^2.0.0",
-    "nuxt-buefy": "^0.3.17",
+    "firebase": "^7.14.2",
+    "grpc": "^1.24.2",
+    "nuxt": "^2.12.2",
+    "nuxt-buefy": "^0.3.28",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9"
+    "nodemon": "^1.19.4"
   }
 }
