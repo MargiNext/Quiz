@@ -380,6 +380,25 @@ async function start () {
         })
       })
 
+      // sign in
+      socket.on('signIn', groupId => {
+        adminDB = db.collection('admin').where('groupId','==',groupId).limit(1)
+        adminDB.get().then(function(querySnapshot) {
+          console.log(querySnapshot)
+          // groupIDが存在しない場合
+          if (querySnapshot.empty) {
+            console.log("signIn: Not Exist groupId")
+            // サインインの失敗をクライアントに送信
+            io.to(socket.id).emit('isSignIn', {'groupId': false, 'name': false})
+          } else {
+            console.log("signIn: Exist groupId")
+            querySnapshot.forEach(function(doc) {
+              io.to(socket.id).emit('isSignIn', {'groupId': doc.data().groupId, 'name': doc.data().name})
+            })
+          }
+        })
+      })
+
       // screen groupIdの受け取り
       socket.on('screen', groupId => {
         // for debug
