@@ -143,7 +143,7 @@ async function start () {
         if (ansSelect.has(groupId) == false) ansSelect[groupId] = []
         if (ansUser.has(groupId) == false) ansUser[groupId] = []
         if (rateResultButtonFlag[groupId]) {
-          rateResultButtonFlag = false
+          rateResultButtonFlag[groupId] = false
           console.log("quiz: ", quizId[groupId])
           // データベースから回答割合を算出する
           function dbResult() {
